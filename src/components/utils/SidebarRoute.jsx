@@ -8,7 +8,7 @@ function SidebarRoute({component : Component, ...rest}) {
         <Route
         {...rest}
         render={props =>
-          sessionStorage.getItem('isAuth') ? (
+          localStorage.getItem('isAuth') ? (
             <Layout/>
             ) : (
                 null

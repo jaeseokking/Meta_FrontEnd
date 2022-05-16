@@ -1,49 +1,47 @@
 import React from 'react';
-import styled from 'styled-components'
-import Main from '../../images/main.jpg';
-import Logo from '../../images/logo.png';
+// import styled from 'styled-components'
+// import Main from '../../images/main.jpg';
+// import Logo from '../../images/logo.png';
 
 const Home = () => {
+    console.log('Home')
     return (
-        <BackgroundImage>
-            <Wrapper>
-                <p>&nbsp;S-Oil 세차권 관리자 페이지&nbsp;</p><img src={Logo} alt={'Logo'}/>
-            </Wrapper>
-        </BackgroundImage>
+        <div style={{width : '100%'}}>
+            <div>
+                <div>{"안녕하세요."}</div>
+                <div>{"@@매장 관리자님"}</div>
+                <div>{"좌측메뉴를 이용해주세요."}</div>
+            </div>
+        </div>
     );
 };
 
 export default Home;
 
-const BackgroundImage = styled.image`
-    background:
-    linear-gradient(to top, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.99)),
-    url(${Main});
-    background-size : cover;    
-    background-repeat: no-repeat;
-    width: 100vw;
-    display: flex;
-    
+// const BackgroundImage = styled.image`
+//     background-size : cover;    
+//     background-repeat: no-repeat;
+//     width: 100vw;
+//     display: flex;
+      
 
-`
+// `
 
+// const Wrapper = styled.section`
+//   display: flex;
+//   justify-content: center;
+// //   align-items: center;
+//   font-size : 30px;
+//   margin : 0 auto;
+//   flex-direction : column;
 
-
-const Wrapper = styled.section`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size : 30px;
-  margin : 0 auto;
-  flex-direction : row;
-
-  p {
-    color: black;
-    border-radius: 4px;
-    margin-top : 50px;
-  }
+//   p {
+//     color: black;
+//     border-radius: 4px;
+//     margin-top : 50px;
+//   }
   
   
 
 
-`;
+// `;

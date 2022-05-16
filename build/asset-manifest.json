@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "./static/css/main.8c8b27cf.chunk.css",
+    "main.js": "./static/js/main.61073a49.chunk.js",
+    "main.js.map": "./static/js/main.61073a49.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.62e865bb.js",
+    "runtime-main.js.map": "./static/js/runtime-main.62e865bb.js.map",
+    "static/css/2.c8956ef5.chunk.css": "./static/css/2.c8956ef5.chunk.css",
+    "static/js/2.235dd11d.chunk.js": "./static/js/2.235dd11d.chunk.js",
+    "static/js/2.235dd11d.chunk.js.map": "./static/js/2.235dd11d.chunk.js.map",
+    "static/js/3.57e85b02.chunk.js": "./static/js/3.57e85b02.chunk.js",
+    "static/js/3.57e85b02.chunk.js.map": "./static/js/3.57e85b02.chunk.js.map",
+    "index.html": "./index.html",
+    "static/css/2.c8956ef5.chunk.css.map": "./static/css/2.c8956ef5.chunk.css.map",
+    "static/css/main.8c8b27cf.chunk.css.map": "./static/css/main.8c8b27cf.chunk.css.map",
+    "static/js/2.235dd11d.chunk.js.LICENSE.txt": "./static/js/2.235dd11d.chunk.js.LICENSE.txt",
+    "static/media/main.333a923f.jpg": "./static/media/main.333a923f.jpg",
+    "static/media/s-oil.46ce5d67.png": "./static/media/s-oil.46ce5d67.png",
+    "static/media/soil_logo.7424a259.png": "./static/media/soil_logo.7424a259.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.62e865bb.js",
+    "static/css/2.c8956ef5.chunk.css",
+    "static/js/2.235dd11d.chunk.js",
+    "static/css/main.8c8b27cf.chunk.css",
+    "static/js/main.61073a49.chunk.js"
+  ]
+}

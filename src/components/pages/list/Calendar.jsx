@@ -4,16 +4,13 @@ import ko from 'date-fns/locale/ko'; // 한국어적용
 import styled from 'styled-components';
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
-import ExcelDownload from './ExcelDownload';
 registerLocale("ko", ko) // 한국어적용
-const _ = require('lodash');
+// const _ = require('lodash');
 
 const Calendar = ({startDate, endDate, currentPage, selectUse}) => {
     
     const [sDate, setSDate] = useState(0);
     const [eDate, setEDate] = useState(0);
-    const [excelStart, setExcelStart] = useState(0);
-    const [excelEnd, setExcelEnd] = useState(0);
     const [use, setUse] = useState('all');
 
     useEffect(() => {
@@ -26,8 +23,6 @@ const Calendar = ({startDate, endDate, currentPage, selectUse}) => {
 
         setSDate(new Date());
         setEDate(new Date());
-        setExcelStart(moment(new Date()).format('yyyyMMDD'))
-        setExcelEnd(moment(new Date()).format('yyyyMMDD'))
 
 
     }
@@ -39,8 +34,6 @@ const Calendar = ({startDate, endDate, currentPage, selectUse}) => {
         setSDate(date);
         setEDate(new Date());
         
-        setExcelStart(moment(new Date()).format('yyyyMMDD'))
-        setExcelEnd(moment(date).format('yyyyMMDD'))
     
     }
 
@@ -51,8 +44,6 @@ const Calendar = ({startDate, endDate, currentPage, selectUse}) => {
         setSDate(date);
         setEDate(new Date());
         
-        setExcelStart(moment(new Date()).format('yyyyMMDD'))
-        setExcelEnd(moment(date).format('yyyyMMDD'))
        
      
     }
@@ -63,8 +54,6 @@ const Calendar = ({startDate, endDate, currentPage, selectUse}) => {
         setSDate(0);
         setEDate(0);
         
-        setExcelStart(0)
-        setExcelEnd(0)
 
     }
 
@@ -95,13 +84,11 @@ const Calendar = ({startDate, endDate, currentPage, selectUse}) => {
 
     function choiceDate1(date) {
         setSDate(date)
-        setExcelStart(moment(date).format('yyyyMMDD'))
 
     }
 
     function choiceDate2(date) {
         setEDate(date)
-        setExcelEnd(moment(date).format('yyyyMMDD'))
 
     }
 
@@ -136,9 +123,7 @@ const Calendar = ({startDate, endDate, currentPage, selectUse}) => {
                 selected={eDate}
                 onChange={(date) => choiceDate2(date)}
              />
-           
-        </Form>
-        <Form>
+            <Form>
             <select onChange={(e) => setUse(e.target.value)}>
                 {OPTIONS.map((option) => (
                     <option
@@ -150,8 +135,10 @@ const Calendar = ({startDate, endDate, currentPage, selectUse}) => {
                 ))}
             </select>
             <Button2 onClick={(e) => SetDate(e)}>{"검색"}</Button2>
-            <ExcelDownload startDate={excelStart !== 0 ? moment(sDate).format('yyyyMMDD') : 0} endDate={excelEnd !== 0 ? moment(eDate).format('yyyyMMDD') : 0} selectUse={use} />
+             </Form>
+           
         </Form>
+    
         </>
     );
   };
@@ -161,6 +148,8 @@ export default Calendar;
 const Form = styled.div`
     display: flex; 
     flex-direction: row;
+    align-self: flex-end;
+    width : 100%;
 
     label, input {
         display: block; 
@@ -169,7 +158,10 @@ const Form = styled.div`
         margin-bottom : 0 auto;
         height : 20px;
         font-size : 15px;
-        width : 100px;
+        max-width : 80px;
+
+
+        
     }
 
     select {
@@ -179,7 +171,7 @@ const Form = styled.div`
 `
 
 const Button = styled.button`
-  width : 50px;
+  max-width : 47px;
   margin-left : 5px;
   margin-right : 5px;
   height : 25px;
@@ -187,8 +179,8 @@ const Button = styled.button`
   border-radius: 4px;
   font-size : 15px;
   outline: 0;
-  border: 0px solid rgba(15, 122, 64, 0.9);
-  background-color : rgba(15, 122, 64, 0.9);
+  border: 0px solid rgba(1, 78, 136, 0.9);
+  background-color : rgba(1, 78, 136, 0.9);
   color : rgba(255,255,255);
 
   &:hover {
@@ -197,24 +189,19 @@ const Button = styled.button`
 `
 
 const Button2 = styled.button`
-  width : 50px;
   margin-left : 5px;
   margin-right : 5px;
   height : 25px;
+  width : 50px;
 
   border-radius: 4px;
   font-size : 15px;
   outline: 0;
-  border: 0px solid rgba(15, 122, 64, 0.9);
-  background-color : rgba(15, 122, 64, 0.9);
+  border: 0px solid rgba(1, 78, 136, 0.9);;
+  background-color : rgba(1, 78, 136, 0.9);;
   color : rgba(255,255,255);
 
   &:hover {
     cursor:pointer;
   }
 `
-
-
-
-
-

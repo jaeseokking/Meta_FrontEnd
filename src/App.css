@@ -36,3 +36,11 @@
     transform: rotate(360deg);
   }
 }
+
+
+@font-face {
+  font-family: 'BMDOHYEON';
+  src: url('./font/BMDOHYEON_ttf.ttf') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
