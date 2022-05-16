@@ -1,25 +1,34 @@
-import logo from './logo.svg';
 import './App.css';
+import {BrowserRouter , Route,Switch} from 'react-router-dom';
+import Home from './components/pages/Home';
+import CWList from './components/pages/list/CWList';
+import UpdataProfile from './components/pages/update/UpdataProfile';
+import NotFound  from './components/pages/NotFound';
+import Login from './components/pages/login/Login';
+import PrivateRoute from './components/utils/PrivateRoute';
+import PublicRoute from './components/utils/PublicRoute';
+import Layout from './components/layout/Layout'
 
-function App() {
+
+
+
+
+function App(props) {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter >
+        <Route render={(props) => (
+            <Layout {...props}>
+                <Switch>
+                    <PrivateRoute path="/" exact component={Home}/>
+                    <PrivateRoute exact path="/cw_list" component={CWList}/>
+                    <PrivateRoute exact path="/update" component={UpdataProfile}/>
+                    <PublicRoute restricted={true} path="/login" component={Login}/>
+                    <PrivateRoute component={NotFound}/>
+                    
+                </Switch> 
+            </Layout>
+        )}/>
+    </BrowserRouter>
   );
 }
-
 export default App;
