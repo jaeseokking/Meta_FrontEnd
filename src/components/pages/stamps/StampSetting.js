@@ -3,10 +3,13 @@ import styled from 'styled-components';
 import CalendarSetting from '../list/CalendarSetting';
 import axios from 'axios';
 import * as config from '../../../config';
+import { useNavigate } from 'react-router';
+import { refreshToken } from '../../utils/RefreshToken';
+import { Values } from 'react-lodash';
 
 
-
-const StampSetting = () => {
+const StampSetting = ({loginCallBack}) => {
+  const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
   const [list, setList] = useState([]);
@@ -15,13 +18,89 @@ const StampSetting = () => {
   const [selectUse, setSelectUse] = useState('all');
   const [disInput, setDisInput] = useState(false);
   const [disInput2, setDisInput2] = useState(false); 
+  const [disInput3, setDisInput3] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [value, SetValue] = useState({
-    minimum_price : '',
-    minimum_count : '',
+    minimum_price : undefined,
+    minimum_count : undefined,
     completion_stamp : '',
-    reward : ''
+    reward : '',
+    stamp_exp : undefined,
   })
+
+  useEffect(() => {
+    try{
+      refreshToken(loginCallBack);
+    }catch(e){
+      console.log(e);
+    }
+  }, []);
+
+
+  //초기 설정한 데이터 가져오기
+  useEffect(() => { 
+    try {
+      axios.post(`${config.SERVER_URL}/api/getStampSetting`, {}, {
+        headers: {
+          "Content-Type": `application/json`,
+        },
+        xhrFields: {
+          withCredentials: true
+        },
+    })
+      .then(res => {
+        console.log(res.data.setting);
+        const {setting , result} = res.data;
+        console.log("SETTING :: ",setting)
+
+        if(result === "TOKEN ERROR"){
+          alert(result);
+          navigate("/login")
+        }
+        if(result === "SUCCESS"){
+          setStartDate(setting.START_DATE)
+          setEndDate(setting.END_DATE)
+
+       
+          SetValue({
+            minimum_price : setting.MINIMUM_PRICE === 0 ? "0" : setting.MINIMUM_PRICE,
+            minimum_count : setting.MINIMUM_COUNT === 0 ? "0" : setting.MINIMUM_COUNT,
+            completion_stamp : setting.COMPLETION_STAMP,
+            reward : setting.REWARD,
+            stamp_exp : setting.STAMP_EXP === 0 ? "0" : setting.STAMP_EXP
+          })
+
+          if(setting.MINIMUM_PRICE === undefined){
+            setDisInput(true);
+          }
+
+          if(setting.MINIMUM_COUNT === undefined){
+            setDisInput2(true);
+          }
+
+          if(setting.STAMP_EXP === undefined){
+            setDisInput3(true);
+          }
+          setLoading(true);
+        }
+        if(result === "TOKEN EXPIRED"){
+          alert(result);
+          navigate("/login")
+        }
+          
+      })
+      .catch(ex => {
+        console.log("login request fail : " + ex);
+      })
+      .finally(() => {console.log("login request end")});
+    } catch (error) {
+      console.log(error);
+      
+    } 
+  }, [])
+
+
 
 
 
@@ -41,66 +120,82 @@ const StampSetting = () => {
       startDate : startDate,
       endDate : endDate,
       completion_stamp : value.completion_stamp,
-      reward : value.reward
-
+      reward : value.reward,
+      stamp_exp : value.stamp_exp
     }
     console.log(data);
-    // try {
-    //   axios.post(`${config.SERVER_URL}/api/login`, JSON.stringify(data), {
-    //     headers: {
-    //       "Content-Type": `application/json`,
-    //     },
-    //     xhrFields: {
-    //       withCredentials: true
-    //     },
-    // })
-    //   .then(res => {
-        
+    try {
+      axios.post(`${config.SERVER_URL}/api/stampSetting`, JSON.stringify(data), {
+        headers: {
+          "Content-Type": `application/json`,
+        },
+        xhrFields: {
+          withCredentials: true
+        },
+    })
+      .then(res => {
+        console.log(res.data.result);
+        const message = res.data.result;
+        if(message === "TOKEN ERROR"){
+          alert(message);
+          navigate("/login")
+        }
+        if(message === "SUCCESS"){
+          alert(message);
+          window.location.reload();
+        }
+        if(message === "TOKEN EXPIRED"){
+          alert(message);
+          navigate("/login")
+        }
+        if(message === "TOKEN NULL"){
+          alert(message);
+          navigate("/login");
+        }
+        if(message === "TOKEN "){
+
+        }
           
-    //   })
-    //   .catch(ex => {
-    //     console.log("login request fail : " + ex);
-    //   })
-    //   .finally(() => {console.log("login request end")});
-    // } catch (error) {
-    //   console.log(error);
+      })
+      .catch(ex => {
+        console.log("login request fail : " + ex);
+      })
+      .finally(() => {console.log("login request end")});
+    } catch (error) {
+      console.log(error);
       
-    // } 
+    } 
   
   }
  
  
   function lockInput(e){
 
+    console.log(e.target.id);
     if(e.target.id === 'money'){
-      if(disInput){
         SetValue({
-          minimum_price : ''
+          ...value,
+          minimum_price : undefined
         })
-      }else{
-        SetValue({
-          minimum_price : 0
-        })
-      }
       setDisInput(!disInput);
-      
-      
-    }else if(e.target.id === 'count'){
-      if(disInput2){
+    }
+    else if(e.target.id === 'count'){
         SetValue({
-          minimum_count : ''
+          ...value,
+          minimum_count : undefined
         })
-      }else{
-        SetValue({
-          minimum_count : 1
-        })
-      }
       setDisInput2(!disInput2);
-    
+    }else if(e.target.id === 'exp'){
+      SetValue({
+        ...value,
+        stamp_exp : undefined
+      })
+      setDisInput3(!disInput3);
+
     }
   }
 
-
+  if(loading === true){
     return (
         <Wrapper>
             <Form>
@@ -110,17 +205,22 @@ const StampSetting = () => {
                      <tbody>
                         <tr>
                           <th>1회발급 최소금액</th>
-                          <td><Input type={"number"} value={value.minimum_price || ""} placeholder="ex) 1000" name="minimum_price" id="minimum_price"  onChange={(e)=>valueChange(e)} disabled={disInput}/> 원</td>
-                          <td><input type="checkbox" id="money"  onClick={(e) => lockInput(e)}/>조건없음</td>
+                          <td><Input type={"number"} value={value.minimum_price || ""} style={{background : disInput ? "#d3d3d3" : null}} placeholder={disInput ? "조건없음" : "ex) 1000"} name="minimum_price" id="minimum_price"  onChange={(e)=>valueChange(e)} disabled={disInput}/> 원</td>
+                          <td><input type="checkbox" id="money" defaultChecked={disInput} onClick={(e) => lockInput(e)}/>조건없음</td>
                         </tr>
                         <tr>
                           <th>1회발급 최소건수</th>
-                          <td><Input type={"number"} value={value.minimum_count || ""} placeholder="ex) 1" name="minimum_count" id="minimum_count"  onChange={(e)=>valueChange(e)} disabled={disInput2}/> 개</td>
-                          <td><input type="checkbox" id="count" onClick={(e) => lockInput(e)}/>조건없음</td>
+                          <td><Input type={"number"} value={value.minimum_count || ""} style={{background : disInput2 ? "#d3d3d3" : null}} placeholder={disInput2 ? "조건없음" : "ex) 1"} name="minimum_count" id="minimum_count"  onChange={(e)=>valueChange(e)} disabled={disInput2}/> 개</td>
+                          <td><input type="checkbox" defaultChecked={disInput2} id="count" onClick={(e) => lockInput(e)}/>조건없음</td>
                         </tr>
                         <tr>
                           <th>이벤트 기간</th>
-                          <td><CalendarSetting startDate={setStartDate} endDate={setEndDate} currentPage={setPage} selectUse={setSelectUse}/></td>
+                          <td><CalendarSetting startDate={setStartDate} endDate={setEndDate} currentPage={setPage} sInitDate={startDate} eInitDate={endDate} selectUse={setSelectUse}/></td>
+                        </tr>
+                        <tr>
+                          <th>발급후 사용기간</th>
+                          <td><Input type={"number"} value={value.stamp_exp || ""} style={{background : disInput3 ? "#d3d3d3" : null}} placeholder={disInput3 ? "무제한" : "ex) 30"} name="stamp_exp" id="stamp_exp"  onChange={(e)=>valueChange(e)}/> 일</td>
+                          <td><input type="checkbox"  defaultChecked={disInput3} id="exp" onClick={(e) => lockInput(e)}/>조건없음</td>
                         </tr>
                         <tr>
                           <th>완료 스탬프 개수</th>
@@ -142,6 +242,13 @@ const StampSetting = () => {
             </Form>
         </Wrapper>
     );
+  }else{
+    return (
+      <Wrapper>
+        Loading ...
+      </Wrapper>
+    )
+  }
 };
 
 export default StampSetting;

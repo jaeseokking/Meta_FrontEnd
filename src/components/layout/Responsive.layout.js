@@ -13,7 +13,7 @@ const ResponsiveLayout = ({loginCallBack, isLogin}) => {
 
     const Mobile = () => {
         const isMobile = useMediaQuery({maxWidth : 767});
-        return isMobile && <MobileLayout></MobileLayout>;
+        return isMobile && <MobileLayout loginCallBack={loginCallBack}></MobileLayout>;
     }
 
     return (

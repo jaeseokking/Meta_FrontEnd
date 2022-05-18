@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { refreshToken } from '../../utils/RefreshToken';
 import Calendar from '../list/Calendar';
 
-const StampList = ({loginCallBack}) => {
+const NoticeList = ({loginCallBack}) => {
     const [page, setPage] = useState(1);
     const [list, setList] = useState([]);
     const [startDate, setStartDate] = useState(0);
@@ -21,11 +21,11 @@ const StampList = ({loginCallBack}) => {
     return (
         <Wrapper>
             <Form>
-               <Title>스탬프 조회</Title>
+               <Title>공지사항</Title>
                <Contents>
-                <SearchForm>
+                {/* <SearchForm>
                         <Calendar startDate={setStartDate} endDate={setEndDate} currentPage={setPage} selectUse={setSelectUse}/>     
-                </SearchForm>
+                </SearchForm> */}
                 <Table>
                 <thead>
                     <tr>
@@ -80,7 +80,7 @@ const StampList = ({loginCallBack}) => {
     );
 };
 
-export default StampList;
+export default NoticeList;
 
 const Wrapper = styled.div`
   display: flex;

@@ -1,14 +1,15 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from "styled-components";
 import { NavLink , useNavigate} from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
 import * as config from '../../config';
-
+const WEEKDAY = ['월요일' , '화요일' , '수요일', '목요일', '금요일' , '토요일', '일요일'];
 
 const DesktopLayout = (props) =>{
     const cookies = new Cookies();
     const navigate = useNavigate();
+    const [time, setTime] = useState(new Date());
 
     const [open1, setOpen1] = useState(false);
     const [open2, setOpen2] = useState(false);
@@ -25,6 +26,14 @@ const DesktopLayout = (props) =>{
         }
     }
 
+    //분단위 시간 변화
+    useEffect(() => {
+        const id = setInterval(() => {
+            setTime(new Date());
+        }, 1000);
+        return(() => clearInterval(id))
+    }, [])
+
     const logout = () => {
 
         try {
@@ -37,9 +46,10 @@ const DesktopLayout = (props) =>{
               },
           })
             .then(res => {
-                navigate("/login");    
-                props.loginCallBack(false);
                 cookies.remove('refresh_token');
+                props.loginCallBack(false);
+                navigate("/login");    
+                
             })
             .catch(ex => {
               console.log("login request fail : " + ex);
@@ -57,21 +67,33 @@ const DesktopLayout = (props) =>{
     }
 
 
-
     return (
-        <Side>
+        <Wrapper>
             <Menu>
+                <div className='title-form'>
+                    <div className="title">
+                        METACITY<br/>
+                        스탬프 관리
+                    </div>
+                    <div className="subtitle">
+                        {time.getFullYear()+"년"}<br/>
+                        {time.getMonth() +"월"+time.getDate()+"일   "+ WEEKDAY[time.getDay() - 1]}<br/>
+                        {time.getHours() >= 10 ? time.getHours() : "0" +time.getHours()}
+                        {":"}
+                        {time.getMinutes() >= 10 ? time.getMinutes() : "0"+time.getMinutes()}
+                </div> 
+                </div>
                 <div onClick={()=>toggleMenu(1)} className="main-menu">스탬프</div>
                     <div className={open1 ? "show-menu" : "hide-menu"} >
                         <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey'})}
+                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none"})}
                         to={"/stamp/setting"}
                         >
                             <div>스탬프 관리</div>
                         </NavLink>
                         <br/>
                         <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey'})}
+                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none"})}
                         to={"/stamp/list"}
                         >
                             <div>스탬프 조회</div>
@@ -80,7 +102,7 @@ const DesktopLayout = (props) =>{
                 <div onClick={()=>toggleMenu(2)} className="main-menu">기본설정</div>
                     <div className={open2 ? "show-menu" : "hide-menu"} >
                         <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey'})}
+                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none"})}
                         to={"/info/edit"}
                         >
                             <div>비밀번호 수정</div>
@@ -89,14 +111,14 @@ const DesktopLayout = (props) =>{
                 <div onClick={()=>toggleMenu(3)} className="main-menu">게시판</div>
                     <div className={open3 ? "show-menu" : "hide-menu"} >
                     <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey'})}
+                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none"})}
                         to={"/notice/list"}
                         >
                             <div>공지사항</div>
                         </NavLink>
                             <br/>
                         <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey'})}
+                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none"})}
                         to={"/question/list"}
                         >
                             <div>1:1문의</div>
@@ -104,14 +126,14 @@ const DesktopLayout = (props) =>{
                 </div>
                 <div onClick={() => logout()} className="main-menu">로그아웃</div>
             </Menu>
-        </Side>
+        </Wrapper>
     );
 }
 
 export default DesktopLayout;
 
 
-const Side = styled.div`
+const Wrapper = styled.div`
   font-family : "BMDOHYEON";
   display: flex;
   border-right: 1px solid #e0e0e0;
@@ -121,9 +143,30 @@ const Side = styled.div`
   height : 100vh;
 
   .main-menu {
-      font-size : 20px;
-      margin-bottom : 10px;
+      font-size : 15px;
+      margin-bottom : 20px;
   }
+
+  .title {
+      font-size : 25px;
+      margin-left : 20px;
+      color : #555;
+      margin-bottom : 20px;
+      margin-top : 20px;
+  }
+
+  .subtitle {
+    font-size : 15px;
+    margin-left : 20px;
+    color : #888;
+    margin-bottom: 20px;
+  }
+
+  .title-form{
+      margin-bottom : 20px;
+  }
+
+
 `
 
 // const Profile = styled.img`
@@ -133,7 +176,6 @@ const Side = styled.div`
 // `
 
 const Menu = styled.div`
-    margin-top: 30px;
     width: 200px;
     display: flex;
     flex-direction: column;

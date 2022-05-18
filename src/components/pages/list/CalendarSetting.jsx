@@ -1,55 +1,37 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import DatePicker, { registerLocale } from "react-datepicker";  // 한국어적용
 import ko from 'date-fns/locale/ko'; // 한국어적용
 import styled from 'styled-components';
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
 registerLocale("ko", ko) // 한국어적용
-const _ = require('lodash');
+// const _ = require('lodash');
 
-const Calendar = ({startDate, endDate, currentPage, selectUse}) => {
-    
-    const [sDate, setSDate] = useState(0);
-    const [eDate, setEDate] = useState(0);
-    const [use, setUse] = useState('all');
+const Calendar = ({startDate, endDate, sInitDate, eInitDate}) => {
+    const [sDate, setSDate] = useState(new Date(sInitDate));
+    const [eDate, setEDate] = useState(new Date(eInitDate));
 
     useEffect(() => {
-        setUse(selectUse)
-    }, [selectUse])
-
-
+        setSDate(new Date(sInitDate));
+    }, [sInitDate])
+    useEffect(() => {
+        setEDate(new Date(eInitDate));
+    }, [eInitDate])
 
 
     function choiceDate1(date) {
 
         setSDate(date) 
-        if(sDate === null){
+        startDate(moment(date).format('yyyy-MM-DD'))
 
-        }else{
-            startDate(moment(sDate).format('yyyy-MM-DD'))
-        }
-    
-          
-    
-        
 
     }
 
     function choiceDate2(date) {
         setEDate(date)
-
-        if(eDate === null){
-
-        }else{
-            endDate(moment(eDate).format('yyyy-MM-DD'))
-        }
+        endDate(moment(date).format('yyyy-MM-DD'))
     }
 
-    const OPTIONS = [
-        { value: "all", name: "전체" },
-        { value: "Y", name: "사용" },
-        { value: "N", name: "미사용" },
-    ];    
     
 
     return (
@@ -98,41 +80,41 @@ const Form = styled.div`
     }
 `
 
-const Button = styled.button`
-  width : 50px;
-  margin-left : 5px;
-  margin-right : 5px;
-  height : 25px;
+// const Button = styled.button`
+//   width : 50px;
+//   margin-left : 5px;
+//   margin-right : 5px;
+//   height : 25px;
 
-  border-radius: 4px;
-  font-size : 15px;
-  outline: 0;
-  border: 0px solid rgba(15, 122, 64, 0.9);
-  background-color : rgba(15, 122, 64, 0.9);
-  color : rgba(255,255,255);
+//   border-radius: 4px;
+//   font-size : 15px;
+//   outline: 0;
+//   border: 0px solid rgba(15, 122, 64, 0.9);
+//   background-color : rgba(15, 122, 64, 0.9);
+//   color : rgba(255,255,255);
 
-  &:hover {
-    cursor:pointer;
-  }
-`
+//   &:hover {
+//     cursor:pointer;
+//   }
+// `
 
-const Button2 = styled.button`
-  width : 50px;
-  margin-left : 5px;
-  margin-right : 5px;
-  height : 25px;
+// const Button2 = styled.button`
+//   width : 50px;
+//   margin-left : 5px;
+//   margin-right : 5px;
+//   height : 25px;
 
-  border-radius: 4px;
-  font-size : 15px;
-  outline: 0;
-  border: 0px solid rgba(15, 122, 64, 0.9);
-  background-color : rgba(15, 122, 64, 0.9);
-  color : rgba(255,255,255);
+//   border-radius: 4px;
+//   font-size : 15px;
+//   outline: 0;
+//   border: 0px solid rgba(15, 122, 64, 0.9);
+//   background-color : rgba(15, 122, 64, 0.9);
+//   color : rgba(255,255,255);
 
-  &:hover {
-    cursor:pointer;
-  }
-`
+//   &:hover {
+//     cursor:pointer;
+//   }
+// `
 
 
 

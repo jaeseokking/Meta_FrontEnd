@@ -3,12 +3,9 @@ import React, {useEffect, useState} from 'react';
 import styled from "styled-components";
 import * as config from '../../../config';
 import {useNavigate } from 'react-router-dom';
-import { refreshToken } from '../../utils/RefreshToken';
-import Cookies from 'universal-cookie';
 
 function Login(props) {
   const navigate = useNavigate();
-  const cookies = new Cookies();
 
   const [SHOP_BIZNO, setCRNumber] = useState('');
   const [password, setPassword] = useState('');
