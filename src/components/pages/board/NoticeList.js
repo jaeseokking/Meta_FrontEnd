@@ -23,9 +23,6 @@ const NoticeList = ({loginCallBack}) => {
             <Form>
                <Title>공지사항</Title>
                <Contents>
-                {/* <SearchForm>
-                        <Calendar startDate={setStartDate} endDate={setEndDate} currentPage={setPage} selectUse={setSelectUse}/>     
-                </SearchForm> */}
                 <Table>
                 <thead>
                     <tr>
