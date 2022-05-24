@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import { refreshToken } from '../../utils/RefreshToken';
-import Calendar from '../list/Calendar';
+//import Calendar from '../list/Calendar';
 
 const NoticeList = ({loginCallBack}) => {
     const [page, setPage] = useState(1);

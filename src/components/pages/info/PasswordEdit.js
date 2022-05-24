@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import * as config from '../../../config';
 
-const PasswordEdit = ({props}) => {
+const PasswordEdit = (props) => {
   const navigate = useNavigate();
     const [currentPW, setCurrentPW] = useState('');
     const [NewPW, setNewPW] = useState('');
@@ -25,10 +25,10 @@ const PasswordEdit = ({props}) => {
 
     async function handleSubmit (e){
         e.preventDefault();
-        if(currentPW === ''){
-            alert('현재 비밀번호를 입력해주세요.')
-            return 
-        }
+        // if(currentPW === ''){
+        //     alert('현재 비밀번호를 입력해주세요.')
+        //     return 
+        // }
 
         if(NewPW === ''){
             alert('변경 비밀번호를 입력해주세요.')
@@ -55,15 +55,15 @@ const PasswordEdit = ({props}) => {
             headers: {
               "Content-Type": `application/json`,
             },
-            xhrFields: {
-              withCredentials: true
-            },
         })
           .then(res => {
-            if(res.data.result === 1){
+            if(res.data === 0){
+              alert('비밀번호 변경오류 다시 시도해주세요.');
+              window.location.reload();
+            }else if(res.data === 1){
               alert('비밀번호 변경완료!');
               navigate("/");
-            }else if(res.data.result === 2){
+            }else if(res.data === 2){
               alert('현재 비밀번호가 일치하지 않습니다.')
             }else{
               alert('다시 로그인 해주세요.');

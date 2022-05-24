@@ -1,4 +1,4 @@
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import styled from "styled-components";
 import {NavLink, useNavigate} from 'react-router-dom';
 import Cookies from 'universal-cookie';
@@ -13,7 +13,6 @@ const MobileLayout = (props) => {
 
     const [isOpen , setOpen] = useState(false);
     const [xPosition, setX] = useState(-202);
-    const side = useRef();
 
     const toggleOpen = () => {
         if(xPosition < 0){
@@ -175,7 +174,7 @@ const Side = styled.div`
     border-bottom: 2px ;
     border-top-left-radius: 15px;
     border-bottom-left-radius: 15px;
-    background-color : rgba(235, 235, 235, 0.95);
+    background-color : rgba(245, 245, 245, 0.9);
 
 
     .main-menu {

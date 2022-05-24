@@ -4,6 +4,7 @@ import ko from 'date-fns/locale/ko'; // 한국어적용
 import styled from 'styled-components';
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
+import { format } from 'date-fns';
 registerLocale("ko", ko) // 한국어적용
 // const _ = require('lodash');
 
@@ -41,7 +42,7 @@ const Calendar = ({startDate, endDate, sInitDate, eInitDate}) => {
                 locale="ko"
                 showPopperArrow={false} //popover 화살표 boolean으로 선택할 수 있음 
                 fixedHeight // calendar의 height 값을 고정시키면 현재달의 비어있는 칸에 지난달과 다음달날짜가 자동으로  표시
-                selected={sDate}
+                selected={sInitDate === 0 ? null : sDate}
                 onChange={(date) => choiceDate1(date)}
                 />
             <div style={{marginRight : 5, marginLeft : 5}}>  -  </div>
@@ -49,10 +50,9 @@ const Calendar = ({startDate, endDate, sInitDate, eInitDate}) => {
                 locale="ko"
                 showPopperArrow={false} //popover 화살표 boolean으로 선택할 수 있음 
                 fixedHeight // calendar의 height 값을 고정시키면 현재달의 비어있는 칸에 지난달과 다음달날짜가 자동으로  표시
-                selected={eDate}
+                selected={eInitDate === 0? null : eDate}
                 onChange={(date) => choiceDate2(date)}
              />
-           
         </Form>
         </>
     );

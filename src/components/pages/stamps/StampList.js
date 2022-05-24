@@ -2,6 +2,12 @@ import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import { refreshToken } from '../../utils/RefreshToken';
 import Calendar from '../list/Calendar';
+import axios from 'axios';
+import PageButtons from './PageButtons';
+import * as config from '../../../config';
+import {format} from 'date-fns';
+import { useNavigate } from 'react-router';
+
 
 const StampList = ({loginCallBack}) => {
     const [page, setPage] = useState(1);
@@ -9,6 +15,10 @@ const StampList = ({loginCallBack}) => {
     const [startDate, setStartDate] = useState(0);
     const [endDate, setEndDate] = useState(0);
     const [selectUse, setSelectUse] = useState('all');
+
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+
 
     useEffect(() => {
       try{
@@ -18,7 +28,45 @@ const StampList = ({loginCallBack}) => {
       }
     },[]);
 
-    return (
+    useEffect(() => {
+      try{
+        refreshToken(loginCallBack);
+      }catch(e){
+        console.log(e);
+      }
+    },[page, startDate, endDate, selectUse]);
+
+
+
+    useEffect(() => {
+      axios.post(`${config.SERVER_URL}/api/stamp/board`, {
+        page : page,
+        startDate : startDate,
+        endDate : endDate,
+        selectUse : selectUse
+      }).then(response => {
+        console.log('DATA' , response.data);
+        setList(response.data.stampList)
+        setLoading(true);
+      })
+    }, [])
+  
+    useEffect(() => {
+      axios.post(`${config.SERVER_URL}/api/stamp/board`, {
+        page : page,
+        startDate : startDate,
+        endDate : endDate,
+        selectUse : selectUse 
+      }).then(response => {
+        setList(response.data.stampList)
+        setLoading(true);
+
+      })
+    }, [page, startDate, endDate, selectUse])
+  
+
+    if(loading === true){
+      return (
         <Wrapper>
             <Form>
                <Title>스탬프 조회</Title>
@@ -29,55 +77,44 @@ const StampList = ({loginCallBack}) => {
                 <Table>
                 <thead>
                     <tr>
-                    <th scope="col">발행번호</th>
+                    <th>발행번호</th>
+                    <th scope="col">스탬프 코드</th>
                     <th scope="col">발행일자</th>
-                    <th scope="col">금액</th>
-                    <th scope="col">사용일자</th>
+                    <th scope="col">유효일자</th>
+                    <th scope="col">스탬프 개수</th>
                     <th scope="col">사용유무</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>2022-01-22</td>
-                        <td>10,000</td>
-                        <td>2022-01-23 10:00</td>    
-                        <td><div><div style={{background : 'rgba(1, 78, 136, 0.9)', color : '#fff' , width : 20}}>N</div></div></td>
-                    </tr>  
-                    <tr>
-                        <td>1</td>
-                        <td>2022-01-22</td>
-                        <td>10,000</td>
-                        <td>2022-01-23 10:00</td>    
-                        <td><div><div style={{background : 'rgba(1, 78, 136, 0.9)', color : '#fff' , width : 20}}>N</div></div></td>
-                    </tr>  
-                    <tr>
-                        <td>1</td>
-                        <td>2022-01-22</td>
-                        <td>10,000</td>
-                        <td>2022-01-23 10:00</td>    
-                        <td><div><div style={{background : 'rgba(1, 78, 136, 0.9)', color : '#fff' , width : 20}}>N</div></div></td>
-                    </tr>  
-                    <tr>
-                        <td>1</td>
-                        <td>2022-01-22</td>
-                        <td>10,000</td>
-                        <td>2022-01-23 10:00</td>    
-                        <td><div><div style={{background : 'rgba(1, 78, 136, 0.9)', color : '#fff' , width : 20}}>N</div></div></td>
-                    </tr>  
-                    <tr>
-                        <td>1</td>
-                        <td>2022-01-22</td>
-                        <td>10,000</td>
-                        <td>2022-01-23 10:00</td>    
-                        <td><div><div style={{background : 'rgba(1, 78, 136, 0.9)', color : '#fff' , width : 20}}>N</div></div></td>
-                    </tr>   
+                {list.length > 0 && list.map((value, index) => {
+                    const COMP_DTM = new Date(value.STAMP_COMP_DTM);
+                    const END_CTM = new Date(value.STAMP_END_DTM);
+                    return(
+                    <tr key={value.SEQ} onClick={() => navigate({ pathname : `/stamp/detail?seq=${value.SEQ}&stampcode=${value.STAMP_CODE}`})}>
+                      <td>{value.SEQ}</td>
+                      <td>{value.STAMP_CODE}</td>
+                      <td>{format(COMP_DTM, 'yyyy-MM-dd HH:mm')}</td>
+                      <td>{format(END_CTM, 'yyyy-MM-dd')}</td>
+                      <td>{value.STAMP_CNT}</td>
+                      <td style={{width : 58}}><div><div style={{background : value.STAMP_USE_YN === "N" ? 'rgba(28, 200, 93, 1)' : '#d12', color : '#fff' , width : 20}}>{value.STAMP_USE_YN}</div></div></td>
+                    </tr> 
+                    );
+                  })}
                 </tbody>
                 </Table>
+                <PageButtons currentPage={setPage} startDate={startDate} endDate={endDate} selectUse={selectUse}/>
                </Contents>
             </Form>
         </Wrapper>
-    );
+      );
+    }else{
+      return (
+        <div>
+          loading.....
+        </div>
+      )
+    }
+
 };
 
 export default StampList;

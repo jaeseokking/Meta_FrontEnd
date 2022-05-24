@@ -9,8 +9,9 @@ function Login(props) {
 
   const [SHOP_BIZNO, setCRNumber] = useState('');
   const [password, setPassword] = useState('');
-
+ 
   function loginHandler(e) {
+    e.preventDefault();
     console.log('로그인 버튼 클릭');
     let data = {
       bizno : SHOP_BIZNO,
@@ -21,16 +22,17 @@ function Login(props) {
         headers: {
           "Content-Type": `application/json`,
         },
-        xhrFields: {
-          withCredentials: true
-        },
+
     })
       .then(res => {
-        if(res.data !== null){
+        console.log(res.data == "");
+        if(res.data !== "" && res.data !== null){
           console.log("res.data.accessToken : " , res.data);
           axios.defaults.headers.common['Authorization'] = 'Bearer' + res.data;
           props.loginCallBack(true);
           navigate("/");    
+        }else{
+          alert('일치하는 회원정보가 없습니다.')
         }
         
           
@@ -63,14 +65,6 @@ function Login(props) {
     }
 
 
-    const handleSubmit = e => {
-      e.preventDefault();
-      loginHandler()
-    }
-
-
-
-
 
     return (
       <Wrapper>
@@ -95,11 +89,7 @@ function Login(props) {
                 placeholder="비밀번호"
                 onChange={(e) => handleChangePW(e)}
             />
-            <Button onClick={(e) => handleSubmit(e)}>로그인 </Button>
-            {/* <text>
-              
-              {data.MEMBER_ID}
-            </text> */}
+            <Button onClick={(e) => loginHandler(e)}>로그인 </Button>
         </Form>
       </Wrapper>
     );

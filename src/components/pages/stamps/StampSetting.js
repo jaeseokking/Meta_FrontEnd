@@ -45,20 +45,24 @@ const StampSetting = ({loginCallBack}) => {
         headers: {
           "Content-Type": `application/json`,
         },
-        xhrFields: {
-          withCredentials: true
-        },
     })
       .then(res => {
         console.log(res.data.setting);
         const {setting , result} = res.data;
         console.log("SETTING :: ",setting)
+        console.log(result);
+     
 
         if(result === "TOKEN ERROR"){
           alert(result);
           navigate("/login")
         }
         if(result === "SUCCESS"){
+          //초기 세팅값이 없는 경우 
+          if(setting === null){
+            setLoading(true);
+            return;
+          }
           setStartDate(setting.START_DATE)
           setEndDate(setting.END_DATE)
 
@@ -236,7 +240,6 @@ const StampSetting = ({loginCallBack}) => {
                           </td>
                         </tr>
                      </tbody>
-                     
                    </Table>
                </Contents>
             </Form>
