@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import styled from "styled-components";
 import axios from 'axios';
-import PageButtons from './PageButtons';
+import PageButtons from '../../utils/PageButtons';
 import Calendar from './Calendar';
 import * as config from '../../../config';
 

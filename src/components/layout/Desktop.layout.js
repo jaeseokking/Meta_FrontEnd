@@ -119,7 +119,7 @@ const DesktopLayout = (props) =>{
                             <br/>
                         <NavLink
                         style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none"})}
-                        to={"/question/list"}
+                        to={"/enquiry/list"}
                         >
                             <div>1:1문의</div>
                         </NavLink>

@@ -8,7 +8,7 @@ import {format} from 'date-fns';
 import { useNavigate, useParams } from 'react-router';
 
 
-const StampDetail = ({loginCallBack}) => {
+const EnquiryDetail = ({loginCallBack}) => {
 
     const [loading, setLoading] = useState(false);
     
@@ -19,12 +19,10 @@ const StampDetail = ({loginCallBack}) => {
         return new URLSearchParams(window.location.search).get(key);
     }
 
-    const [seq, setSEQ] = useState('');
-    const [stampCode, setStampCode] = useState('');
-    const [compDTM, setCompDTM] = useState('');
-    const [endDTM, setEndDTM] = useState('');
-    const [useYN, setUseYN] = useState('');
-    const [userKey, setUserKey] = useState('');
+    const [title, setTitle] = useState('');
+    const [content, setContent] = useState('');
+    const [date, setDate] = useState('');
+    const [reply, setReply] = useState();
 
     useEffect(() => {
       try{
@@ -35,9 +33,8 @@ const StampDetail = ({loginCallBack}) => {
     },[]);
 
     useEffect(() => {
-      axios.post(`${config.SERVER_URL}/api/stamp/detail`, {
-        SEQ : getParameter('seq'),
-        STAMP_CODE :  getParameter('stampcode')
+      axios.post(`${config.SERVER_URL}/api/enquiry/detail`, {
+        IDX : getParameter('idx'),
       }).then(response => {
         console.log('DATA' , response.data);
 
@@ -46,15 +43,15 @@ const StampDetail = ({loginCallBack}) => {
           navigate('/stamp/list')
         }
         if(response.data.result === 'SUCCESS'){
-          console.log(response.data.stampDetail)
-          const detail = response.data.stampDetail;
-          setSEQ(detail.SEQ);
-          setStampCode(detail.STAMP_CODE);
-          setCompDTM(format(detail.STAMP_COMP_DTM, 'yyyy-MM-dd HH:mm'));
-          setEndDTM(format(detail.STAMP_END_DTM, 'yyyy-MM-dd'));
-          setUseYN(detail.STAMP_USE_YN);
-          setUserKey(detail.USER_KEY);
-          console.log(useYN);
+          console.log(response.data.enquiryDetail)
+          const detail = response.data.enquiryDetail;
+          if(response.data.enquiryReply !== null){
+            setReply(response.data.enquiryReply);
+          }
+
+          setTitle(detail.TITLE);
+          setContent(detail.CONTENT);
+          setDate(detail.DATE);
           setLoading(true);
         }else{
           navigate('/login');
@@ -63,73 +60,34 @@ const StampDetail = ({loginCallBack}) => {
       })
     }, [])
 
-    const checkUse = (e) => {
-      setUseYN(e.target.value);
-    }
-
-    const updateStamp = () => {
-      axios.post(`${config.SERVER_URL}/api/stamp/update`, {
-        SEQ : seq,
-        STAMP_CODE : stampCode,
-        STAMP_USE_YN : useYN
-
-      }).then(response => {
-        const status = response.data.result;
-        if(status === 'SUCCESS'){
-          alert('수정완료')
-          window.location.reload();
-        }else{
-          alert('수정실패')
-          window.location.reload();
-        }
-      })
-
-    }
-
 
     if(loading === true){
       return (
         <Wrapper>
             <Form>
-               <Title>스탬프 조회 및 수정</Title>
+               <Title>문의글</Title>
                <Contents>
-                <Table>
-                     <tbody>
-                        <tr>
-                          <th>발행번호</th>
-                          <td>{seq}</td>
-                        </tr>
-                        <tr>
-                          <th>사용자</th>
-                          <td>{userKey}</td>
-                        </tr>
-                        <tr>
-                          <th>발행일자</th>
-                          <td>{compDTM}</td>
-                        </tr>
-                        <tr>
-                          <th>만료일자</th>
-                          <td>{endDTM}</td>
-                        </tr>
-                        <tr>
-                          <th>사용여부</th>
-                          <td>
-                              사용<input type="radio" name="use_yn" value="Y" checked={useYN === 'Y'} onChange={(e) => checkUse(e)}/> 
-                              &nbsp;&nbsp;&nbsp; 미사용<input type="radio" name="use_yn" value="N" checked={useYN === 'N'} onChange={(e) => checkUse(e)}/>
-                          </td>
-                        </tr>
-            
-                        <tr>
-                          <td colSpan={3} style={{textAlign : 'right'}}>
-                              
-                          </td>
-                        </tr>
-                     </tbody>
-                   </Table>
-                   </Contents>
+                    <div className="title_container">
+                        <div className="title"><div className="q_container"><div className='a'>Q</div></div>{title}</div>
+                        <div className="subtitle"><div>{format(date, 'yyyy.MM.dd')}</div></div>
+                    </div>
+                    <div className="content">{content}</div>
+                    {reply !== undefined ?
+                        <>
+                            <div className="boundary"></div>
+                            <div className="title_container">
+                                <div className="title"><div className="a_container"><div className='a'>A</div></div>[답변]</div>
+                                {/* <div className="subtitle"><div>{format(date, 'yyyy.MM.dd')}</div></div> */}
+                            </div>
+                            <div className="content">{reply.CONTENT}</div>
+                        </>
+                        :
+                       null
+                    }
+                </Contents>
                    <div style={{width : '100%', textAlign : 'end' , marginTop : '10px'}}> 
-                    <Button style={{backgroundColor : 'rgba(1, 78, 136, 0.9)' }} onClick={() => updateStamp()}>수정</Button>
-                    <Button style={{ backgroundColor : 'rgba(150, 150, 150, 0.9)', marginRight : '30px'}} onClick={()=> navigate('/stamp/list')}>확인</Button>
+                    <Button style={{backgroundColor : 'rgba(1, 78, 136, 0.9)' }}>수정</Button>
+                    <Button style={{ backgroundColor : 'rgba(150, 150, 150, 0.9)', marginRight : '30px'}} onClick={()=> navigate('/enquiry/list')}>확인</Button>
                    </div>
             </Form>
         </Wrapper>
@@ -146,7 +104,7 @@ const StampDetail = ({loginCallBack}) => {
 
 };
 
-export default StampDetail;
+export default EnquiryDetail;
 
 const Wrapper = styled.div`
   display: flex;
@@ -183,9 +141,81 @@ const Contents = styled.div`
   margin : 30px 30px 0px 30px;
   display : flex;
   flex-direction: column;
-  border: 2px solid rgb(240,240,240);
   border-radius: 5px;
+
+  .title_container {
+    border-bottom: 2px solid rgb(240,240,240);
+    width : 100%;
+    flex-direction: row;
+    display : flex;
+  }
+
+  .title {
+      font-size:  20px;
+      font-weight: 600;
+      color : rgb(50,50,50);
+      margin-bottom: 10px;
+      flex : 1;
+      align-self : right;
+      flex-direction: row;
+      display : flex;   
+      text-justify : end ;
+  }
+  
+
+  .subtitle{
+      font-size : 15px;
+      color : rgb(100,100,100);
+      margin-bottom : 10px;
+      align-self : center;
+      text-align: right;
+
+  }
+
+  .content {
+    padding : 10px;
+  }
+
+  .reply_title{
+      margin-top : 20px;
+      border-radius: 5px;
+      padding : 2px 5px ;
+      box-shadow: inset -2px -2px 2px 1px rgb(100,100,100);
+  }
+
+
+  .q_container {
+        border-radius: 20px;
+        width : 32px;
+        height : 32px;
+        background-color: pink;
+        color : #f62a94;
+        text-align: center;
+        margin-right : 4px;
+        position: relative;
+    }
  
+
+    .a_container {
+        border-radius: 20px;
+        width : 32px;
+        height : 32px;
+        background-color: #87cee3;
+        color : #3e69ad;
+        text-align: center;
+        margin-right : 4px;
+        position: relative;
+    }
+
+    .a {
+        position: absolute; 
+        bottom: 6px;
+        left : 9px;
+    }
+
+    .boundary {
+        margin : 20px;
+    }
 `
 
 

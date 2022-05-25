@@ -8,12 +8,15 @@ import Center from './components/utils/Center';
 import StampList from './components/pages/stamps/StampList';
 import PasswordEdit from './components/pages/info/PasswordEdit';
 import Login from './components/pages/login/Login';
-import { refreshToken } from './components/utils/RefreshToken';
-import PrivateRoute from './components/utils/PrivateRoute';
-import PublicRoute from './components/utils/PublicRoute';
+import { refreshToken } from './components/auth/RefreshToken';
+import PrivateRoute from './components/auth/PrivateRoute';
+import PublicRoute from './components/auth/PublicRoute';
 import Cookies from 'universal-cookie';
 import NoticeList from './components/pages/board/NoticeList';
 import StampDetail from './components/pages/stamps/StampDetail';
+import NoticeDetail from './components/pages/board/NoticeDetail';
+import EnquiryList from './components/pages/board/EnquiryList';
+import EnquiryDetail from './components/pages/board/EnquiryDetail';
 
 
 
@@ -61,6 +64,9 @@ function App(props) {
                 <Route path="/stamp/detail" element={<PrivateRoute authenticated={isLogin} component={<StampDetail loginCallBack={loginCallBack}/>}/>}/>
                 <Route exact path="/info/edit" element={<PrivateRoute authenticated={isLogin} component={<PasswordEdit loginCallBack={loginCallBack}/>}/>}/>
                 <Route exact path="/notice/list" element={<PrivateRoute authenticated={isLogin} component={<NoticeList loginCallBack={loginCallBack}/>}/>}/>
+                <Route path="/notice/detail" element={<PrivateRoute authenticated={isLogin} component={<NoticeDetail loginCallBack={loginCallBack}/>}/>}/>
+                <Route path="/enquiry/list" element={<PrivateRoute authenticated={isLogin} component={<EnquiryList loginCallBack={loginCallBack}/>}/>}/>
+                <Route path="/enquiry/detail" element={<PrivateRoute authenticated={isLogin} component={<EnquiryDetail loginCallBack={loginCallBack}/>}/>}/>
             </Routes> 
            </Center>
   

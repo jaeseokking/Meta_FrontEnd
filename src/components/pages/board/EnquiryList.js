@@ -7,7 +7,7 @@ import PageButtons from '../../utils/PageButtons';
 import { useNavigate } from 'react-router';
 import {format} from 'date-fns';
 
-const NoticeList = ({loginCallBack}) => {
+const EnquiryList = ({loginCallBack}) => {
     const navigate = useNavigate();
     const [page, setPage] = useState(1);
     const [list, setList] = useState([]);
@@ -33,33 +33,33 @@ const NoticeList = ({loginCallBack}) => {
     },[page, startDate, endDate, selectUse]);
 
     useEffect(() => {
-      axios.post(`${config.SERVER_URL}/api/notice/board`, {
+      axios.post(`${config.SERVER_URL}/api/enquiry/board`, {
         page : page,
         startDate : startDate,
         endDate : endDate,
         selectUse : selectUse,
       }).then(response => {
         console.log('DATA' , response.data);
-        setList(response.data.noticeList)
+        setList(response.data.enquiryList)
         setLoading(true);
       })
     }, [])
 
     useEffect(() => {
-      axios.post(`${config.SERVER_URL}/api/notice/board`, {
+      axios.post(`${config.SERVER_URL}/api/enquiry/board`, {
         page : page,
         startDate : startDate,
         endDate : endDate,
         selectUse : selectUse,
       }).then(response => {
         console.log('DATA' , response.data);
-        setList(response.data.noticeList)
+        setList(response.data.enquiryList)
         setLoading(true);
       })
     },[page, startDate, endDate, selectUse]);
 
     const goDetail = (idx) =>{
-      navigate({ pathname : `/notice/detail?idx=${idx}`});
+      navigate({ pathname : `/enquiry/detail?idx=${idx}`});
     }
 
 
@@ -67,37 +67,30 @@ const NoticeList = ({loginCallBack}) => {
       return (
         <Wrapper>
             <Form>
-               <TitleContainer>
-                 <div className="title">공지사항</div>
+             <TitleContainer>
+                 <div className="title">문의내역</div>
               </TitleContainer>
-            
                
-                {list !== undefined && list.length > 0 ? 
+               {list !== undefined && list.length > 0 ? 
                   <Contents>
                   <Table>
-                     {/* <thead>
-                         <tr>
-                         <th scope="col">번호</th>
-                         <th scope="col">제목</th>
-                         <th scope="col">작성날짜</th>
-                         </tr>
-                     </thead> */}
+    
                      <tbody>
                       {list.map((value, index) => {
                         return(
                           <tr key={value.IDX} onClick={() => goDetail(value.IDX)}>
                             <th>{value.TITLE}</th>
-                            <td>{format(value.DATE, 'yyyy-MM-dd')}</td>
+                            <td>{value.DATE != null ? format(value.DATE, 'yyyy-MM-dd') : 'YYYY-MM-DD'}</td>
                           </tr> 
                         ) ;
                       })}
                      </tbody>
                   </Table>
-                  <PageButtons currentPage={setPage} startDate={startDate} endDate={endDate} selectUse={selectUse} what={'notice'}/>
+                  <PageButtons currentPage={setPage} startDate={startDate} endDate={endDate} selectUse={selectUse} what={'enquiry'}/>
                   </Contents>
                   : 
                   <Contents style={{textAlign : 'center'}}>
-                    <div style={{width : '100%', margin : '10px'}}>공지사항이 존재하지 않습니다.</div>
+                    <div style={{width : '100%', margin : '10px'}}>문의내역이 존재하지 않습니다.</div>
                   </Contents>
                 }
                
@@ -114,7 +107,7 @@ const NoticeList = ({loginCallBack}) => {
     
 };
 
-export default NoticeList;
+export default EnquiryList;
 
 const Wrapper = styled.div`
   display: flex;
@@ -154,6 +147,7 @@ const TitleContainer = styled.div`
 const Contents = styled.div`
   display : flex;
   flex-direction: column;
+ 
 `
 
 const Input = styled.input`
