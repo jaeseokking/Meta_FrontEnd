@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
-import { refreshToken } from '../../utils/RefreshToken';
+import { refreshToken } from '../../auth/RefreshToken';
 import Calendar from '../list/Calendar';
 import axios from 'axios';
-import PageButtons from './PageButtons';
+import PageButtons from '../../utils/PageButtons';
 import * as config from '../../../config';
 import {format} from 'date-fns';
 import { useNavigate } from 'react-router';
@@ -43,7 +43,7 @@ const StampList = ({loginCallBack}) => {
         page : page,
         startDate : startDate,
         endDate : endDate,
-        selectUse : selectUse
+        selectUse : selectUse,
       }).then(response => {
         console.log('DATA' , response.data);
         setList(response.data.stampList)
@@ -56,7 +56,7 @@ const StampList = ({loginCallBack}) => {
         page : page,
         startDate : startDate,
         endDate : endDate,
-        selectUse : selectUse 
+        selectUse : selectUse ,
       }).then(response => {
         setList(response.data.stampList)
         setLoading(true);
@@ -102,7 +102,7 @@ const StampList = ({loginCallBack}) => {
                   })}
                 </tbody>
                 </Table>
-                <PageButtons currentPage={setPage} startDate={startDate} endDate={endDate} selectUse={selectUse}/>
+                  <PageButtons currentPage={setPage} startDate={startDate} endDate={endDate} selectUse={selectUse} what={'stamp'}/>
                </Contents>
             </Form>
         </Wrapper>
@@ -217,5 +217,27 @@ const Table = styled.table`
   td {
     padding: 7px;
     background-color: rgb(240, 240, 240);
+  }
+`
+
+
+const NotData = styled.div `
+margin-top : 10px;
+  border-collapse: collapse;
+  width : 700px;
+  margin-bottom : 10px;
+  overflow: hidden;
+  border-radius: 15px;
+  align-items : center;
+
+
+
+  div {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius : 100px;
+    font-weight: bold;
+
   }
 `

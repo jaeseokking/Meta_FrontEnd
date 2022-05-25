@@ -1,15 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import * as config from '../../../config'
+import * as config from '../../config'
 
 
-function PageButtons({currentPage, startDate, endDate, selectUse}) {
+function PageButtons({currentPage, startDate, endDate, selectUse, what}) {
 	  const [selectPage, setSelectPage] = useState(currentPage); 
     const [totalcounts, setTot] = useState(0);
 
     const [index, setIndex] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [kind, setKind] = useState('');
 
     //시작날짜와 끝날짜, 사용유무를 선택 변경할 경우 시작페이지와 인덱스 변경
     useEffect(() => {
@@ -22,10 +23,19 @@ function PageButtons({currentPage, startDate, endDate, selectUse}) {
     //초기 렌더링시 전체의 갯수를 가져옴
     var pageNumber = [];
     useEffect(() => {
+        if(what === 'stamp'){
+          setKind('스탬프')
+        }else if(what === 'notice'){
+          setKind('공지')
+        }else if(what === 'enquiry'){
+          setKind('문의')
+        }
+
         axios.post(`${config.SERVER_URL}/api/board/counts`, {
             startDate : startDate,
             endDate: endDate,
-            selectUse : selectUse
+            selectUse : selectUse,
+            what : what
         }).then(response => {
             setTot(response.data)
             setLoading(true);
@@ -37,7 +47,8 @@ function PageButtons({currentPage, startDate, endDate, selectUse}) {
         axios.post(`${config.SERVER_URL}/api/board/counts`, {
             startDate : startDate,
             endDate: endDate,
-            selectUse : selectUse
+            selectUse : selectUse,
+            what : what
         }).then(response => {
             setTot(response.data)
         })   
@@ -104,7 +115,7 @@ function PageButtons({currentPage, startDate, endDate, selectUse}) {
                 }
             </PageBtnContainer>
 
-            <PageRange>총 세차권 {totalcounts}개  &nbsp; {count !== 0 ? selectPage : 0} / {count} 페이지</PageRange>
+            <PageRange>총 {kind} {totalcounts}개  &nbsp; {count !== 0 ? selectPage : 0} / {count} 페이지</PageRange>
             {/* <AdditionalFee>추가 수수료가 부과됩니다. 세금도 부과될 수 있습니다.</AdditionalFee> */}
         </Wrapper>
 

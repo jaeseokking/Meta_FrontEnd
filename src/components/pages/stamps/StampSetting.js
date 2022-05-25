@@ -4,7 +4,7 @@ import CalendarSetting from '../list/CalendarSetting';
 import axios from 'axios';
 import * as config from '../../../config';
 import { useNavigate } from 'react-router';
-import { refreshToken } from '../../utils/RefreshToken';
+import { refreshToken } from '../../auth/RefreshToken';
 import { Values } from 'react-lodash';
 
 
