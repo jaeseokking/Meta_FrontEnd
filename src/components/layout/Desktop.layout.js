@@ -86,14 +86,14 @@ const DesktopLayout = (props) =>{
                 <div onClick={()=>toggleMenu(1)} className="main-menu">스탬프</div>
                     <div className={open1 ? "show-menu" : "hide-menu"} >
                         <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none"})}
+                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
                         to={"/stamp/setting"}
                         >
                             <div>스탬프 관리</div>
                         </NavLink>
                         <br/>
                         <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none"})}
+                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
                         to={"/stamp/list"}
                         >
                             <div>스탬프 조회</div>
@@ -102,7 +102,7 @@ const DesktopLayout = (props) =>{
                 <div onClick={()=>toggleMenu(2)} className="main-menu">기본설정</div>
                     <div className={open2 ? "show-menu" : "hide-menu"} >
                         <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none"})}
+                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
                         to={"/info/edit"}
                         >
                             <div>비밀번호 수정</div>
@@ -111,20 +111,20 @@ const DesktopLayout = (props) =>{
                 <div onClick={()=>toggleMenu(3)} className="main-menu">게시판</div>
                     <div className={open3 ? "show-menu" : "hide-menu"} >
                     <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none"})}
+                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
                         to={"/notice/list"}
                         >
                             <div>공지사항</div>
                         </NavLink>
                             <br/>
                         <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none"})}
+                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
                         to={"/enquiry/list"}
                         >
                             <div>1:1문의</div>
                         </NavLink>
                 </div>
-                <div onClick={() => logout()} className="main-menu">로그아웃</div>
+                <div onClick={() => logout()} className="main-menu" style={{cursor : 'pointer'}}>로그아웃</div>
             </Menu>
         </Wrapper>
     );
@@ -145,6 +145,7 @@ const Wrapper = styled.div`
   .main-menu {
       font-size : 15px;
       margin-bottom : 20px;
+      cursor: pointer;
   }
 
   .title {

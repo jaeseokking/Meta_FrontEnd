@@ -6,6 +6,7 @@ import * as config from '../../../config';
 import PageButtons from '../../utils/PageButtons';
 import { useNavigate } from 'react-router';
 import {format} from 'date-fns';
+import Spinner from 'react-spinkit';
 
 const NoticeList = ({loginCallBack}) => {
     const navigate = useNavigate();
@@ -106,9 +107,9 @@ const NoticeList = ({loginCallBack}) => {
       );
     }else{
       return (
-        <div>
-          loading.....
-        </div>
+        <Wrapper>
+           <Spinner name="ball-grid-pulse" color="steelblue" />
+        </Wrapper>
       )  
     }
     
@@ -200,6 +201,11 @@ const Table = styled.table`
     border-bottom : 1px solid rgb(200, 200, 200);
     height : 30px;
 
+    @media screen and (max-width: 767px){
+      padding : 5px;
+   }
+
+
   }
 
 
@@ -216,4 +222,14 @@ const Table = styled.table`
     font-weight: 400;
 
   }
+
+  tr{
+    transition: 0.5s;
+    cursor :pointer;
+  }
+  tr:hover{
+    background-color : rgb(240,240,240);
+  }
+
+
 `

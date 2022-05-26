@@ -160,7 +160,7 @@ const Form = styled.div`
   border : 0px solid gray; 
   border-radius : 10px;
   box-shadow: 5px 5px 10px 0px gray;
-  padding : 20px;
+  padding : 40px;
 `
 
 const Title = styled.div`

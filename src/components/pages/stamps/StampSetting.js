@@ -6,6 +6,8 @@ import * as config from '../../../config';
 import { useNavigate } from 'react-router';
 import { refreshToken } from '../../auth/RefreshToken';
 import { Values } from 'react-lodash';
+import Spinner from 'react-spinkit';
+
 
 
 const StampSetting = ({loginCallBack}) => {
@@ -248,8 +250,8 @@ const StampSetting = ({loginCallBack}) => {
   }else{
     return (
       <Wrapper>
-        Loading ...
-      </Wrapper>
+      <Spinner name="ball-grid-pulse" color="steelblue" />
+    </Wrapper>
     )
   }
 };
@@ -270,7 +272,7 @@ const Form = styled.div`
   border : 0px solid gray; 
   border-radius : 10px;
   box-shadow: 5px 5px 10px 0px gray;
-  padding : 10px;
+  padding : 40px;
 `
 
 const Title = styled.div`

@@ -105,7 +105,7 @@ function PageButtons({currentPage, startDate, endDate, selectUse, what}) {
                 <Form>
                   {/* pageNumber : 총개시글수/10 한 것을 넘버링, 페이이넘버를 페이징 5개씩  */}
                   {pageNumber.slice(index * 5, (index + 1) * 5).map((value) => (
-                      <PageBtn key={value} onClick={() => SetPage(value)} style={selectPage === value ? {fontSize : "20px"} : null}>{value}</PageBtn>
+                      <PageBtn key={value} onClick={() => SetPage(value)} style={selectPage === value ? {fontSize : "20px" ,backgroundColor : 'rgb(245,245,245)'} : null}>{value}</PageBtn>
                   ))} 
                 </Form>     
                 {index + 1 < length && length !== 0 && length !== 1 ?  

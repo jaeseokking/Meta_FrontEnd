@@ -6,6 +6,7 @@ import * as config from '../../../config';
 import PageButtons from '../../utils/PageButtons';
 import { useNavigate } from 'react-router';
 import {format} from 'date-fns';
+import Spinner from 'react-spinkit';
 
 const EnquiryList = ({loginCallBack}) => {
     const navigate = useNavigate();
@@ -85,7 +86,11 @@ const EnquiryList = ({loginCallBack}) => {
                         ) ;
                       })}
                      </tbody>
+                    
                   </Table>
+                  <div style={{textAlign : 'right'}}>
+                      <Button onClick={() => navigate('/enquiry/write')}>문의글 작성</Button>
+                     </div>
                   <PageButtons currentPage={setPage} startDate={startDate} endDate={endDate} selectUse={selectUse} what={'enquiry'}/>
                   </Contents>
                   : 
@@ -99,9 +104,9 @@ const EnquiryList = ({loginCallBack}) => {
       );
     }else{
       return (
-        <div>
-          loading.....
-        </div>
+        <Wrapper>
+           <Spinner name="ball-grid-pulse" color="steelblue" />
+        </Wrapper>
       )  
     }
     
@@ -177,7 +182,7 @@ const SearchForm = styled.div`
 const Table = styled.table`
   border-collapse: collapse;
   align-items : center;
-  margin : 0px 20px 20px 20px;
+  margin : 0px 20px 5px 20px;
 
 
   div {
@@ -193,6 +198,10 @@ const Table = styled.table`
     padding : 10px;
     border-bottom : 1px solid rgb(200, 200, 200);
     height : 30px;
+
+    @media screen and (max-width: 767px){
+      padding : 5px;
+    }
 
   }
 
@@ -210,4 +219,30 @@ const Table = styled.table`
     font-weight: 400;
 
   }
+  tr{
+    transition: 0.5s;
+    cursor :pointer;
+
+  }
+  tr:hover{
+    background-color : rgb(240,240,240);
+  }
 `
+
+
+const Button = styled.button`
+  margin-right : 20px;
+  border : 0;
+  border-radius : 3px;
+  background-color: rgba(30, 108, 166, 0.9);
+  color : white;
+  font-size : 14px;
+  padding : 3px 5px 3px 5px;
+  font-weight : 600;
+  transition: 0.5s;
+  :hover {
+   background-color : rgba(1, 78, 136, 0.9);
+  }
+  cursor: pointer;
+`
+

@@ -4,7 +4,7 @@ import ko from 'date-fns/locale/ko'; // 한국어적용
 import styled from 'styled-components';
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
-registerLocale("ko", ko) // 한국어적용
+registerLocale("ko", ko); // 한국어적용
 // const _ = require('lodash');
 
 const Calendar = ({startDate, endDate, currentPage, selectUse}) => {

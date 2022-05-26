@@ -17,6 +17,7 @@ import StampDetail from './components/pages/stamps/StampDetail';
 import NoticeDetail from './components/pages/board/NoticeDetail';
 import EnquiryList from './components/pages/board/EnquiryList';
 import EnquiryDetail from './components/pages/board/EnquiryDetail';
+import EnquiryWrite from './components/pages/board/EnquiryWrite';
 
 
 
@@ -67,6 +68,8 @@ function App(props) {
                 <Route path="/notice/detail" element={<PrivateRoute authenticated={isLogin} component={<NoticeDetail loginCallBack={loginCallBack}/>}/>}/>
                 <Route path="/enquiry/list" element={<PrivateRoute authenticated={isLogin} component={<EnquiryList loginCallBack={loginCallBack}/>}/>}/>
                 <Route path="/enquiry/detail" element={<PrivateRoute authenticated={isLogin} component={<EnquiryDetail loginCallBack={loginCallBack}/>}/>}/>
+                <Route path="/enquiry/write" element={<PrivateRoute authenticated={isLogin} component={<EnquiryWrite loginCallBack={loginCallBack}/>}/>}/>
+
             </Routes> 
            </Center>
   
@@ -74,9 +77,7 @@ function App(props) {
     );
   }else{
     return (
-      <div>
-        Loading ...
-      </div>
+      null
     )
   }
  
