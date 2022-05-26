@@ -6,6 +6,7 @@ import axios from 'axios';
 import * as config from '../../../config';
 import {format} from 'date-fns';
 import { useNavigate, useParams } from 'react-router';
+import Spinner from 'react-spinkit';
 
 
 const NoticeDetail = ({loginCallBack}) => {
@@ -59,7 +60,7 @@ const NoticeDetail = ({loginCallBack}) => {
             <Form>
                <Title>공지사항</Title>
                <Contents>
-                   <div className="title_container">
+                <div className="title_container">
                     <div className="title">{title}</div>
                     <div className="subtitle">{format(date, 'yyyy.MM.dd')}</div>
                 </div>
@@ -74,9 +75,7 @@ const NoticeDetail = ({loginCallBack}) => {
     }else{
       return (
         <Wrapper>
-            <Form>
-            loading.....
-            </Form>
+          <Spinner name="ball-grid-pulse" color="steelblue" />
         </Wrapper>
       )
     }

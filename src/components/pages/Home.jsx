@@ -1,18 +1,16 @@
 import React from 'react';
-// import styled from 'styled-components'
-// import Main from '../../images/main.jpg';
-// import Logo from '../../images/logo.png';
+import styled from 'styled-components'
 
 const Home = () => {
     console.log('Home')
     return (
-        <div style={{width : '100%'}}>
+
+        <Wrapper>
             <div>
                 <div>{"안녕하세요."}</div>
-                <div>{"@@매장 관리자님"}</div>
                 <div>{"좌측메뉴를 이용해주세요."}</div>
             </div>
-        </div>
+        </Wrapper>
     );
 };
 
@@ -41,6 +39,15 @@ export default Home;
 //     margin-top : 50px;
 //   }
   
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height : 100vh;
+ 
+`
   
 
 

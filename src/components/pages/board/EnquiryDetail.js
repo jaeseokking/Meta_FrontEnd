@@ -6,6 +6,8 @@ import axios from 'axios';
 import * as config from '../../../config';
 import {format} from 'date-fns';
 import { useNavigate, useParams } from 'react-router';
+import Spinner from 'react-spinkit';
+
 
 
 const EnquiryDetail = ({loginCallBack}) => {
@@ -95,9 +97,7 @@ const EnquiryDetail = ({loginCallBack}) => {
     }else{
       return (
         <Wrapper>
-            <Form>
-            loading.....
-            </Form>
+           <Spinner name="ball-grid-pulse" color="steelblue" />
         </Wrapper>
       )
     }
@@ -121,7 +121,7 @@ const Form = styled.div`
   border : 0px solid gray; 
   border-radius : 10px;
   box-shadow: 5px 5px 10px 0px gray;
-  padding : 10px;
+  padding : 40px;
     max-width : 600px;
   width : 80%;
 

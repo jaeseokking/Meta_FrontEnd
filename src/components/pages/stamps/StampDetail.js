@@ -6,6 +6,7 @@ import axios from 'axios';
 import * as config from '../../../config';
 import {format} from 'date-fns';
 import { useNavigate, useParams } from 'react-router';
+import Spinner from 'react-spinkit';
 
 
 const StampDetail = ({loginCallBack}) => {
@@ -137,9 +138,7 @@ const StampDetail = ({loginCallBack}) => {
     }else{
       return (
         <Wrapper>
-            <Form>
-            loading.....
-            </Form>
+           <Spinner name="ball-grid-pulse" color="steelblue" />
         </Wrapper>
       )
     }

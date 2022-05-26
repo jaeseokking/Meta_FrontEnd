@@ -7,6 +7,7 @@ import PageButtons from '../../utils/PageButtons';
 import * as config from '../../../config';
 import {format} from 'date-fns';
 import { useNavigate } from 'react-router';
+import Spinner from 'react-spinkit';
 
 
 const StampList = ({loginCallBack}) => {
@@ -109,9 +110,9 @@ const StampList = ({loginCallBack}) => {
       );
     }else{
       return (
-        <div>
-          loading.....
-        </div>
+        <Wrapper>
+           <Spinner name="ball-grid-pulse" color="steelblue" />
+        </Wrapper>
       )
     }
 
@@ -134,7 +135,7 @@ const Form = styled.div`
   border : 0px solid gray; 
   border-radius : 10px;
   box-shadow: 5px 5px 10px 0px gray;
-  padding : 10px;
+  padding : 40px;
 
   width : 80%;
 
