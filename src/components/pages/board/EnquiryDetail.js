@@ -23,7 +23,10 @@ const EnquiryDetail = ({loginCallBack}) => {
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [category, SetCategory] = useState('');
     const [date, setDate] = useState('');
+    const [updatedDate, SetUpdatedDate] = useState('');
+    const [idx , SetIdx] = useState('');
     const [reply, setReply] = useState();
 
     useEffect(() => {
@@ -37,12 +40,13 @@ const EnquiryDetail = ({loginCallBack}) => {
     useEffect(() => {
       axios.post(`${config.SERVER_URL}/api/enquiry/detail`, {
         IDX : getParameter('idx'),
+        type : 'detail'
       }).then(response => {
         console.log('DATA' , response.data);
 
         if(response.data.result === 'NO DATA'){
           alert('접근권한이 없거나 없는 데이터입니다.');
-          navigate('/stamp/list')
+          navigate('/enquiry/list')
         }
         if(response.data.result === 'SUCCESS'){
           console.log(response.data.enquiryDetail)
@@ -50,10 +54,11 @@ const EnquiryDetail = ({loginCallBack}) => {
           if(response.data.enquiryReply !== null){
             setReply(response.data.enquiryReply);
           }
-
+          SetIdx(getParameter('idx'));
           setTitle(detail.TITLE);
           setContent(detail.CONTENT);
           setDate(detail.DATE);
+          SetUpdatedDate(detail.UPDATED_DATE);
           setLoading(true);
         }else{
           navigate('/login');
@@ -71,7 +76,19 @@ const EnquiryDetail = ({loginCallBack}) => {
                <Contents>
                     <div className="title_container">
                         <div className="title"><div className="q_container"><div className='a'>Q</div></div>{title}</div>
-                        <div className="subtitle"><div>{format(date, 'yyyy.MM.dd')}</div></div>
+                        <div className="subtitle">
+                             {updatedDate ?
+                              <div>
+                                <span style={{color : '#999', fontSize : '13px', marginRight : '5px'}}>수정일</span>
+                                {format(updatedDate, 'yyyy.MM.dd HH:mm')}
+                              </div>
+                              :
+                              <div>
+                                <span style={{color : '#999', fontSize : '13px', marginRight : '5px'}}>작성일</span>
+                                {format(date, 'yyyy.MM.dd HH:mm')}
+                              </div>
+                             }
+                        </div>
                     </div>
                     <div className="content">{content}</div>
                     {reply !== undefined ?
@@ -88,7 +105,7 @@ const EnquiryDetail = ({loginCallBack}) => {
                     }
                 </Contents>
                    <div style={{width : '100%', textAlign : 'end' , marginTop : '10px'}}> 
-                    <Button style={{backgroundColor : 'rgba(1, 78, 136, 0.9)' }}>수정</Button>
+                    <Button style={{backgroundColor : 'rgba(1, 78, 136, 0.9)' }} onClick={()=> navigate(`/enquiry/update?idx=${getParameter('idx')}`)}>수정</Button>
                     <Button style={{ backgroundColor : 'rgba(150, 150, 150, 0.9)', marginRight : '30px'}} onClick={()=> navigate('/enquiry/list')}>확인</Button>
                    </div>
             </Form>
