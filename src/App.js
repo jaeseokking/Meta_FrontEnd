@@ -18,8 +18,7 @@ import NoticeDetail from './components/pages/board/NoticeDetail';
 import EnquiryList from './components/pages/board/EnquiryList';
 import EnquiryDetail from './components/pages/board/EnquiryDetail';
 import EnquiryWrite from './components/pages/board/EnquiryWrite';
-
-
+import EnquiryUpdate from './components/pages/board/EnquiryUpdate';
 
 
 
@@ -50,6 +49,8 @@ function App(props) {
     }
   }
 
+
+
   if(loading){
     return (
       <>
@@ -69,7 +70,7 @@ function App(props) {
                 <Route path="/enquiry/list" element={<PrivateRoute authenticated={isLogin} component={<EnquiryList loginCallBack={loginCallBack}/>}/>}/>
                 <Route path="/enquiry/detail" element={<PrivateRoute authenticated={isLogin} component={<EnquiryDetail loginCallBack={loginCallBack}/>}/>}/>
                 <Route path="/enquiry/write" element={<PrivateRoute authenticated={isLogin} component={<EnquiryWrite loginCallBack={loginCallBack}/>}/>}/>
-
+                <Route path="/enquiry/update" element={<PrivateRoute authenticated={isLogin} component={<EnquiryUpdate loginCallBack={loginCallBack}/>}/>}/>
             </Routes> 
            </Center>
   

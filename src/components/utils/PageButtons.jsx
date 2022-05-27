@@ -31,11 +31,11 @@ function PageButtons({currentPage, startDate, endDate, selectUse, what}) {
           setKind('문의')
         }
 
-        axios.post(`${config.SERVER_URL}/api/board/counts`, {
-            startDate : startDate,
-            endDate: endDate,
-            selectUse : selectUse,
-            what : what
+      axios.post(`${config.SERVER_URL}/api/board/counts`, {
+          startDate : startDate,
+          endDate: endDate,
+          selectUse : selectUse,
+          what : what
         }).then(response => {
             setTot(response.data)
             setLoading(true);
