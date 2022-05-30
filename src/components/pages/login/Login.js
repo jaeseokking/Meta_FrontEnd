@@ -1,10 +1,11 @@
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import styled from "styled-components";
 import * as config from '../../../config';
 import {useNavigate } from 'react-router-dom';
 
 function Login(props) {
+  const inputRef = useRef([]);
   const navigate = useNavigate();
 
   const [SHOP_BIZNO, setCRNumber] = useState('');
@@ -12,7 +13,20 @@ function Login(props) {
  
   function loginHandler(e) {
     e.preventDefault();
-    console.log('로그인 버튼 클릭');
+    
+    if(SHOP_BIZNO === ''){
+      alert('사업자등록번호를 입력해주세요.')
+      inputRef.current[0].focus();
+      return;
+    }
+
+    if(password === ''){
+      alert('비밀번호를 입력해주세요.')
+      inputRef.current[1].focus();
+      return;
+    }
+
+
     let data = {
       bizno : SHOP_BIZNO,
       password : password
@@ -80,6 +94,7 @@ function Login(props) {
                 value={SHOP_BIZNO}
                 placeholder="사업자등록번호"
                 onChange={(e) => handleChangeEmail(e)}
+                ref={el => (inputRef.current[0] = el)}
             />
             <Input
                 maxLength="20"
@@ -88,6 +103,7 @@ function Login(props) {
                 value={password}
                 placeholder="비밀번호"
                 onChange={(e) => handleChangePW(e)}
+                ref={el => (inputRef.current[1] = el)}
             />
             <Button onClick={(e) => loginHandler(e)}>로그인 </Button>
         </Form>
@@ -146,7 +162,7 @@ const Button = styled.button`
   background-color : rgba(1, 78, 136, 0.9);
   color : rgba(255,255,255);
   font-weight : bold;
-
+  cursor: pointer;
 `
 
 

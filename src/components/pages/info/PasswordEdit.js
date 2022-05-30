@@ -1,11 +1,12 @@
 import axios from 'axios';
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import * as config from '../../../config';
 
 
 const PasswordEdit = (props) => {
+  const inputRef = useRef([]);
   const navigate = useNavigate();
     const [currentPW, setCurrentPW] = useState('');
     const [NewPW, setNewPW] = useState('');
@@ -26,23 +27,28 @@ const PasswordEdit = (props) => {
 
     async function handleSubmit (e){
         e.preventDefault();
-        // if(currentPW === ''){
-        //     alert('현재 비밀번호를 입력해주세요.')
-        //     return 
-        // }
+        if(currentPW === ''){
+            alert('현재 비밀번호를 입력해주세요.')
+            inputRef.current[0].focus();
+            return 
+        }
 
         if(NewPW === ''){
             alert('변경 비밀번호를 입력해주세요.')
+            inputRef.current[1].focus();
             return 
         }
 
         if(CheckPW === ''){
             alert('변경 비밀번호 확인을 입력해주세요.')
+            inputRef.current[2].focus();
             return
         }
 
         if(NewPW !== CheckPW){
             alert('변경 비밀번호가 일치하지 않습니다.')
+            inputRef.current[2].focus();
+            return;
         }
 
 
@@ -66,6 +72,7 @@ const PasswordEdit = (props) => {
               navigate("/");
             }else if(res.data === 2){
               alert('현재 비밀번호가 일치하지 않습니다.')
+              inputRef.current[0].focus();
             }else{
               alert('다시 로그인 해주세요.');
               props.loginCallBack(false);
@@ -117,6 +124,7 @@ const PasswordEdit = (props) => {
                <Title>비밀번호 수정</Title>
                <Contents>
              <Input
+                ref={el => (inputRef.current[0] = el)}
                 maxLength="20"
                 type="password"
                 name="currentPW"
@@ -124,6 +132,7 @@ const PasswordEdit = (props) => {
                 onChange={(e) => ChangePW1(e)}
             />
             <Input
+                ref={el => (inputRef.current[1] = el)}
                 maxLength="20"
                 type="password"
                 name="NewPW"
@@ -131,6 +140,7 @@ const PasswordEdit = (props) => {
                 onChange={(e) => ChangePW2(e)}
             />
             <Input
+                ref={el => (inputRef.current[2] = el)}
                 maxLength="20"
                 type="password"
                 name="CheckPW"

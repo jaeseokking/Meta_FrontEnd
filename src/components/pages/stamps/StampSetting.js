@@ -125,15 +125,15 @@ const StampSetting = ({loginCallBack}) => {
         if(i < 3){
           inputRef.current[i].value = "";
           if(i === 0){
-            if(disInput === false){
+            if(disInput === true){
               continue;
             }
           }else if(i === 1){
-            if(disInput2 === false){
+            if(disInput2 === true){
               continue;
             }
           }else if(i === 2){
-            if(disInput3 === false){
+            if(disInput === true){
               continue;
             }
           }
@@ -158,47 +158,47 @@ const StampSetting = ({loginCallBack}) => {
       stamp_exp : value.stamp_exp
     }
     console.log("DATA ::::: " ,data);
-    // try {
-    //   axios.post(`${config.SERVER_URL}/api/stampSetting`, JSON.stringify(data), {
-    //     headers: {
-    //       "Content-Type": `application/json`,
-    //     },
-    //     xhrFields: {
-    //       withCredentials: true
-    //     },
-    // })
-    //   .then(res => {
-    //     console.log(res.data.result);
-    //     const message = res.data.result;
-    //     if(message === "TOKEN ERROR"){
-    //       alert(message);
-    //       navigate("/login")
-    //     }
-    //     if(message === "SUCCESS"){
-    //       alert(message);
-    //       window.location.reload();
-    //     }
-    //     if(message === "TOKEN EXPIRED"){
-    //       alert(message);
-    //       navigate("/login")
-    //     }
-    //     if(message === "TOKEN NULL"){
-    //       alert(message);
-    //       navigate("/login");
-    //     }
-    //     if(message === "TOKEN "){
+    try {
+      axios.post(`${config.SERVER_URL}/api/stampSetting`, JSON.stringify(data), {
+        headers: {
+          "Content-Type": `application/json`,
+        },
+        xhrFields: {
+          withCredentials: true
+        },
+    })
+      .then(res => {
+        console.log(res.data.result);
+        const message = res.data.result;
+        if(message === "TOKEN ERROR"){
+          alert(message);
+          navigate("/login")
+        }
+        if(message === "SUCCESS"){
+          alert(message);
+          window.location.reload();
+        }
+        if(message === "TOKEN EXPIRED"){
+          alert(message);
+          navigate("/login")
+        }
+        if(message === "TOKEN NULL"){
+          alert(message);
+          navigate("/login");
+        }
+        if(message === "TOKEN "){
 
-    //     }
+        }
           
-    //   })
-    //   .catch(ex => {
-    //     console.log("login request fail : " + ex);
-    //   })
-    //   .finally(() => {console.log("login request end")});
-    // } catch (error) {
-    //   console.log(error);
+      })
+      .catch(ex => {
+        console.log("login request fail : " + ex);
+      })
+      .finally(() => {console.log("login request end")});
+    } catch (error) {
+      console.log(error);
       
-    // } 
+    } 
   
   }
  
