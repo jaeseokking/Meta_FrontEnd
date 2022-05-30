@@ -1,16 +1,16 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import styled from 'styled-components';
 import CalendarSetting from '../list/CalendarSetting';
 import axios from 'axios';
 import * as config from '../../../config';
 import { useNavigate } from 'react-router';
 import { refreshToken } from '../../auth/RefreshToken';
-import { Values } from 'react-lodash';
 import Spinner from 'react-spinkit';
 
 
 
 const StampSetting = ({loginCallBack}) => {
+  const inputRef = useRef([]);
   const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
@@ -120,6 +120,34 @@ const StampSetting = ({loginCallBack}) => {
   }
 
   const SettingButton = () => {
+    for(let i = 0; i<inputRef.current.length; i++){
+      if(inputRef.current[i].value === ""){
+        if(i < 3){
+          inputRef.current[i].value = "";
+          if(i === 0){
+            if(disInput === true){
+              continue;
+            }
+          }else if(i === 1){
+            if(disInput2 === true){
+              continue;
+            }
+          }else if(i === 2){
+            if(disInput === true){
+              continue;
+            }
+          }
+          alert(inputRef.current[i].id + "을 설정해주세요.");
+        }else{
+          alert(inputRef.current[i].id + "를 입력해주세요.");
+        }
+        inputRef.current[i].focus();
+        return;
+      }
+    }
+
+
+
     const data = {
       minimum_price : value.minimum_price,
       minimum_count : value.minimum_count,
@@ -129,7 +157,7 @@ const StampSetting = ({loginCallBack}) => {
       reward : value.reward,
       stamp_exp : value.stamp_exp
     }
-    console.log(data);
+    console.log("DATA ::::: " ,data);
     try {
       axios.post(`${config.SERVER_URL}/api/stampSetting`, JSON.stringify(data), {
         headers: {
@@ -211,30 +239,30 @@ const StampSetting = ({loginCallBack}) => {
                      <tbody>
                         <tr>
                           <th>1회발급 최소금액</th>
-                          <td><Input type={"number"} value={value.minimum_price || ""} style={{background : disInput ? "#d3d3d3" : null}} placeholder={disInput ? "조건없음" : "ex) 1000"} name="minimum_price" id="minimum_price"  onChange={(e)=>valueChange(e)} disabled={disInput}/> 원</td>
+                          <td><Input type={"number"} value={value.minimum_price || ""} style={{background : disInput ? "#d3d3d3" : null}} placeholder={disInput ? "조건없음" : "ex) 1000"} name="minimum_price" id="최소금액"  onChange={(e)=>valueChange(e)} disabled={disInput} ref={el => (inputRef.current[0] = el)}/> 원</td>
                           <td><input type="checkbox" id="money" defaultChecked={disInput} onClick={(e) => lockInput(e)}/>조건없음</td>
                         </tr>
                         <tr>
                           <th>1회발급 최소건수</th>
-                          <td><Input type={"number"} value={value.minimum_count || ""} style={{background : disInput2 ? "#d3d3d3" : null}} placeholder={disInput2 ? "조건없음" : "ex) 1"} name="minimum_count" id="minimum_count"  onChange={(e)=>valueChange(e)} disabled={disInput2}/> 개</td>
+                          <td><Input type={"number"} value={value.minimum_count || ""} style={{background : disInput2 ? "#d3d3d3" : null}} placeholder={disInput2 ? "조건없음" : "ex) 1"} name="minimum_count" id="최소건수"  onChange={(e)=>valueChange(e)} disabled={disInput2} ref={el => (inputRef.current[1] = el)}/> 개</td>
                           <td><input type="checkbox" defaultChecked={disInput2} id="count" onClick={(e) => lockInput(e)}/>조건없음</td>
                         </tr>
                         <tr>
                           <th>이벤트 기간</th>
-                          <td><CalendarSetting startDate={setStartDate} endDate={setEndDate} currentPage={setPage} sInitDate={startDate} eInitDate={endDate} selectUse={setSelectUse}/></td>
+                          <td><CalendarSetting startDate={setStartDate} endDate={setEndDate} currentPage={setPage} sInitDate={startDate} eInitDate={endDate} selectUse={setSelectUse} /></td>
                         </tr>
                         <tr>
                           <th>발급후 사용기간</th>
-                          <td><Input type={"number"} value={value.stamp_exp || ""} style={{background : disInput3 ? "#d3d3d3" : null}} placeholder={disInput3 ? "무제한" : "ex) 30"} name="stamp_exp" id="stamp_exp"  onChange={(e)=>valueChange(e)}/> 일</td>
+                          <td><Input type={"number"} value={value.stamp_exp || ""} style={{background : disInput3 ? "#d3d3d3" : null}} placeholder={disInput3 ? "무제한" : "ex) 30"} name="stamp_exp" id="사용기간"  onChange={(e)=>valueChange(e)} ref={el => (inputRef.current[2] = el)}/> 일</td>
                           <td><input type="checkbox"  defaultChecked={disInput3} id="exp" onClick={(e) => lockInput(e)}/>조건없음</td>
                         </tr>
                         <tr>
                           <th>완료 스탬프 개수</th>
-                          <td><Input type={"number"} name="completion_stamp" id="completion_stamp" placeholder="ex) 10" onChange={(e)=>valueChange(e)} value={value.completion_stamp || ""}/> 개</td>
+                          <td><Input type={"number"} name="completion_stamp" id="완료 개수" placeholder="ex) 10" onChange={(e)=>valueChange(e)} value={value.completion_stamp || ""} ref={el => (inputRef.current[3] = el)}/> 개</td>
                         </tr>
                         <tr>
                           <th>스탬프 보상</th>
-                          <td><Input value={value.reward || ""} name="reward" placeholder="ex) 할인 2000원" id="reward" onChange={(e)=>valueChange(e)}/></td>
+                          <td><Input value={value.reward || ""} name="reward" placeholder="ex) 할인 2000원" id="스탬프 보상" onChange={(e)=>valueChange(e)} ref={el => (inputRef.current[4] = el)}/></td>
                         </tr>
                         <tr>
                           <td colSpan={3} style={{textAlign : 'right'}}>

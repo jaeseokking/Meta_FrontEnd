@@ -1,22 +1,15 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import styled from 'styled-components';
-import CalendarSetting from '../list/CalendarSetting';
 import axios from 'axios';
 import * as config from '../../../config';
 import { useNavigate } from 'react-router';
 import { refreshToken } from '../../auth/RefreshToken';
-import { Values } from 'react-lodash';
-import Spinner from 'react-spinkit';
 
 
 const EnquiryWitre = ({loginCallBack}) => {
-    
-    
+  const inputRef = useRef([]);
   const navigate = useNavigate();
 
-  let getParameter = (key) => {
-      return new URLSearchParams(window.location.search).get(key);
-  }
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -31,6 +24,19 @@ const EnquiryWitre = ({loginCallBack}) => {
   },[]);
 
   const enquiryWriter = () => {
+    for(let i = 0; i<inputRef.current.length; i++){
+      if(inputRef.current[i].value === ""){
+        if(i === 0){
+          alert(inputRef.current[i].name + "를 선택해주세요.");
+        }else{
+          alert(inputRef.current[i].name + "을 입력해주세요.");
+        }
+        inputRef.current[i].focus();
+        return;
+      }
+    }
+
+
     const data = {
       TITLE : title,
       CONTENT : content,
@@ -94,23 +100,25 @@ const EnquiryWitre = ({loginCallBack}) => {
             <Form>
                <Title>문의글 작성</Title>
                <Contents>
-                  <Select onChange={handleSelect}>
-                    <option style={{display : 'none', color : 'grey'}}>문의 종류</option>
+               <Select name="문의 종류" onChange={handleSelect} value={category} ref={el => (inputRef.current[0] = el)}>
+                    <option style={{display : 'none', color : 'grey'}} value=''>문의 종류</option>
                     <option value="문의1">문의1</option>
                     <option value="문의2">문의2</option>
                     <option value="문의3">문의3</option>
                   </Select>   
                   <label>문의 제목</label>              
                   <Input
+                    ref = {el => (inputRef.current[1] = el)}
                     maxLength="20"
-                    name="title"
+                    name="문의 제목"
                     placeholder="제목을 입력해주세요."
                     onChange={handleTitle}
                   />
                   <label>문의 내용</label>
                   <TextArea
+                      ref = {el => (inputRef.current[2] = el)}
                       maxLength="500"
-                      name="content"
+                      name="문의 내용"
                       placeholder="내용을 입력해주세요."
                       onChange={handleContent}
                   />

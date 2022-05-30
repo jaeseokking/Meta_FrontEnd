@@ -95,7 +95,7 @@ const MobileLayout = (props) => {
             <Side style={{width : "200px", height : '100%', transform : `translatex(${-xPosition}px)`}}>
             <Button onClick={() => toggleOpen()}>
                 {isOpen ?
-                   <Img alert="x" src={x}/> : <Img alert="hambergermenu" src={hamberger}/>  
+                   <Img style={{cursor : 'pointer'}} alert="x" src={x}/> : <Img style={{cursor : 'pointer'}} alert="hambergermenu" src={hamberger}/>  
                 }
             </Button>
             
@@ -181,6 +181,7 @@ const Side = styled.div`
       font-size : 22px;
       margin-bottom : 20px;
       margin-left : 20px;
+      cursor: pointer;
     }
 
 

@@ -1,10 +1,7 @@
 import axios from 'axios';
-import React, { useEffect } from 'react';
-import Cookies from 'universal-cookie';
 import * as config from '../../config';
 
 export const refreshToken = function(callback){
-    const cookies = new Cookies();
 
     try{
         axios.post(`${config.SERVER_URL}/api/refreshToken` , {}, {
@@ -16,7 +13,7 @@ export const refreshToken = function(callback){
           },
         })
         .then(res =>{
-          if(res.data == null || res.data == ""){
+          if(res.data === null || res.data === ""){
             callback(false);
             return;
           }
