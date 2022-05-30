@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import * as config from '../../../config';
 
+
 const PasswordEdit = (props) => {
   const navigate = useNavigate();
     const [currentPW, setCurrentPW] = useState('');
@@ -85,6 +86,7 @@ const PasswordEdit = (props) => {
         } 
 
 
+
         // await axios.post(`${config.SERVER_URL}/api/login`, {
              
         // })
@@ -146,7 +148,6 @@ const PasswordEdit = (props) => {
 export default PasswordEdit;
 
 const Wrapper = styled.div`
-  font-family : "BMDOHYEON";
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -166,7 +167,7 @@ const Form = styled.div`
 const Title = styled.div`
   font-size : 30px;
   color : rgba(1, 78, 136, 0.9);
-  padding : 0px 0px 20px 0px;
+  font-weight: 800;
 
 `
 

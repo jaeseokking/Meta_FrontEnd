@@ -1,11 +1,10 @@
-import React, {useState, useEffect, useSyncExternalStore} from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import { refreshToken } from '../../auth/RefreshToken';
-import Calendar from '../list/Calendar';
 import axios from 'axios';
 import * as config from '../../../config';
 import {format} from 'date-fns';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate } from 'react-router';
 import Spinner from 'react-spinkit';
 
 
@@ -23,10 +22,9 @@ const EnquiryDetail = ({loginCallBack}) => {
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [category, SetCategory] = useState('');
+    const [category, setCategory] = useState('');
     const [date, setDate] = useState('');
-    const [updatedDate, SetUpdatedDate] = useState('');
-    const [idx , SetIdx] = useState('');
+    const [updatedDate, setUpdatedDate] = useState('');
     const [reply, setReply] = useState();
 
     useEffect(() => {
@@ -38,6 +36,10 @@ const EnquiryDetail = ({loginCallBack}) => {
     },[]);
 
     useEffect(() => {
+      if(getParameter('idx') === null){
+        navigate('/');
+      }
+
       axios.post(`${config.SERVER_URL}/api/enquiry/detail`, {
         IDX : getParameter('idx'),
         type : 'detail'
@@ -54,18 +56,20 @@ const EnquiryDetail = ({loginCallBack}) => {
           if(response.data.enquiryReply !== null){
             setReply(response.data.enquiryReply);
           }
-          SetIdx(getParameter('idx'));
           setTitle(detail.TITLE);
           setContent(detail.CONTENT);
           setDate(detail.DATE);
-          SetUpdatedDate(detail.UPDATED_DATE);
+          setUpdatedDate(detail.UPDATED_DATE);
+          setCategory(detail.KIND);
           setLoading(true);
         }else{
           navigate('/login');
         }
         
       })
-    }, [])
+    }, []);
+
+
 
 
     if(loading === true){
@@ -75,12 +79,13 @@ const EnquiryDetail = ({loginCallBack}) => {
                <Title>문의글</Title>
                <Contents>
                     <div className="title_container">
-                        <div className="title"><div className="q_container"><div className='a'>Q</div></div>{title}</div>
+                        <div className="title"><div className="q_container"><div className='a'>Q</div></div>{title}<div className="category">[{category}]</div></div>
                         <div className="subtitle">
                              {updatedDate ?
                               <div>
-                                <span style={{color : '#999', fontSize : '13px', marginRight : '5px'}}>수정일</span>
+                                <span style={{color : '#999', fontSize : '13px', marginRight : '5px'}}>수정일</span> 
                                 {format(updatedDate, 'yyyy.MM.dd HH:mm')}
+
                               </div>
                               :
                               <div>
@@ -88,6 +93,7 @@ const EnquiryDetail = ({loginCallBack}) => {
                                 {format(date, 'yyyy.MM.dd HH:mm')}
                               </div>
                              }
+                             
                         </div>
                     </div>
                     <div className="content">{content}</div>
@@ -170,23 +176,36 @@ const Contents = styled.div`
   .title {
       font-size:  20px;
       font-weight: 600;
+      margin-bottom : 5px;
       color : rgb(50,50,50);
-      margin-bottom: 10px;
       flex : 1;
       align-self : right;
       flex-direction: row;
       display : flex;   
       text-justify : end ;
+      align-items: center;
   }
   
 
   .subtitle{
       font-size : 15px;
       color : rgb(100,100,100);
-      margin-bottom : 10px;
-      align-self : center;
       text-align: right;
+      display : flex;   
 
+      align-items: center;
+
+  }
+
+  .category {
+    width : fit-content;
+    text-align : right;
+    font-size:  12px;
+    height : fit-content;
+    padding : 2px;
+    margin-left : 4px;
+    border-radius: 3px;
+    color : rgb(150,150,150);
   }
 
   .content {
@@ -236,68 +255,6 @@ const Contents = styled.div`
 `
 
 
-const Input = styled.input`
-  height : 10px;
-  text-align: end;
-
-  padding: 11px 13px;
-  background: #f9f9fa;
-  color: #000;
-  border-radius: 4px;
-  outline: 0;
-  border: 1px solid rgba(245, 245, 245, 0.7);
-  font-size: 15px;
-  transition: all 0.3s ease-out;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.1);
-  :focus,
-  :hover {
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);
-  }
-
-
-`
-
-
-
-const SearchForm = styled.div`
-    display : flex;
-    align-items: center;
-    align-self : end;
-    justify-content: center;
-    width : '100%';
-  
-    @media screen and (max-width: 767px){
-        display: inline-block;
-        align-items: center;
-        align-self : end;
-        justify-content: flex-end;
-    }
-
-`
-
-
-
-const Table = styled.table`
-  border: 0px;
-  border-collapse: separate;
-  border-spacing: 0 10px;
-
-  tbody th {
-    font-weight : 400;
-    padding : 10px;
-  }
-
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  /* Firefox */
-  input[type=number] {
-    -moz-appearance: textfield;
-  }
-`
 
 const Button = styled.button`
   max-width : 50px;
