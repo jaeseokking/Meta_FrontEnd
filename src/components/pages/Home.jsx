@@ -8,7 +8,7 @@ const Home = () => {
         <Wrapper>
             <div>
                 <div>{"안녕하세요."}</div>
-                <div>{"좌측메뉴를 이용해주세요."}</div>
+                <div>{"메뉴를 이용해주세요."}</div>
             </div>
         </Wrapper>
     );
@@ -46,6 +46,8 @@ const Wrapper = styled.div`
   align-items: center;
   width: 100%;
   height : 100vh;
+
+  font-size : 30px;
  
 `
   

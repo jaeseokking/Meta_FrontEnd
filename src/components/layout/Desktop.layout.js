@@ -72,8 +72,10 @@ const DesktopLayout = (props) =>{
             <Menu>
                 <div className='title-form'>
                     <div className="title">
+                    <NavLink style={{textDecoration : "none" ,color : "#555"}} to={"/"}>
                         METACITY<br/>
                         스탬프 관리
+                    </NavLink>
                     </div>
                     <div className="subtitle">
                         {time.getFullYear()+"년"}<br/>

@@ -4,7 +4,7 @@ import axios from 'axios';
 import * as config from '../../config'
 
 
-function PageButtons({currentPage, startDate, endDate, selectUse, what}) {
+function PageButtons({currentPage, startDate, endDate, selectUse, what, shopInfoNo}) {
 	  const [selectPage, setSelectPage] = useState(currentPage); 
     const [totalcounts, setTot] = useState(0);
 
@@ -48,7 +48,8 @@ function PageButtons({currentPage, startDate, endDate, selectUse, what}) {
             startDate : startDate,
             endDate: endDate,
             selectUse : selectUse,
-            what : what
+            what : what,
+            shop_info_no : shopInfoNo
         }).then(response => {
             setTot(response.data)
         })   
@@ -146,7 +147,6 @@ const PageBtn = styled.div`
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  font-size: ;
   
   cursor: pointer;
 

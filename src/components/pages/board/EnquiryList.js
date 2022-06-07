@@ -95,7 +95,11 @@ const EnquiryList = ({loginCallBack}) => {
                   </Contents>
                   : 
                   <Contents style={{textAlign : 'center'}}>
+                     
                     <div style={{width : '100%', margin : '10px'}}>문의내역이 존재하지 않습니다.</div>
+                    <div style={{textAlign : 'right'}}>
+                      <Button onClick={() => navigate('/enquiry/write')} style={{marginBottom : '10px'}}>문의글 작성</Button>
+                     </div>
                   </Contents>
                 }
                

@@ -22,6 +22,8 @@ const StampSetting = ({loginCallBack}) => {
   const [disInput2, setDisInput2] = useState(false); 
   const [disInput3, setDisInput3] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [shopList, setShopList] = useState([]);
+  const [shop, setShop] = useState('');
 
   const [value, SetValue] = useState({
     minimum_price : undefined,
@@ -41,9 +43,56 @@ const StampSetting = ({loginCallBack}) => {
 
 
   //초기 설정한 데이터 가져오기
-  useEffect(() => { 
+  useEffect(() =>  { 
+
+    async function getShopDetail(){
+      try {
+        await axios.post(`${config.SERVER_URL}/api/getShopList`, {}, {
+          headers: {
+            "Content-Type": `application/json`,
+          },
+      })
+        .then(res => {
+          const {shopList , result} = res.data;
+
+          if(result === "TOKEN ERROR"){
+            alert(result);
+            navigate("/login")
+          }
+          if(result === "SUCCESS"){
+            setShopList(shopList);
+            setShop(shopList[0].SHOP_INFO_NO);       
+  
+          }
+          if(result === "TOKEN EXPIRED"){
+            alert(result);
+            navigate("/login")
+          }
+            
+        })
+        .catch(ex => {
+          console.log("login request fail : " + ex);
+        })
+        .finally(() => {console.log("login request end")});
+      } catch (error) {
+        console.log(error);
+
+      } 
+
+     
+  
+    }
+
+  getShopDetail();
+    console.log(shopList);
+  }, [])
+
+
+  useEffect(()=> {
+    const data = {SHOP_INFO_NO : shop}
+    console.log(data);
     try {
-      axios.post(`${config.SERVER_URL}/api/getStampSetting`, {}, {
+    axios.post(`${config.SERVER_URL}/api/getStampSetting`, JSON.stringify(data), {
         headers: {
           "Content-Type": `application/json`,
         },
@@ -61,34 +110,56 @@ const StampSetting = ({loginCallBack}) => {
         }
         if(result === "SUCCESS"){
           //초기 세팅값이 없는 경우 
-          if(setting === null){
+          setStartDate(0);
+          setEndDate(0);
+          setDisInput(false);
+          setDisInput2(false);
+          setDisInput3(false);
+
+
+          SetValue({
+            minimum_price : undefined,
+            minimum_count : undefined,
+            completion_stamp : '',
+            reward : '',
+            stamp_exp : undefined,
+          })
+
+
+          if(setting !== null){
+            setStartDate(setting.START_DATE)
+            setEndDate(setting.END_DATE)
+
+        
+            SetValue({
+              minimum_price : setting.MINIMUM_PRICE === 0 ? "0" : setting.MINIMUM_PRICE,
+              minimum_count : setting.MINIMUM_COUNT === 0 ? "0" : setting.MINIMUM_COUNT,
+              completion_stamp : setting.COMPLETION_STAMP,
+              reward : setting.REWARD,
+              stamp_exp : setting.STAMP_EXP === 0 ? "0" : setting.STAMP_EXP
+            })
+
+            if(setting.MINIMUM_PRICE === undefined){
+              setDisInput(true);
+            }
+
+            if(setting.MINIMUM_COUNT === undefined){
+              setDisInput2(true);
+            }
+
+            if(setting.STAMP_EXP === undefined){
+              setDisInput3(true);
+            }
+
+
             setLoading(true);
             return;
           }
-          setStartDate(setting.START_DATE)
-          setEndDate(setting.END_DATE)
 
-       
-          SetValue({
-            minimum_price : setting.MINIMUM_PRICE === 0 ? "0" : setting.MINIMUM_PRICE,
-            minimum_count : setting.MINIMUM_COUNT === 0 ? "0" : setting.MINIMUM_COUNT,
-            completion_stamp : setting.COMPLETION_STAMP,
-            reward : setting.REWARD,
-            stamp_exp : setting.STAMP_EXP === 0 ? "0" : setting.STAMP_EXP
-          })
 
-          if(setting.MINIMUM_PRICE === undefined){
-            setDisInput(true);
-          }
-
-          if(setting.MINIMUM_COUNT === undefined){
-            setDisInput2(true);
-          }
-
-          if(setting.STAMP_EXP === undefined){
-            setDisInput3(true);
-          }
+          
           setLoading(true);
+          return;
         }
         if(result === "TOKEN EXPIRED"){
           alert(result);
@@ -99,12 +170,11 @@ const StampSetting = ({loginCallBack}) => {
       .catch(ex => {
         console.log("login request fail : " + ex);
       })
-      .finally(() => {console.log("login request end")});
     } catch (error) {
       console.log(error);
       
     } 
-  }, [])
+  }, [shop]);
 
 
 
@@ -155,7 +225,8 @@ const StampSetting = ({loginCallBack}) => {
       endDate : endDate,
       completion_stamp : value.completion_stamp,
       reward : value.reward,
-      stamp_exp : value.stamp_exp
+      stamp_exp : value.stamp_exp,
+      shop_info_no : shop
     }
     console.log("DATA ::::: " ,data);
     try {
@@ -229,23 +300,37 @@ const StampSetting = ({loginCallBack}) => {
     }
   }
 
+  function selectShop(e){
+    setShop(e.target.value);
+  }
+
   if(loading === true){
     return (
         <Wrapper>
             <Form>
-               <Title>스탬프 발급 조건 설정</Title>
+               <Title>스탬프 발급 조건 설정 
+              <div style={{flex : '1', textAlign : 'right'}}>   
+                <Select style={{textAlign : 'center'}} onChange={e => selectShop(e)}>
+                  {shopList.map((value, index) => 
+                    <option key={value.SHOP_INFO_NO} value={value.SHOP_INFO_NO} >{value.SHOP_NAME}</option>
+                    )
+                  }
+               </Select>
+               </div>
+               </Title>
+           
                <Contents>
                    <Table>
                      <tbody>
                         <tr>
                           <th>1회발급 최소금액</th>
                           <td><Input type={"number"} value={value.minimum_price || ""} style={{background : disInput ? "#d3d3d3" : null}} placeholder={disInput ? "조건없음" : "ex) 1000"} name="minimum_price" id="최소금액"  onChange={(e)=>valueChange(e)} disabled={disInput} ref={el => (inputRef.current[0] = el)}/> 원</td>
-                          <td><input type="checkbox" id="money" defaultChecked={disInput} onClick={(e) => lockInput(e)}/>조건없음</td>
+                          <td><input type="checkbox" id="money"  defaultChecked={disInput} onClick={(e) => lockInput(e)}/>조건없음</td>
                         </tr>
                         <tr>
                           <th>1회발급 최소건수</th>
                           <td><Input type={"number"} value={value.minimum_count || ""} style={{background : disInput2 ? "#d3d3d3" : null}} placeholder={disInput2 ? "조건없음" : "ex) 1"} name="minimum_count" id="최소건수"  onChange={(e)=>valueChange(e)} disabled={disInput2} ref={el => (inputRef.current[1] = el)}/> 개</td>
-                          <td><input type="checkbox" defaultChecked={disInput2} id="count" onClick={(e) => lockInput(e)}/>조건없음</td>
+                          <td><input type="checkbox"  defaultChecked={disInput2} id="count" onClick={(e) => lockInput(e)}/>조건없음</td>
                         </tr>
                         <tr>
                           <th>이벤트 기간</th>
@@ -254,7 +339,7 @@ const StampSetting = ({loginCallBack}) => {
                         <tr>
                           <th>발급후 사용기간</th>
                           <td><Input type={"number"} value={value.stamp_exp || ""} style={{background : disInput3 ? "#d3d3d3" : null}} placeholder={disInput3 ? "무제한" : "ex) 30"} name="stamp_exp" id="사용기간"  onChange={(e)=>valueChange(e)} ref={el => (inputRef.current[2] = el)}/> 일</td>
-                          <td><input type="checkbox"  defaultChecked={disInput3} id="exp" onClick={(e) => lockInput(e)}/>조건없음</td>
+                          <td><input type="checkbox" defaultChecked={disInput3} id="exp" onClick={(e) => lockInput(e)}/>조건없음</td>
                         </tr>
                         <tr>
                           <th>완료 스탬프 개수</th>
@@ -307,7 +392,9 @@ const Title = styled.div`
   font-size : 30px;
   color : rgba(1, 78, 136, 0.9);
   font-weight: 800;
-
+  width : 100%;
+  display: flex;
+  flex-direction: row;
 `
 
 const Contents = styled.div`
@@ -375,4 +462,22 @@ const Button = styled.button`
   &:hover {
     cursor:pointer;
   }
+`
+
+
+const Select = styled.select`
+  height : 30px;
+  background: #f9f9fa;
+  border-radius: 4px;
+  color: #000;
+  outline: 0;
+  border: 1px solid rgba(245, 245, 245, 0.7);
+  font-size: 15px;
+  transition: all 0.3s ease-out;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.1);
+  :focus,
+  :hover {
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);
+  }
+  font-family: inherit;
 `

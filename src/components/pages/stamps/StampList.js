@@ -16,6 +16,8 @@ const StampList = ({loginCallBack}) => {
     const [startDate, setStartDate] = useState(0);
     const [endDate, setEndDate] = useState(0);
     const [selectUse, setSelectUse] = useState('all');
+    const [shopList, setShopList] = useState([]);
+    const [shop, setShop] = useState('');
 
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -40,16 +42,56 @@ const StampList = ({loginCallBack}) => {
 
 
     useEffect(() => {
-      axios.post(`${config.SERVER_URL}/api/stamp/board`, {
-        page : page,
-        startDate : startDate,
-        endDate : endDate,
-        selectUse : selectUse,
-      }).then(response => {
-        console.log('DATA' , response.data);
-        setList(response.data.stampList)
-        setLoading(true);
-      })
+      // axios.post(`${config.SERVER_URL}/api/stamp/board`, {
+      //   page : page,
+      //   startDate : startDate,
+      //   endDate : endDate,
+      //   selectUse : selectUse,
+      // }).then(response => {
+      //   console.log('DATA' , response.data);
+      //   setList(response.data.stampList)
+      //   setLoading(true);
+      // })
+
+      async function getShopDetail(){
+        try {
+          await axios.post(`${config.SERVER_URL}/api/getShopList`, {}, {
+            headers: {
+              "Content-Type": `application/json`,
+            },
+        })
+          .then(res => {
+            const {shopList , result} = res.data;
+  
+            if(result === "TOKEN ERROR"){
+              alert(result);
+              navigate("/login")
+            }
+            if(result === "SUCCESS"){
+              setShopList(shopList);
+              setShop(shopList[0].SHOP_INFO_NO);       
+    
+            }
+            if(result === "TOKEN EXPIRED"){
+              alert(result);
+              navigate("/login")
+            }
+              
+          })
+          .catch(ex => {
+            console.log("login request fail : " + ex);
+          })
+          .finally(() => {console.log("login request end")});
+        } catch (error) {
+          console.log(error);
+  
+        } 
+  
+       
+    
+      }
+  
+      getShopDetail();
     }, [])
   
     useEffect(() => {
@@ -57,24 +99,40 @@ const StampList = ({loginCallBack}) => {
         page : page,
         startDate : startDate,
         endDate : endDate,
-        selectUse : selectUse ,
+        selectUse : selectUse,
+        shop_info_no : shop,
       }).then(response => {
         setList(response.data.stampList)
         setLoading(true);
 
       })
-    }, [page, startDate, endDate, selectUse])
+    }, [page, startDate, endDate, selectUse, shop])
   
+    function selectShop(e){
+      setShop(e.target.value);
+    }
 
     if(loading === true){
       return (
         <Wrapper>
             <Form>
-               <Title>스탬프 조회</Title>
+               <Title>스탬프 조회
+               <div style={{flex : '1', textAlign : 'right'}}>   
+                <Select style={{textAlign : 'center'}} onChange={e => selectShop(e)}>
+                  {shopList.map((value, index) => 
+                    <option key={value.SHOP_INFO_NO} value={value.SHOP_INFO_NO} >{value.SHOP_NAME}</option>
+                    )
+                  }
+               </Select>
+               </div>
+               </Title>
                <Contents>
-                <SearchForm>
+               <SearchForm>
                         <Calendar startDate={setStartDate} endDate={setEndDate} currentPage={setPage} selectUse={setSelectUse}/>     
                 </SearchForm>
+                 {list.length > 0 ?
+                 <>
+                
                 <Table>
                 <thead>
                     <tr>
@@ -103,7 +161,13 @@ const StampList = ({loginCallBack}) => {
                   })}
                 </tbody>
                 </Table>
-                  <PageButtons currentPage={setPage} startDate={startDate} endDate={endDate} selectUse={selectUse} what={'stamp'}/>
+                  </>
+                  :
+                  <div style={{width : '100%', textAlign : 'center', marginTop : '10px', fontSize : '20px'}}>
+                    조회된 스탬프가 없습니다.
+                  </div>
+                }
+                <PageButtons currentPage={setPage} startDate={startDate} endDate={endDate} selectUse={selectUse} what={'stamp'} shopInfoNo={shop}/>
                </Contents>
             </Form>
         </Wrapper>
@@ -148,7 +212,9 @@ const Title = styled.div`
   font-size : 30px;
   color : rgba(1, 78, 136, 0.9);
   font-weight: 800;
-
+  width : 100%;
+  display: flex;
+  flex-direction: row;
 `
 
 const Contents = styled.div`
@@ -241,4 +307,21 @@ margin-top : 10px;
     font-weight: bold;
 
   }
+`
+
+const Select = styled.select`
+  height : 30px;
+  background: #f9f9fa;
+  border-radius: 4px;
+  color: #000;
+  outline: 0;
+  border: 1px solid rgba(245, 245, 245, 0.7);
+  font-size: 15px;
+  transition: all 0.3s ease-out;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.1);
+  :focus,
+  :hover {
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);
+  }
+  font-family: inherit;
 `
