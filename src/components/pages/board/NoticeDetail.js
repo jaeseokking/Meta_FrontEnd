@@ -121,6 +121,8 @@ const Contents = styled.div`
   flex-direction: column;
   border-radius: 5px;
 
+  white-space: pre-wrap;
+
   .title_container {
     border-bottom: 2px solid rgb(240,240,240);
   }
