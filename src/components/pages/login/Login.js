@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useState, useRef} from 'react';
 import styled from "styled-components";
 import * as config from '../../../config';
 import {useNavigate } from 'react-router-dom';
@@ -39,11 +39,9 @@ function Login(props) {
 
     })
       .then(res => {
-        console.log(res.data == "");
-        if(res.data !== "" && res.data !== null){
-          console.log("res.data.accessToken : " , res.data);
-          axios.defaults.headers.common['Authorization'] = 'Bearer' + res.data;
-          props.loginCallBack(true);
+        if(res.data.accessToken != null){
+          axios.defaults.headers.common['Authorization'] = 'Bearer' + res.data.accessToken;
+          props.loginCallBack(true, res.data.ROLE);
           navigate("/");    
         }else{
           alert('일치하는 회원정보가 없습니다.')
@@ -53,19 +51,16 @@ function Login(props) {
       })
       .catch(ex => {
         console.log("login request fail : " + ex);
-        props.loginCallBack(false);
+        props.loginCallBack(false, 0);
       })
-      .finally(() => {console.log("login request end")});
+      .finally(() => {});
     } catch (error) {
       console.log(error);
-      props.loginCallBack(false);
+      props.loginCallBack(false, 0);
       
     } 
   }
 
-  useEffect(() => {
-    console.log("Login Page render ....")
-  })
 
 
 
@@ -99,7 +94,6 @@ function Login(props) {
             <Input
                 maxLength="20"
                 type="password"
-                name="password"
                 value={password}
                 placeholder="비밀번호"
                 onChange={(e) => handleChangePW(e)}

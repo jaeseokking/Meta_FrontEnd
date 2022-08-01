@@ -1,11 +1,10 @@
-import React, {useState, useEffect, useSyncExternalStore} from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import { refreshToken } from '../../auth/RefreshToken';
-import Calendar from '../list/Calendar';
 import axios from 'axios';
 import * as config from '../../../config';
 import {format} from 'date-fns';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate } from 'react-router';
 import Spinner from 'react-spinkit';
 
 
@@ -29,19 +28,18 @@ const NoticeDetail = ({loginCallBack}) => {
       }catch(e){
         console.log(e);
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
 
     useEffect(() => {
       axios.post(`${config.SERVER_URL}/api/notice/detail`, {
         IDX : getParameter('idx'),
       }).then(response => {
-        console.log('DATA' , response.data);
         if(response.data.result === 'NO DATA'){
           alert('접근권한이 없거나 없는 데이터입니다.');
           navigate('/notice/list')
         }
         if(response.data.result === 'SUCCESS'){
-          console.log(response.data.noticeDetail)
           const detail = response.data.noticeDetail;
           setTitle(detail.TITLE);
           setContent(detail.CONTENT);
@@ -51,6 +49,7 @@ const NoticeDetail = ({loginCallBack}) => {
           navigate('/login');
         }
       })
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
 
@@ -149,85 +148,6 @@ const Contents = styled.div`
 `
 
 
-const Input = styled.input`
-  height : 10px;
-  text-align: end;
-
-  padding: 11px 13px;
-  background: #f9f9fa;
-  color: #000;
-  border-radius: 4px;
-  outline: 0;
-  border: 1px solid rgba(245, 245, 245, 0.7);
-  font-size: 15px;
-  transition: all 0.3s ease-out;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.1);
-  :focus,
-  :hover {
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);
-  }
-
-
-`
-
-
-
-const SearchForm = styled.div`
-    display : flex;
-    align-items: center;
-    align-self : end;
-    justify-content: center;
-    width : '100%';
-  
-    @media screen and (max-width: 767px){
-        display: inline-block;
-        align-items: center;
-        align-self : end;
-        justify-content: flex-end;
-    }
-
-`
-
-
-
-const Table = styled.table`
-  border: 0px;
-  border-collapse: separate;
-  border-spacing: 0 10px;
-
-  tbody th {
-    flex: 1;
-    margin : 30px;
-    font-weight : 400;
-  }
-  
-  tbody td {
-    flex: 2;
-    margin : 30px;
-    font-weight : 400;
-  }
-
-  .title th {
-    padding-bottom: 10px;
-
-  }
-
-  .title td {
-    padding-bottom: 10px;
-
-  }
-
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  /* Firefox */
-  input[type=number] {
-    -moz-appearance: textfield;
-  }
-`
 
 const Button = styled.button`
   max-width : 50px;

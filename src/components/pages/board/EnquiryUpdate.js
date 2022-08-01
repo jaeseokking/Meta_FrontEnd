@@ -1,13 +1,10 @@
 import React, {useState, useEffect, useRef} from 'react';
 import styled from 'styled-components';
-import CalendarSetting from '../list/CalendarSetting';
 import axios from 'axios';
 import * as config from '../../../config';
 import { useNavigate } from 'react-router';
 import { refreshToken } from '../../auth/RefreshToken';
-import { Values } from 'react-lodash';
 import Spinner from 'react-spinkit';
-import { loadPartialConfig } from '@babel/core';
 
 
 const EnquiryUpdate = ({loginCallBack}) => {
@@ -31,6 +28,7 @@ const EnquiryUpdate = ({loginCallBack}) => {
     }catch(e){
       console.log(e);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
 
   useEffect(() => {
@@ -44,7 +42,6 @@ const EnquiryUpdate = ({loginCallBack}) => {
           navigate('/enquiry/list')
         }
         if(response.data.result === 'SUCCESS'){
-          console.log(response.data.enquiryDetail)
           const detail = response.data.enquiryDetail;
           SetIdx(getParameter('idx'));
           setTitle(detail.TITLE);
@@ -56,11 +53,11 @@ const EnquiryUpdate = ({loginCallBack}) => {
         }
         
       })
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const enquiryUpdate = () => {
     for(let i = 0; i<inputRef.current.length; i++){
-      console.log(inputRef.current[i].value);
       if(inputRef.current[i].value === ""){
         if(i === 0){
           alert(inputRef.current[i].name + "를 선택해주세요.");
@@ -78,7 +75,6 @@ const EnquiryUpdate = ({loginCallBack}) => {
       CATEGORY : category,
       IDX : idx
     }
-    console.log(data);
     try {
       axios.post(`${config.SERVER_URL}/api/enquiryUpdate`, JSON.stringify(data), {
         headers: {
@@ -113,7 +109,8 @@ const EnquiryUpdate = ({loginCallBack}) => {
       .catch(ex => {
         console.log("login request fail : " + ex);
       })
-      .finally(() => {console.log("login request end")});
+      .finally(() => {
+      });
     } catch (error) {
       console.log(error);
       
@@ -239,27 +236,6 @@ const Input = styled.input`
 
 `
 
-const Table = styled.table`
-  border: 0px;
-  border-collapse: separate;
-  border-spacing: 0 10px;
-
-  tbody th {
-    font-weight : 400;
-    padding : 10px;
-  }
-
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  /* Firefox */
-  input[type=number] {
-    -moz-appearance: textfield;
-  }
-`
 
 const Button = styled.button`
   max-width : 50px;

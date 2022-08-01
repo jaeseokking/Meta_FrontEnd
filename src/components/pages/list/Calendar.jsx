@@ -171,7 +171,7 @@ const Form = styled.div`
 `
 
 const Button = styled.button`
-  max-width : 47px;
+  max-width : 55px;
   margin-left : 5px;
   margin-right : 5px;
   height : 25px;

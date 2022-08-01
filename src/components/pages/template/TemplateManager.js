@@ -6,28 +6,21 @@ import * as config from '../../../config';
 import { useNavigate } from 'react-router';
 import { refreshToken } from '../../auth/RefreshToken';
 import Spinner from 'react-spinkit';
+import reactStringReplace from 'react-string-replace';
 
 
 
-const StampSetting = ({loginCallBack}) => {
+const TemplateManager = ({loginCallBack}) => {
   const inputRef = useRef([]);
   const navigate = useNavigate();
 
-  const [startDate, setStartDate] = useState(0);
-  const [endDate, setEndDate] = useState(0);
-  const [disInput, setDisInput] = useState(false);
-  const [disInput2, setDisInput2] = useState(false); 
-  const [disInput3, setDisInput3] = useState(false);
   const [loading, setLoading] = useState(false);
   const [shopList, setShopList] = useState([]);
   const [shop, setShop] = useState('');
 
   const [value, SetValue] = useState({
-    minimum_price : undefined,
-    minimum_count : undefined,
-    completion_stamp : '',
-    reward : '',
-    stamp_exp : undefined,
+    message : "",
+    title : "",
   })
 
   useEffect(() => {
@@ -36,7 +29,6 @@ const StampSetting = ({loginCallBack}) => {
     }catch(e){
       console.log(e);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
@@ -82,14 +74,12 @@ const StampSetting = ({loginCallBack}) => {
     }
 
   getShopDetail();
-     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
 
   useEffect(()=> {
-    const data = {
-      SHOP_INFO_NO : shop
-    }
+    const data = {SHOP_INFO_NO : shop}
+    console.log(data);
     try {
     axios.post(`${config.SERVER_URL}/api/getStampSetting`, JSON.stringify(data), {
         headers: {
@@ -97,62 +87,28 @@ const StampSetting = ({loginCallBack}) => {
         },
     })
       .then(res => {
-        const {setting , result} = res.data;     
+        const {setting , result} = res.data;
+     
 
         if(result === "TOKEN ERROR"){
           alert(result);
           navigate("/login")
         }
         if(result === "SUCCESS"){
-          //초기 세팅값이 없는 경우 
-          setStartDate(0);
-          setEndDate(0);
-          setDisInput(false);
-          setDisInput2(false);
-          setDisInput3(false);
+ 
 
 
           SetValue({
-            minimum_price : undefined,
-            minimum_count : undefined,
-            completion_stamp : '',
-            reward : '',
-            stamp_exp : undefined,
+     
           })
 
 
           if(setting !== null){
-            if(setting.START_DATE){
-              setStartDate(setting.START_DATE);
-            }
-
-            if(setting.END_DATE){
-              setEndDate(setting.END_DATE)
-            }
-            
-            
-
+ 
         
             SetValue({
-              minimum_price : setting.MINIMUM_PRICE === 0 ? "0" : setting.MINIMUM_PRICE,
-              minimum_count : setting.MINIMUM_COUNT === 0 ? "0" : setting.MINIMUM_COUNT,
-              completion_stamp : setting.COMPLETION_STAMP,
-              reward : setting.REWARD,
-              stamp_exp : setting.STAMP_EXP === 0 ? "0" : setting.STAMP_EXP
+
             })
-
-            if(setting.MINIMUM_PRICE === undefined){
-              setDisInput(true);
-            }
-
-            if(setting.MINIMUM_COUNT === undefined){
-              setDisInput2(true);
-            }
-
-            if(setting.STAMP_EXP === undefined){
-              setDisInput3(true);
-            }
-
 
             setLoading(true);
             return;
@@ -175,7 +131,6 @@ const StampSetting = ({loginCallBack}) => {
       console.log(error);
       
     } 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shop]);
 
 
@@ -194,19 +149,7 @@ const StampSetting = ({loginCallBack}) => {
       if(inputRef.current[i].value === ""){
         if(i < 3){
           inputRef.current[i].value = "";
-          if(i === 0){
-            if(disInput === true){
-              continue;
-            }
-          }else if(i === 1){
-            if(disInput2 === true){
-              continue;
-            }
-          }else if(i === 2){
-            if(disInput === true){
-              continue;
-            }
-          }
+        
           alert(inputRef.current[i].id + "을 설정해주세요.");
         }else{
           alert(inputRef.current[i].id + "를 입력해주세요.");
@@ -219,16 +162,8 @@ const StampSetting = ({loginCallBack}) => {
 
 
     const data = {
-      minimum_price : value.minimum_price,
-      minimum_count : value.minimum_count,
-      startDate : startDate,
-      endDate : endDate,
-      completion_stamp : value.completion_stamp,
-      reward : value.reward,
-      stamp_exp : value.stamp_exp,
-      shop_info_no : shop
-    }
 
+    }
     try {
       axios.post(`${config.SERVER_URL}/api/stampSetting`, JSON.stringify(data), {
         headers: {
@@ -269,89 +204,121 @@ const StampSetting = ({loginCallBack}) => {
   }
  
  
-  function lockInput(e){
-
-    if(e.target.id === 'money'){
-        SetValue({
-          ...value,
-          minimum_price : undefined
-        })
-      setDisInput(!disInput);
-    }
-    else if(e.target.id === 'count'){
-        SetValue({
-          ...value,
-          minimum_count : undefined
-        })
-      setDisInput2(!disInput2);
-    }else if(e.target.id === 'exp'){
-      SetValue({
-        ...value,
-        stamp_exp : undefined
-      })
-      setDisInput3(!disInput3);
-
-    }
-  }
 
   function selectShop(e){
     setShop(e.target.value);
+  }
+
+  function insertTemplate(){
+    for(let i = 0; i<inputRef.current.length; i++){
+      if(inputRef.current[i].value === ""){
+        alert(inputRef.current[i].id + "를 입력해주세요.");
+        inputRef.current[i].focus();
+        return;
+      }
+    }
+
+
+
+
+    const data = {
+      message : value.message.replaceAll(`<br>`, "\r\n"),
+      title : value.title,
+      shop_info_no : shop
+    }
+    try {
+      axios.post(`${config.SERVER_URL}/api/template/insert`, JSON.stringify(data), {
+        headers: {
+          "Content-Type": `application/json`,
+        },
+        xhrFields: {
+          withCredentials: true
+        },
+    })
+      .then(res => {
+        
+
+        const message = res.data.result;
+        if(message === "TOKEN ERROR"){
+          alert(message);
+          navigate("/login")
+        }
+        if(message === "SUCCESS"){
+          window.location.reload();
+        }
+        if(message === "TOKEN EXPIRED"){
+          alert("로그인 만료 다시 로그인해주세요.");
+          navigate("/login")
+        }
+        if(message === "TOKEN NULL"){
+          navigate("/login");
+        }
+      
+          
+      })
+      .catch(ex => {
+      })
+      .finally(() => {
+      });
+    } catch (error) {
+      console.log(error);
+      
+    } 
   }
 
   if(loading === true){
     return (
         <Wrapper>
             <Form>
-               <Title>스탬프 발급 조건 설정 
-              <div style={{flex : '1', textAlign : 'right'}}>   
-                <Select style={{textAlign : 'center'}} onChange={e => selectShop(e)}>
-                  {shopList.map((value, index) => 
-                    <option key={value.SHOP_INFO_NO} value={value.SHOP_INFO_NO} >{value.SHOP_NAME}</option>
-                    )
-                  }
-               </Select>
+               <Title>템플릿 등록
+              <div style={{flex : '1', textAlign : 'right'}}> 
+              { shopList ?
+                    <Select style={{textAlign : 'center'}} onChange={e => selectShop(e)}>
+                    {shopList.map((value, index) => 
+                        <option key={value.SHOP_INFO_NO} value={value.SHOP_INFO_NO} >{value.SHOP_NAME}</option>
+                        )
+                    }
+                    </Select>
+                    :
+                    null
+               }
                </div>
                </Title>
            
                <Contents>
+                <TemplateContainer>
+                    <div className="banner">
+                        <div className="speaker"/>
+                    </div>
+                    <div className="templatediv">
+                        <textarea placeholder='내용을 입력해주세요.' name="message" id="템플릿 내용" onChange={(e) => valueChange(e)} value={value.message} ref={el => (inputRef.current[0] = el)}></textarea>
+                    </div>
+                </TemplateContainer>
                    <Table>
                      <tbody>
                         <tr>
-                          <th>1회발급 최소금액</th>
-                          <td><Input type={"number"} value={value.minimum_price || ""} style={{background : disInput ? "#d3d3d3" : null}} placeholder={disInput ? "조건없음" : "ex) 1000"} name="minimum_price" id="최소금액"  onChange={(e)=>valueChange(e)} disabled={disInput} ref={el => (inputRef.current[0] = el)}/> 원</td>
-                          <td><input type="checkbox" id="money"  defaultChecked={disInput} checked={disInput} onClick={(e) => lockInput(e)}/>조건없음</td>
+                          <th >탬플릿 제목</th>
+                          <td><Input value={value.title}  placeholder={"제목을 입력해주세요."} name="title" id="템플릿 제목"  onChange={(e)=>valueChange(e)}  ref={el => (inputRef.current[1] = el)}/></td>
                         </tr>
                         <tr>
-                          <th>1회발급 최소건수</th>
-                          <td><Input type={"number"} value={value.minimum_count || ""} style={{background : disInput2 ? "#d3d3d3" : null}} placeholder={disInput2 ? "조건없음" : "ex) 1"} name="minimum_count" id="최소건수"  onChange={(e)=>valueChange(e)} disabled={disInput2} ref={el => (inputRef.current[1] = el)}/> 개</td>
-                          <td><input type="checkbox"  defaultChecked={disInput2} checked={disInput2} id="count" onClick={(e) => lockInput(e)}/>조건없음</td>
+                            <td colSpan={2} className="registration_form"><Button onClick={insertTemplate}>등록</Button></td>
                         </tr>
                         <tr>
-                          <th>이벤트 기간</th>
-                          <td><CalendarSetting startDate={setStartDate} endDate={setEndDate} sInitDate={startDate} eInitDate={endDate} /></td>
-                        </tr>
-                        <tr>
-                          <th>발급후 사용기간</th>
-                          <td><Input type={"number"} value={value.stamp_exp || ""} style={{background : disInput3 ? "#d3d3d3" : null}} placeholder={disInput3 ? "무제한" : "ex) 30"} name="stamp_exp" id="사용기간"  onChange={(e)=>valueChange(e)} ref={el => (inputRef.current[2] = el)}/> 일</td>
-                          <td><input type="checkbox" defaultChecked={disInput3} checked={disInput3} id="exp" onClick={(e) => lockInput(e)}/>조건없음</td>
-                        </tr>
-                        <tr>
-                          <th>완료 스탬프 개수</th>
-                          <td><Input type={"number"} name="completion_stamp" id="완료 개수" placeholder="ex) 10" onChange={(e)=>valueChange(e)} value={value.completion_stamp || ""} ref={el => (inputRef.current[3] = el)}/> 개</td>
-                        </tr>
-                        <tr>
-                          <th>스탬프 보상</th>
-                          <td><Input value={value.reward || ""} name="reward" placeholder="ex) 할인 2000원" id="스탬프 보상" onChange={(e)=>valueChange(e)} ref={el => (inputRef.current[4] = el)}/></td>
-                        </tr>
-                        <tr>
-                          <td colSpan={3} style={{textAlign : 'right'}}>
-                              <Button onClick={SettingButton}>설정</Button>
-                          </td>
+                            <td rowSpan={5} colSpan={2}>
+                              <h3 className="description">
+                                   발송할 때마다 달라지는 부분을 가변 값으로 설정할 수 있습니다.
+                                  <br/>가변 항목은 <span>&#035;&#123;가변 항목&#125;</span> 형태로 본문에 입력하시면 됩니다.
+                                  <br/> 내용 입력 예시: <span>&#035;&#123;고객명&#125;</span>님의 택배가 금일 <span>&#035;&#123;배송 시각&#125;</span>에 배달될 예정입니다.  
+                                  <br/>가변 항목이 본문에 입력되면 오른쪽 항목 테이블에 매핑됩니다.<br/>
+                              </h3>
+                            </td>
                         </tr>
                      </tbody>
                    </Table>
                </Contents>
             </Form>
+
+
         </Wrapper>
     );
   }else{
@@ -363,7 +330,7 @@ const StampSetting = ({loginCallBack}) => {
   }
 };
 
-export default StampSetting;
+export default TemplateManager;
 
 const Wrapper = styled.div`
   display: flex;
@@ -437,13 +404,30 @@ const Table = styled.table`
   input[type=number] {
     -moz-appearance: textfield;
   }
+
+  .registration_form {
+    text-align : center;
+
+     div {
+        width : 200px;
+        
+     }
+  }
+
+  .description {
+    margin : 20px;
+    color: #9f6eaf;
+    font-size: 14px;
+    font-weight:600;
+    line-height: 1.9em;
+    float: right;
+  }
+
 `
 
 const Button = styled.button`
-  max-width : 50px;
-  margin-left : 5px;
-  margin-right : 5px;
-  height : 25px;
+  width : 40%;
+  height : 30px;
   align-self: flex-end;
 
   border-radius: 4px;
@@ -474,4 +458,46 @@ const Select = styled.select`
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);
   }
   font-family: inherit;
+`
+
+const TemplateContainer = styled.div`
+        width: 220px;
+        height: 400px;
+        border-radius: 20px;
+        border: 7px solid #343434;
+        background-color: #fff;
+        float: left;    
+        
+        .banner {
+            width: 80px;
+            height: 20px;
+            border-radius: 0 0 15px 15px;
+            background-color: #343434;
+            margin: 0px auto;
+            margin-bottom : 30px;
+
+            .speaker{
+                width: 40px;
+                height: 3px;
+                border-radius: 0 0 3px 3px;
+                background-color: #454545;
+                margin: -4px auto;
+            }
+        }
+
+        .templatediv{
+          margin: 0 auto;
+          text-align: center;
+
+          textarea {
+              width: 205px;
+              height: 330px;
+              background-color: #fff38e;
+              border: 0;
+              font-size : 12px;
+
+          }
+      }
+
+
 `

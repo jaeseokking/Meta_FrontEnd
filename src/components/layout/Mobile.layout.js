@@ -44,7 +44,7 @@ const MobileLayout = (props) => {
     const [open1, setOpen1] = useState(false);
     const [open2, setOpen2] = useState(false);
     const [open3, setOpen3] = useState(false);
-
+    const [open4, setOpen4] = useState(false);
 
     const toggleMenu = (e) => {
   
@@ -54,6 +54,8 @@ const MobileLayout = (props) => {
             setOpen2(open2 => !open2);
         }else if(e === 3){
             setOpen3(open3 => !open3);
+        }else if(e === 4){
+            setOpen4(open4 => !open4);
         }
     }
 
@@ -71,20 +73,20 @@ const MobileLayout = (props) => {
               },
           })
             .then(res => {
-                navigate("/login");    
-                props.loginCallBack(false);
                 cookies.remove('refresh_token');
+                props.loginCallBack(false, 0);
+                navigate("/login");    
             })
             .catch(ex => {
-              console.log("login request fail : " + ex);
-              props.loginCallBack(false);
+              console.log(" fail : " + ex);
+              props.loginCallBack(false, 0);
               cookies.remove('refresh_token');
 
             })
-            .finally(() => {console.log("login request end")});
+            .finally(() => {});
           } catch (error) {
             console.log(error);
-            props.loginCallBack(false);
+            props.loginCallBack(false, 0);
             cookies.remove('refresh_token');
 
           } 
@@ -114,9 +116,52 @@ const MobileLayout = (props) => {
                         >
                             <div>스탬프 조회</div>
                         </NavLink>
+                        <br/>
+                        <NavLink
+                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none",})}
+                        to={"/stamp/issuance"}
+                        >
+                            <div>스탬프 발급</div>
+                        </NavLink>
+                        <br/>
+                        <NavLink
+                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
+                        to={"/stamp/resend"}
+                        >
+                            <div>스탬프 재발송</div>
+                        </NavLink>
                 </div>
-                <div onClick={()=>toggleMenu(2)} className="main-menu">기본설정</div>
+                <div onClick={()=>toggleMenu(2)} className="main-menu">탬플릿</div>
                     <div className={open2 ? "show-menu" : "hide-menu"} >
+                        {props.role === 2 ? <>                        
+                        <NavLink
+                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
+                        to={"/account/list"}
+                        >
+                            <div>계정 관리</div>
+                        </NavLink>
+                        <br/>
+                        </>
+                        :
+                        null
+                        }
+                        <NavLink
+                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
+                        to={"/template/manager"}
+                        >
+                            <div>탬플릿 등록</div>
+                        </NavLink>
+                        <br/>
+                        <NavLink
+                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
+                        to={"/template/list"}
+                        >
+                            <div>탬플릿 관리</div>
+                        </NavLink>
+
+                </div>
+                <div onClick={()=>toggleMenu(3)} className="main-menu">기본설정</div>
+                    <div className={open3 ? "show-menu" : "hide-menu"} >
                         <NavLink
                         style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none",})}
                         to={"/info/edit"}
@@ -124,8 +169,8 @@ const MobileLayout = (props) => {
                             <div>비밀번호 수정</div>
                         </NavLink>
                 </div>
-                <div onClick={()=>toggleMenu(3)} className="main-menu">게시판</div>
-                    <div className={open3 ? "show-menu" : "hide-menu"} >
+                <div onClick={()=>toggleMenu(4)} className="main-menu">게시판</div>
+                    <div className={open4 ? "show-menu" : "hide-menu"} >
                     <NavLink
                         style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", })}
                         to={"/notice/list"}

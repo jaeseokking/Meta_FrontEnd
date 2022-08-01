@@ -33,6 +33,7 @@ const EnquiryDetail = ({loginCallBack}) => {
       }catch(e){
         console.log(e);
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
 
     useEffect(() => {
@@ -44,14 +45,12 @@ const EnquiryDetail = ({loginCallBack}) => {
         IDX : getParameter('idx'),
         type : 'detail'
       }).then(response => {
-        console.log('DATA' , response.data);
 
         if(response.data.result === 'NO DATA'){
           alert('접근권한이 없거나 없는 데이터입니다.');
           navigate('/enquiry/list')
         }
         if(response.data.result === 'SUCCESS'){
-          console.log(response.data.enquiryDetail)
           const detail = response.data.enquiryDetail;
           if(response.data.enquiryReply !== null){
             setReply(response.data.enquiryReply);
@@ -67,6 +66,7 @@ const EnquiryDetail = ({loginCallBack}) => {
         }
         
       })
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
 

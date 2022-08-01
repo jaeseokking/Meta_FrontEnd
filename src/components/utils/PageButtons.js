@@ -16,7 +16,7 @@ function PageButtons({currentPage, startDate, endDate, selectUse, what, shopInfo
     useEffect(() => {
       setSelectPage(1)
       setIndex(0)
-    }, [startDate, endDate, selectUse])
+    }, [startDate, endDate, selectUse, shopInfoNo])
 
 
   
@@ -29,13 +29,18 @@ function PageButtons({currentPage, startDate, endDate, selectUse, what, shopInfo
           setKind('공지')
         }else if(what === 'enquiry'){
           setKind('문의')
+        }else if(what === 'account'){
+          setKind('계정')
+        }else if(what === 'template'){
+          setKind("템플릿")
         }
 
       axios.post(`${config.SERVER_URL}/api/board/counts`, {
           startDate : startDate,
           endDate: endDate,
           selectUse : selectUse,
-          what : what
+          what : what,
+          shop_info_no : shopInfoNo
         }).then(response => {
             setTot(response.data)
             setLoading(true);
@@ -52,8 +57,9 @@ function PageButtons({currentPage, startDate, endDate, selectUse, what, shopInfo
             shop_info_no : shopInfoNo
         }).then(response => {
             setTot(response.data)
+            setLoading(true);
         })   
-      }, [startDate, endDate, selectUse])
+      }, [startDate, endDate, selectUse, shopInfoNo])
 
     //총 페이지를 한페이지에 10개씩 보여줌 
     var count = Math.ceil(totalcounts/10)

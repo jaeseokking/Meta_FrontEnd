@@ -12,9 +12,12 @@ const NoticeList = ({loginCallBack}) => {
     const navigate = useNavigate();
     const [page, setPage] = useState(1);
     const [list, setList] = useState([]);
-    const [startDate, setStartDate] = useState(0);
-    const [endDate, setEndDate] = useState(0);
-    const [selectUse, setSelectUse] = useState('all');
+    // const [startDate, setStartDate] = useState(0);
+    // const [endDate, setEndDate] = useState(0);
+    // const [selectUse, setSelectUse] = useState('all');
+    const startDate = 0;
+    const endDate = 0;
+    const selectUse = 'all';
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -23,6 +26,7 @@ const NoticeList = ({loginCallBack}) => {
       }catch(e){
         console.log(e);
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
 
     useEffect(() => {
@@ -31,7 +35,8 @@ const NoticeList = ({loginCallBack}) => {
       }catch(e){
         console.log(e);
       }
-    },[page, startDate, endDate, selectUse]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[page]);
 
     useEffect(() => {
       axios.post(`${config.SERVER_URL}/api/notice/board`, {
@@ -40,10 +45,10 @@ const NoticeList = ({loginCallBack}) => {
         endDate : endDate,
         selectUse : selectUse,
       }).then(response => {
-        console.log('DATA' , response.data);
         setList(response.data.noticeList)
         setLoading(true);
       })
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
@@ -53,7 +58,6 @@ const NoticeList = ({loginCallBack}) => {
         endDate : endDate,
         selectUse : selectUse,
       }).then(response => {
-        console.log('DATA' , response.data);
         setList(response.data.noticeList)
         setLoading(true);
       })
@@ -155,28 +159,6 @@ const TitleContainer = styled.div`
 const Contents = styled.div`
   display : flex;
   flex-direction: column;
-`
-
-const Input = styled.input`
-   height : 20px;
-   text-align: end;
-`
-
-
-const SearchForm = styled.div`
-    display : flex;
-    align-items: center;
-    align-self : end;
-    justify-content: center;
-    width : '100%';
-  
-    @media screen and (max-width: 767px){
-        display: inline-block;
-        align-items: center;
-        align-self : end;
-        justify-content: flex-end;
-    }
-
 `
 
 

@@ -21,6 +21,7 @@ const EnquiryWitre = ({loginCallBack}) => {
     }catch(e){
       console.log(e);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
 
   const enquiryWriter = () => {
@@ -42,7 +43,6 @@ const EnquiryWitre = ({loginCallBack}) => {
       CONTENT : content,
       CATEGORY : category
     }
-    console.log(data);
     try {
       axios.post(`${config.SERVER_URL}/api/enquiryWrite`, JSON.stringify(data), {
         headers: {
@@ -50,7 +50,6 @@ const EnquiryWitre = ({loginCallBack}) => {
         },
     })
       .then(res => {
-        console.log(res.data.result);
         const message = res.data.result;
         if(message === "TOKEN ERROR"){
           alert(message);
@@ -61,15 +60,14 @@ const EnquiryWitre = ({loginCallBack}) => {
           navigate("/enquiry/list");
         }
         if(message === "TOKEN EXPIRED"){
-          alert(message);
+          alert("로그인 만료 다시 로그인해주세요.");
           navigate("/login")
         }
         if(message === "TOKEN NULL"){
-          alert(message);
           navigate("/login");
         }
         if(message === "INSERT ERROR"){
-          alert(message);
+          alert("다시 시도해주세요.");
           window.location.reload();
         }
           
@@ -77,7 +75,8 @@ const EnquiryWitre = ({loginCallBack}) => {
       .catch(ex => {
         console.log("login request fail : " + ex);
       })
-      .finally(() => {console.log("login request end")});
+      .finally(() => {
+        });
     } catch (error) {
       console.log(error);
       
@@ -192,27 +191,7 @@ const Input = styled.input`
 
 `
 
-const Table = styled.table`
-  border: 0px;
-  border-collapse: separate;
-  border-spacing: 0 10px;
 
-  tbody th {
-    font-weight : 400;
-    padding : 10px;
-  }
-
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  /* Firefox */
-  input[type=number] {
-    -moz-appearance: textfield;
-  }
-`
 
 const Button = styled.button`
   max-width : 50px;

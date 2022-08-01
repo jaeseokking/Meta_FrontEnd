@@ -75,7 +75,7 @@ const PasswordEdit = (props) => {
               inputRef.current[0].focus();
             }else{
               alert('다시 로그인 해주세요.');
-              props.loginCallBack(false);
+              props.loginCallBack(false, 0);
               navigate("/login");
             }
             
@@ -83,12 +83,14 @@ const PasswordEdit = (props) => {
           })
           .catch(ex => {
             console.log("login request fail : " + ex);
-            props.loginCallBack(false);
+            props.loginCallBack(false, 0);
           })
-          .finally(() => {console.log("login request end")});
+          .finally(() => {
+       
+          });
         } catch (error) {
           console.log(error);
-          props.loginCallBack(false);
+          props.loginCallBack(false, 0);
           
         } 
 

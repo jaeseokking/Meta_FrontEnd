@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as config from '../../config';
 
-export const refreshToken = function(callback){
+export const refreshToken = (loginCallback) => {
 
     try{
         axios.post(`${config.SERVER_URL}/api/refreshToken` , {}, {
@@ -13,27 +13,25 @@ export const refreshToken = function(callback){
           },
         })
         .then(res =>{
-          if(res.data === null || res.data === ""){
-            callback(false);
+          if(res === null || res === ""){
+            loginCallback(false, 0);
             return;
           }
-          //console.log("res.data.accessToken : " + res.data);
-          axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.data;
-          callback(true);
-          
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.data.accessToken;
+          loginCallback(true, res.data.ROLE);
+
         })
         .catch(ex=>{
             console.log("app silent request fail : " + ex);
-            if(callback){
-                callback(false);
+            if(loginCallback){
+              loginCallback(false, 0);
             }
 
         })
         .finally(()=>{
-          console.log("login request end");
         });
     }catch(e){
         console.log(e);
-        callback(false);
+        loginCallback(false, 0);
     }
 }
