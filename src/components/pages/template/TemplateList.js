@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router';
 import Spinner from 'react-spinkit';
 
 
-const StampList = ({loginCallBack}) => {
+const TemplateList = ({loginCallBack}) => {
     const [page, setPage] = useState(1);
     const [list, setList] = useState([]);
     const [startDate, setStartDate] = useState(0);
@@ -38,14 +38,15 @@ const StampList = ({loginCallBack}) => {
       }catch(e){
         console.log(e);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },[page, startDate, endDate, selectUse]);
 
 
 
     useEffect(() => {
 
+
       async function getShopDetail(){
+
         try {
           await axios.post(`${config.SERVER_URL}/api/getShopList`, {}, {
             headers: {
@@ -58,17 +59,21 @@ const StampList = ({loginCallBack}) => {
             if(result === "TOKEN ERROR"){
               navigate("/login")
             }
-            if(result === "SUCCESS"){
-              setShopList(shopList);
-              setShop(shopList[0].SHOP_INFO_NO);       
-    
-            }
             if(result === "TOKEN EXPIRED"){
               alert("로그인 만료 다시 로그인해주세요.");
               navigate("/login")
             }
-              
+
+            if(result === "SUCCESS"){
+              if(shopList != null){
+                setShopList(shopList);
+              }
+              setShop(shopList[0].SHOP_INFO_NO);       
+    
+            }
+  
           })
+       
           .catch(ex => {
           })
           .finally(() => {
@@ -81,28 +86,42 @@ const StampList = ({loginCallBack}) => {
        
     
       }
+
+      async function getTemplate(){
+          axios.post(`${config.SERVER_URL}/api/template/board`, {
+            page : page,
+            startDate : startDate,
+            endDate : endDate,
+            selectUse : selectUse,
+            shop_info_no : shop,
+          }).then(response => {
+            setList(response.data.templateList)
+            setLoading(true);
+    
+          })
+        
+        
+      }
   
       getShopDetail();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      getTemplate();
     }, [])
   
     useEffect(() => {
-      axios.post(`${config.SERVER_URL}/api/stamp/board`, {
-        page : page,
-        startDate : startDate,
-        endDate : endDate,
-        selectUse : selectUse,
-        shop_info_no : shop,
-      }).then(response => {
-       if(response.data.stampList != null){
-        setList(response.data.stampList)
-
-       }
-
-        setLoading(true);
-
-      })
-    }, [page, startDate, endDate, selectUse, shop])
+        axios.post(`${config.SERVER_URL}/api/template/board`, {
+          page : page,
+          startDate : startDate,
+          endDate : endDate,
+          selectUse : selectUse,
+          shop_info_no : shop,
+        }).then(response => {
+          setList(response.data.templateList)
+          setLoading(true);
+  
+        })
+      
+      
+    }, [page, shop])
   
     function selectShop(e){
       setShop(e.target.value);
@@ -112,55 +131,65 @@ const StampList = ({loginCallBack}) => {
       return (
         <Wrapper>
             <Form>
-               <Title>스탬프 조회
+               <Title>탬플릿 조회
                <div style={{flex : '1', textAlign : 'right'}}>   
-               {shopList ?
                 <Select style={{textAlign : 'center'}} onChange={e => selectShop(e)}>
-                  {shopList.map((value, index) => 
+                  {shopList.length > 0  ? shopList.map((value, index) => 
                     <option key={value.SHOP_INFO_NO} value={value.SHOP_INFO_NO} >{value.SHOP_NAME}</option>
-                    )
+                    ) :
+                    null
                   }
                </Select>
-               : 
-               null
-              }
                </div>
                </Title>
                <Contents>
-               <SearchForm>
+               {/* <SearchForm>
                         <Calendar startDate={setStartDate} endDate={setEndDate} currentPage={setPage} selectUse={setSelectUse}/>     
-                </SearchForm>
+                </SearchForm> */}
                  {list.length > 0 ?
                  <>
                 
                 <Table>
                 <thead>
                     <tr>
-                    <th>발행번호</th>
-                    <th scope="col" className="stamp_code">스탬프 코드</th>
-                    <th scope="col">발행일자</th>
-                    <th scope="col">유효일자</th>
-                    <th scope="col">스탬프 개수</th>
-                    <th scope="col">사용유무</th>
+                    <th>NO.</th>
+                    <th scope="col" className="stamp_code">탬플릿 코드</th>
+                    <th scope="col">탬플릿명</th>
+                    <th scope="col">등록일</th>
+                    <th scope="col">상태</th>
                     </tr>
                 </thead>
                 <tbody>
-                {list.length > 0 && list.map((value, index) => {
-                    const COMP_DTM = new Date(value.STAMP_COMP_DTM);
-                    let END_CTM = "";
-                    if(value.STAMP_END_DTM != null){
-                       END_CTM = new Date(value.STAMP_END_DTM);
+                  {list.map((value, index) => {
+                    let date;
+                    if(value.REG_DATE != null){
+                      date = new Date(value.REG_DATE);
                     }
-                    return(
-                    <tr key={value.SEQ} onClick={() => navigate({ pathname : `/stamp/detail?seq=${value.SEQ}&stampcode=${value.STAMP_CODE}&type=${value.STAMP_TYPE}`})}>
-                      <td>{value.SEQ}</td>
-                                                                                    <td className="stamp_code">{value.STAMP_CODE}</td>
-                      <td>{format(COMP_DTM, 'yyyy-MM-dd HH:mm')}</td>
-                      <td>{END_CTM ? format(END_CTM, 'yyyy-MM-dd') : ""}</td>
-                      <td>{value.STAMP_CNT}</td>
-                      <td style={{width : 58}}><div><div style={{background : value.STAMP_USE_YN === "N" ? 'rgba(28, 200, 93, 1)' : '#d12', color : '#fff' , width : 20}}>{value.STAMP_USE_YN}</div></div></td>
-                    </tr> 
-                    );
+
+                    let status;
+                    if(value.GRADE == 0){
+                      status = "신청완료"
+                    }else if(value.GRADE == 1){
+                      status = "검수중"
+                    }else if(value.GRADE == 2){
+                      status = '검수완료'
+                    }else if(value.GRADE == 3){
+                      status = "사용가능"
+                    }else if(value.GRADE == 4){
+                      status = "부결"
+                    }else{
+                      status = "오류"
+                    }
+
+                    return (
+                    <tr key={value.TALK_CODE} onClick={() => navigate({ pathname : `/template/message?tc=${value.TALK_CODE}`})}>
+                        <td>{value.TALK_CODE}</td>
+                        <td>{value.TEMPLATE_CODE ? value.TEMPLATE_CODE : ""}</td>
+                        <td>{value.TITLE}</td>
+                        <td>{date ? format(date, 'yyyy-MM-dd') : ""}</td>
+                        <td>{status}</td>
+                    </tr>
+                    )
                   })}
                 </tbody>
                 </Table>
@@ -170,7 +199,7 @@ const StampList = ({loginCallBack}) => {
                     조회된 스탬프가 없습니다.
                   </div>
                 }
-                <PageButtons currentPage={setPage} startDate={startDate} endDate={endDate} selectUse={selectUse} what={'stamp'} shopInfoNo={shop}/>
+                <PageButtons currentPage={setPage} startDate={startDate} endDate={endDate} selectUse={selectUse} what={'template'} shopInfoNo={shop}/>
                </Contents>
             </Form>
         </Wrapper>
@@ -185,7 +214,7 @@ const StampList = ({loginCallBack}) => {
 
 };
 
-export default StampList;
+export default TemplateList;
 
 const Wrapper = styled.div`
   display: flex;
@@ -193,8 +222,9 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height : 100vh;
- 
+  margin-top : 30px;
+  margin-bottom : 30px;
+
 `
 
 
@@ -203,7 +233,6 @@ const Form = styled.div`
   border-radius : 10px;
   box-shadow: 5px 5px 10px 0px gray;
   padding : 40px;
-
   width : 80%;
 
   @media screen and (max-width: 767px){
@@ -227,6 +256,10 @@ const Contents = styled.div`
  
 `
 
+const Input = styled.input`
+   height : 20px;
+   text-align: end;
+`
 
 
 const SearchForm = styled.div`
@@ -294,6 +327,26 @@ const Table = styled.table`
 `
 
 
+const NotData = styled.div `
+margin-top : 10px;
+  border-collapse: collapse;
+  width : 700px;
+  margin-bottom : 10px;
+  overflow: hidden;
+  border-radius: 15px;
+  align-items : center;
+
+
+
+  div {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius : 100px;
+    font-weight: bold;
+
+  }
+`
 
 const Select = styled.select`
   height : 30px;

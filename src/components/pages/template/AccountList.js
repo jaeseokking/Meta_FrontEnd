@@ -1,24 +1,19 @@
 import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import { refreshToken } from '../../auth/RefreshToken';
-import Calendar from '../list/Calendar';
 import axios from 'axios';
 import PageButtons from '../../utils/PageButtons';
 import * as config from '../../../config';
-import {format} from 'date-fns';
 import { useNavigate } from 'react-router';
 import Spinner from 'react-spinkit';
 
 
-const StampList = ({loginCallBack}) => {
+const AccountList = ({loginCallBack}) => {
     const [page, setPage] = useState(1);
-    const [list, setList] = useState([]);
+    const [accountList, setAccountList] = useState([]);
     const [startDate, setStartDate] = useState(0);
     const [endDate, setEndDate] = useState(0);
     const [selectUse, setSelectUse] = useState('all');
-    const [shopList, setShopList] = useState([]);
-    const [shop, setShop] = useState('');
-
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -32,6 +27,7 @@ const StampList = ({loginCallBack}) => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
 
+    
     useEffect(() => {
       try{
         refreshToken(loginCallBack);
@@ -41,34 +37,37 @@ const StampList = ({loginCallBack}) => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
     },[page, startDate, endDate, selectUse]);
 
-
-
     useEffect(() => {
-
-      async function getShopDetail(){
+      async function getAccountList(){
+        const data = {
+          page : page
+        }
         try {
-          await axios.post(`${config.SERVER_URL}/api/getShopList`, {}, {
+          await axios.post(`${config.SERVER_URL}/api/get/accountList`, JSON.stringify(data), {
             headers: {
               "Content-Type": `application/json`,
             },
         })
           .then(res => {
-            const {shopList , result} = res.data;
-  
+            const {accountList , result} = res.data;
             if(result === "TOKEN ERROR"){
               navigate("/login")
-            }
-            if(result === "SUCCESS"){
-              setShopList(shopList);
-              setShop(shopList[0].SHOP_INFO_NO);       
-    
             }
             if(result === "TOKEN EXPIRED"){
               alert("로그인 만료 다시 로그인해주세요.");
               navigate("/login")
             }
-              
+
+            if(result === "SUCCESS"){
+              if(accountList != null){
+                setAccountList(accountList);
+              }
+    
+            }
+            setLoading(true);
+  
           })
+       
           .catch(ex => {
           })
           .finally(() => {
@@ -82,9 +81,67 @@ const StampList = ({loginCallBack}) => {
     
       }
   
-      getShopDetail();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      getAccountList();
     }, [])
+
+
+        
+    useEffect(() => {
+      try{
+        refreshToken(loginCallBack);
+      }catch(e){
+        console.log(e);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[page, startDate, endDate, selectUse]);
+    
+    useEffect(() => {
+      async function getAccountList(){
+        const data = {
+          page : page
+        }
+        console.log(data);
+        try {
+          await axios.post(`${config.SERVER_URL}/api/get/accountList`, JSON.stringify(data), {
+            headers: {
+              "Content-Type": `application/json`,
+            },
+        })
+          .then(res => {
+            const {accountList , result} = res.data;
+            if(result === "TOKEN ERROR"){
+              navigate("/login")
+            }
+            if(result === "TOKEN EXPIRED"){
+              alert("로그인 만료 다시 로그인해주세요.");
+              navigate("/login")
+            }
+
+            if(result === "SUCCESS"){
+              if(accountList != null){
+                setAccountList(accountList);
+              }
+    
+            }
+            setLoading(true);
+  
+          })
+       
+          .catch(ex => {
+          })
+          .finally(() => {
+          });
+        } catch (error) {
+          console.log(error);
+  
+        } 
+  
+       
+    
+      }
+  
+      getAccountList();
+    }, [page])
   
     useEffect(() => {
       axios.post(`${config.SERVER_URL}/api/stamp/board`, {
@@ -92,76 +149,58 @@ const StampList = ({loginCallBack}) => {
         startDate : startDate,
         endDate : endDate,
         selectUse : selectUse,
-        shop_info_no : shop,
       }).then(response => {
        if(response.data.stampList != null){
-        setList(response.data.stampList)
+        //setList(response.data.stampList)
 
        }
 
         setLoading(true);
 
       })
-    }, [page, startDate, endDate, selectUse, shop])
+    }, [page, startDate, endDate, selectUse])
   
-    function selectShop(e){
-      setShop(e.target.value);
-    }
 
     if(loading === true){
       return (
         <Wrapper>
             <Form>
-               <Title>스탬프 조회
-               <div style={{flex : '1', textAlign : 'right'}}>   
-               {shopList ?
-                <Select style={{textAlign : 'center'}} onChange={e => selectShop(e)}>
-                  {shopList.map((value, index) => 
-                    <option key={value.SHOP_INFO_NO} value={value.SHOP_INFO_NO} >{value.SHOP_NAME}</option>
-                    )
-                  }
-               </Select>
-               : 
-               null
-              }
-               </div>
-               </Title>
+               <Title>계정 관리</Title>
                <Contents>
-               <SearchForm>
-                        <Calendar startDate={setStartDate} endDate={setEndDate} currentPage={setPage} selectUse={setSelectUse}/>     
-                </SearchForm>
-                 {list.length > 0 ?
+               <div style={{flex : '1', textAlign : 'right'}}>    
+                  <Button onClick={() => navigate({ pathname : `/account/create`})}>
+                  계정등록
+                  </Button>
+                </div>
+                 {accountList.length > 0 ?
                  <>
                 
                 <Table>
                 <thead>
                     <tr>
-                    <th>발행번호</th>
-                    <th scope="col" className="stamp_code">스탬프 코드</th>
-                    <th scope="col">발행일자</th>
-                    <th scope="col">유효일자</th>
-                    <th scope="col">스탬프 개수</th>
-                    <th scope="col">사용유무</th>
+                    <th scope="col">플러스 친구</th>
+                    <th scope="col">사업자등록번호(ID)</th>
+                    <th scope="col">CEONAME</th>
+                    <th scope="col">가맹점 수<PlusButton onClick={() => navigate({ pathname : `/account/shop/create`})}>+</PlusButton></th>
+                    <th scope="col">탬플릿 수<PlusButton onClick={() => navigate({ pathname : `/template/manager`})}>+</PlusButton></th>
                     </tr>
                 </thead>
                 <tbody>
-                {list.length > 0 && list.map((value, index) => {
-                    const COMP_DTM = new Date(value.STAMP_COMP_DTM);
-                    let END_CTM = "";
-                    if(value.STAMP_END_DTM != null){
-                       END_CTM = new Date(value.STAMP_END_DTM);
-                    }
-                    return(
-                    <tr key={value.SEQ} onClick={() => navigate({ pathname : `/stamp/detail?seq=${value.SEQ}&stampcode=${value.STAMP_CODE}&type=${value.STAMP_TYPE}`})}>
-                      <td>{value.SEQ}</td>
-                                                                                    <td className="stamp_code">{value.STAMP_CODE}</td>
-                      <td>{format(COMP_DTM, 'yyyy-MM-dd HH:mm')}</td>
-                      <td>{END_CTM ? format(END_CTM, 'yyyy-MM-dd') : ""}</td>
-                      <td>{value.STAMP_CNT}</td>
-                      <td style={{width : 58}}><div><div style={{background : value.STAMP_USE_YN === "N" ? 'rgba(28, 200, 93, 1)' : '#d12', color : '#fff' , width : 20}}>{value.STAMP_USE_YN}</div></div></td>
-                    </tr> 
-                    );
-                  })}
+                  {accountList.map((value, index) => {
+                    return (
+                      <tr key={value.BIZNO} >
+                        <td>{value.PLUS_ID}</td>
+                        <td>{value.BIZNO}</td>
+                        <td>{value.CEONAME}</td>
+                        <td className="shopCount"><a onClick={() => value.SHOP_COUNT > 0 ?navigate({ pathname : `/account/shop/update?bizno=${value.BIZNO}`}) : null }>{value.SHOP_COUNT || 0}</a></td>
+                        <td className="templateCount" ><a onClick={() => value.TEMPLATE_COUNT > 0 ? navigate({ pathname : `/template/update?bizno=${value.BIZNO}`}): null}>{value.TEMPLATE_COUNT || 0}</a></td>
+                      </tr>
+                    )
+                  })
+
+                }
+
+                   
                 </tbody>
                 </Table>
                   </>
@@ -170,7 +209,7 @@ const StampList = ({loginCallBack}) => {
                     조회된 스탬프가 없습니다.
                   </div>
                 }
-                <PageButtons currentPage={setPage} startDate={startDate} endDate={endDate} selectUse={selectUse} what={'stamp'} shopInfoNo={shop}/>
+                <PageButtons currentPage={setPage} what={'account'} />
                </Contents>
             </Form>
         </Wrapper>
@@ -185,7 +224,8 @@ const StampList = ({loginCallBack}) => {
 
 };
 
-export default StampList;
+export default AccountList;
+
 
 const Wrapper = styled.div`
   display: flex;
@@ -193,8 +233,9 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height : 100vh;
- 
+  margin-top : 30px;
+  margin-bottom : 30px;
+
 `
 
 
@@ -203,7 +244,6 @@ const Form = styled.div`
   border-radius : 10px;
   box-shadow: 5px 5px 10px 0px gray;
   padding : 40px;
-
   width : 80%;
 
   @media screen and (max-width: 767px){
@@ -226,7 +266,24 @@ const Contents = styled.div`
   flex-direction: column;
  
 `
-
+const Button = styled.button`
+  border : 0;
+  border-radius : 3px;
+  background-color: rgba(30, 108, 166, 0.9);
+  color : white;
+  font-size : 14px;
+  padding : 3px 5px 3px 5px;
+  font-weight : 600;
+  transition: 0.5s;
+  :hover {
+   background-color : rgba(1, 78, 136, 0.9);
+  }
+  cursor: pointer;  
+`
+const Input = styled.input`
+   height : 20px;
+   text-align: end;
+`
 
 
 const SearchForm = styled.div`
@@ -291,9 +348,38 @@ const Table = styled.table`
     }
   }
 
+ .templateCount a, .shopCount a {
+    text-decoration : underline;
+  }
+  .shopCount a:hover{
+    cursor : pointer;
+  }
+  .templateCount a:hover{
+    cursor : pointer;
+  }
 `
 
 
+const NotData = styled.div `
+margin-top : 10px;
+  border-collapse: collapse;
+  width : 700px;
+  margin-bottom : 10px;
+  overflow: hidden;
+  border-radius: 15px;
+  align-items : center;
+
+
+
+  div {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius : 100px;
+    font-weight: bold;
+
+  }
+`
 
 const Select = styled.select`
   height : 30px;
@@ -310,4 +396,19 @@ const Select = styled.select`
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);
   }
   font-family: inherit;
+`
+
+const PlusButton = styled.button`
+  width : 20px;
+  height: 20px;
+  font-size : 12px;
+  text-align : center;
+  margin-left : 10px;
+  border-radius : 22px;
+  border : 0px;
+  background-color : white;
+
+  :hover {
+    cursor : pointer;
+  }
 `

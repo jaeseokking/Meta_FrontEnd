@@ -1,11 +1,10 @@
-import React, {useState, useEffect, useSyncExternalStore} from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import { refreshToken } from '../../auth/RefreshToken';
-import Calendar from '../list/Calendar';
 import axios from 'axios';
 import * as config from '../../../config';
 import {format} from 'date-fns';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate } from 'react-router';
 import Spinner from 'react-spinkit';
 
 
@@ -33,28 +32,40 @@ const StampDetail = ({loginCallBack}) => {
       }catch(e){
         console.log(e);
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
 
     useEffect(() => {
+      const seq = getParameter('seq');
+      const stampCode = getParameter('stampcode');
+      const stampType = getParameter('type');
+      if(seq ===null || seq ==='' || stampCode ===null || stampCode ==='' || stampType ==='' || stampType ===null || !(stampType ==='rs' || stampType === 'ms')){
+        alert('잘못된 URL 경로입니다.');
+        navigate('/stamp/list')
+      }
+
       axios.post(`${config.SERVER_URL}/api/stamp/detail`, {
-        SEQ : getParameter('seq'),
-        STAMP_CODE :  getParameter('stampcode')
+        SEQ : seq,
+        STAMP_CODE :  stampCode,
+        STAMP_TYPE : stampType
       }).then(response => {
-        console.log('DATA' , response.data);
 
         if(response.data.result === 'NO DATA'){
           alert('접근권한이 없거나 없는 데이터입니다.');
           navigate('/stamp/list')
         }
         if(response.data.result === 'SUCCESS'){
-          console.log(response.data.stampDetail)
           const detail = response.data.stampDetail;
           setSEQ(detail.SEQ);
           setStampCode(detail.STAMP_CODE);
           setCompDTM(format(detail.STAMP_COMP_DTM, 'yyyy-MM-dd HH:mm'));
-          setEndDTM(format(detail.STAMP_END_DTM, 'yyyy-MM-dd'));
+          if(detail.STAMP_END_DTM != null){
+            setEndDTM(format(detail.STAMP_END_DTM, 'yyyy-MM-dd'));
+          }else{
+          
+          }
           setUseYN(detail.STAMP_USE_YN);
-          setUserKey(detail.USER_KEY);
+          setUserKey(detail.USER_KEY ? detail.USER_KEY : detail.USER_PHONE);
           console.log(useYN);
           setLoading(true);
         }else{
@@ -62,6 +73,7 @@ const StampDetail = ({loginCallBack}) => {
         }
         
       })
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const checkUse = (e) => {
@@ -186,47 +198,6 @@ const Contents = styled.div`
   border-radius: 5px;
  
 `
-
-
-const Input = styled.input`
-  height : 10px;
-  text-align: end;
-
-  padding: 11px 13px;
-  background: #f9f9fa;
-  color: #000;
-  border-radius: 4px;
-  outline: 0;
-  border: 1px solid rgba(245, 245, 245, 0.7);
-  font-size: 15px;
-  transition: all 0.3s ease-out;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.1);
-  :focus,
-  :hover {
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);
-  }
-
-
-`
-
-
-
-const SearchForm = styled.div`
-    display : flex;
-    align-items: center;
-    align-self : end;
-    justify-content: center;
-    width : '100%';
-  
-    @media screen and (max-width: 767px){
-        display: inline-block;
-        align-items: center;
-        align-self : end;
-        justify-content: flex-end;
-    }
-
-`
-
 
 
 const Table = styled.table`

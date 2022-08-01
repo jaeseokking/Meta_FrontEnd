@@ -81,8 +81,6 @@ function PageButtons({shop_bizno, currentPage, startDate, endDate, selectUse}) {
       
     }
 
-    console.log(length)
-console.log(index)
 
     return (
         <Wrapper>

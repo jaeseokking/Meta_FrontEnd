@@ -12,9 +12,13 @@ const EnquiryList = ({loginCallBack}) => {
     const navigate = useNavigate();
     const [page, setPage] = useState(1);
     const [list, setList] = useState([]);
-    const [startDate, setStartDate] = useState(0);
-    const [endDate, setEndDate] = useState(0);
-    const [selectUse, setSelectUse] = useState('all');
+    //const [startDate, setStartDate] = useState(0);
+    //const [endDate, setEndDate] = useState(0);
+    //const [selectUse, setSelectUse] = useState('all');
+
+    let startDate = 0;
+    let endDate = 0;
+    let selectUse = 'all';
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -23,6 +27,7 @@ const EnquiryList = ({loginCallBack}) => {
       }catch(e){
         console.log(e);
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
 
     useEffect(() => {
@@ -31,7 +36,8 @@ const EnquiryList = ({loginCallBack}) => {
       }catch(e){
         console.log(e);
       }
-    },[page, startDate, endDate, selectUse]);
+       // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[page]);
 
     useEffect(() => {
       axios.post(`${config.SERVER_URL}/api/enquiry/board`, {
@@ -40,10 +46,10 @@ const EnquiryList = ({loginCallBack}) => {
         endDate : endDate,
         selectUse : selectUse,
       }).then(response => {
-        console.log('DATA' , response.data);
         setList(response.data.enquiryList)
         setLoading(true);
       })
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
@@ -53,7 +59,6 @@ const EnquiryList = ({loginCallBack}) => {
         endDate : endDate,
         selectUse : selectUse,
       }).then(response => {
-        console.log('DATA' , response.data);
         setList(response.data.enquiryList)
         setLoading(true);
       })
@@ -158,29 +163,6 @@ const Contents = styled.div`
   flex-direction: column;
  
 `
-
-const Input = styled.input`
-   height : 20px;
-   text-align: end;
-`
-
-
-const SearchForm = styled.div`
-    display : flex;
-    align-items: center;
-    align-self : end;
-    justify-content: center;
-    width : '100%';
-  
-    @media screen and (max-width: 767px){
-        display: inline-block;
-        align-items: center;
-        align-self : end;
-        justify-content: flex-end;
-    }
-
-`
-
 
 
 const Table = styled.table`

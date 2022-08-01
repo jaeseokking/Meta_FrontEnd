@@ -29,6 +29,10 @@ function PageButtons({currentPage, startDate, endDate, selectUse, what, shopInfo
           setKind('공지')
         }else if(what === 'enquiry'){
           setKind('문의')
+        }else if(what === 'account'){
+          setKind('계정')
+        }else if(what === 'template'){
+          setKind("템플릿")
         }
 
       axios.post(`${config.SERVER_URL}/api/board/counts`, {

@@ -5,14 +5,15 @@ import * as config from '../../../config';
 import { useNavigate } from 'react-router';
 import { refreshToken } from '../../auth/RefreshToken';
 import Spinner from 'react-spinkit';
+import DatePicker, { registerLocale } from "react-datepicker";  // 한국어적용
+import ko from 'date-fns/locale/ko'; // 한국어적용
 import moment from 'moment';
 import leftButton from '../../../images/angle-left.svg';
 import rightButton from '../../../images/angle-right.svg';
-import InputList from './InputList';
 
 
 
-const StampIssuance = ({loginCallBack}) => {
+const TemplateUpdate = ({loginCallBack}) => {
   const inputRef = useRef([]);
   const navigate = useNavigate();
   
@@ -20,14 +21,22 @@ const StampIssuance = ({loginCallBack}) => {
   const [loading, setLoading] = useState(false);
   const [shopList, setShopList] = useState([]);
   const [shop, setShop] = useState('');
-  //const [issuanceDate, setIssuanceDate] = useState(new Date());
-  //const [expirationDate, setExpirationDate] = useState('');
-  const issuanceDate = new Date();
-  const expirationDate = "";
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [stampAmount, setStampAmount] = useState(1);
+  const [issuanceDate, setIssuanceDate] = useState(new Date());
+  const [expirationDate, setExpirationDate] = useState('');
   const [templateList , setTemplateList] = useState([]);
   const [templateIDX, setTemplateIDX] = useState(0);
-  const [templateCode, setTemplateCode] = useState();
-  const [itemCount, setItemCount] = useState(0);
+  const [inputList, setInputList] = useState([]);
+  const [status, setStatus] = useState(4);
+  const [templateTitle, setTemplateTitle] = useState('');
+  const [templateCode, setTemplateCode] = useState('');
+  const [itemCount, setItemCount] = useState("");
+  const [talkCode, setTalkCode] = useState('');
+
+  let getParameter = (key) => {
+    return new URLSearchParams(window.location.search).get(key);
+}
 
 
   useEffect(() => {
@@ -36,16 +45,21 @@ const StampIssuance = ({loginCallBack}) => {
     }catch(e){
       console.log(e);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  
 
 
 //초기 설정한 데이터 가져오기
 useEffect(() =>  { 
+  const bizno = getParameter("bizno");
+  const data ={
+    bizno : bizno
+  }
+
 
   async function getTemplate(){
     try {
-      await axios.post(`${config.SERVER_URL}/api/get/template`, {}, {
+      await axios.post(`${config.SERVER_URL}/api/get/template`, JSON.stringify(data), {
         headers: {
           "Content-Type": `application/json`,
         },
@@ -63,6 +77,9 @@ useEffect(() =>  {
           setTemplateList(templateList);
           setTemplateCode(templateList[templateIDX].TEMPLATE_CODE);
           setItemCount(templateList[templateIDX].VAR);
+          setTemplateTitle(templateList[templateIDX].TITLE)
+          setStatus(templateList[templateIDX].GRADE);
+          setTalkCode(templateList[templateIDX].TALK_CODE);
 
         }
         if(result === "TOKEN EXPIRED"){
@@ -86,17 +103,20 @@ useEffect(() =>  {
   }
 
   getTemplate();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [])
 
 
 
 useEffect(() =>  { 
 
+  const bizno = getParameter("bizno");
+
+
   async function getTemplate(){
     try {
       const data ={
-        shop_info_no : shop
+        shop_info_no : shop,
+        bizno : bizno
       }
 
       await axios.post(`${config.SERVER_URL}/api/get/template`, JSON.stringify(data), {
@@ -105,7 +125,7 @@ useEffect(() =>  {
         },
     })
       .then(res => {
-        const {result, templateList} = res.data;
+        const {shopList , result, templateList} = res.data;
 
         if(result === "TOKEN ERROR"){
           alert(result);
@@ -114,6 +134,12 @@ useEffect(() =>  {
         if(result === "SUCCESS"){
           setTemplateIDX(0);
           setTemplateList(templateList);
+          setItemCount(templateList[templateIDX] ? templateList[templateIDX].VAR : "");
+          setTemplateTitle(templateList[templateIDX] ? templateList[templateIDX].TITLE : "")
+          setStatus(templateList[templateIDX] ? templateList[templateIDX].GRADE : "");
+          setTemplateCode(templateList[templateIDX] ? templateList[templateIDX].TEMPLATE_CODE : "");
+          setTalkCode(templateList[templateIDX] ? templateList[templateIDX].TALK_CODE : "");
+
 
         }
         if(result === "TOKEN EXPIRED"){
@@ -137,44 +163,87 @@ useEffect(() =>  {
   }
 
   getTemplate();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+  
 }, [shop])
    
 
 
 
 
-  const issuanceButton = () => {
-    for(let i = 0; i<inputRef.current.length; i++){
-      if(inputRef.current[i].value === ""){
-        alert(inputRef.current[i].id + "을 입력해주세요.");
-        inputRef.current[i].focus();
-        return;
-      }
-    }
-
-    if(issuanceDate === ""){
-        alert("발급 날짜를 선택해주세요.");
-        return;
-    }    
-
-    if(expirationDate === ""){
-      alert("만료 날짜를 선택해주세요");
+function choiceDate1(date) {
+    if(date > expirationDate && expirationDate != ""){
+      alert('만료 일자 이전의 날짜를 설정해주세요.')
       return;
     }
+    setIssuanceDate(date) 
+}
 
 
 
-    const data = {
-      varnum : itemCount,
-      template_code : templateCode,
-      issuanceDate : moment(issuanceDate).format('yyyy-MM-DD'),
-      expirationDate : moment(expirationDate).format('yyyy-MM-DD'),
-      shop_info_no : shop
+
+
+ 
+
+  function selectShop(e){
+    setShop(e.target.value);
+    
+  }
+
+  function selectStatus(e){
+    setStatus(e.target.value);
+  }
+
+  function changeTemplate(e){
+    const button = e.target.name;
+
+    if(button == "before" && templateIDX !== 0){
+      const IDX = templateIDX - 1;
+      setTemplateCode(templateList[IDX].TEMPLATE_CODE);
+      setTemplateIDX(IDX);
+      setItemCount(templateList[IDX].VAR);
+      setTemplateTitle(templateList[IDX].TITLE);
+      setStatus(templateList[IDX].GRADE);
+      setTalkCode(templateList[IDX].TALK_CODE);
+    }else if(button == "after" && templateIDX < templateList.length - 1){
+      const IDX = templateIDX + 1;
+      setTemplateCode(templateList[IDX].TEMPLATE_CODE);
+      setTemplateIDX(IDX);
+      setItemCount(templateList[IDX].VAR);
+      setTemplateTitle(templateList[IDX].TITLE);
+      setStatus(templateList[IDX].GRADE);
+      setTalkCode(templateList[IDX].TALK_CODE);
+
     }
 
+  }
+
+  function PlusOrMinus(e){
+    e.preventDefault();
+    console.log(e.target);
+
+    if(e.target.value == "-"){
+
+
+    }else{
+
+    }
+
+  }
+
+  function updateTemplate(e){
+    e.preventDefault();
+    const data = {
+      shop_info_no : shop,
+      talkCode : talkCode,
+      status : status,
+      templateTitle : templateTitle,
+      templateCode : templateCode,
+      itemCount : itemCount
+    }
+    
     try {
-      axios.post(`${config.SERVER_URL}/api/issue/stamp`, JSON.stringify(data), {
+      axios.post(`${config.SERVER_URL}/api/template/update`, JSON.stringify(data), {
         headers: {
           "Content-Type": `application/json`,
         },
@@ -215,114 +284,13 @@ useEffect(() =>  {
       console.log(error);
       
     } 
+  }
+
+ 
   
-  }
- 
- 
-
-  function selectShop(e){
-    setShop(e.target.value);
-    
-  }
-
-  function changeTemplate(e){
-    const button = e.target.name;
-
-    if(button === "before" && templateIDX !== 0){
-      const IDX = templateIDX - 1;
-      setTemplateCode(templateList[IDX].TEMPLATE_CODE);
-      setTemplateIDX(IDX);
-      setItemCount(templateList[IDX].VAR);
-    }else if(button === "after" && templateIDX < templateList.length - 1){
-      const IDX = templateIDX + 1;
-      setTemplateCode(templateList[IDX].TEMPLATE_CODE);
-      setTemplateIDX(IDX);
-      setItemCount(templateList[IDX].VAR);
-    }
-
-  }
 
 
-  function uploadexcel(e){
 
-    //const template = templateCode;
-    const excelval = e.target.value;
-
-   var excels = document.querySelectorAll("#uploadExcelForm")[0];
-
-    // if(plusidval !=='admin'){
-    //   service = $("#service").val();
-    // }else{
-    //   service = $("#service_sel").val();
-    //   $("#service").val(service);
-    // }
-   if(excelval !==""){
-
-    const formData = new FormData(excels);
-    const fileName = e.target.files[0].name;
-    //const files = e.target.files[0];      
-    const value = [{
-      shop_info_no : shop,
-      templateCode : templateCode
-    }]
-
-    formData.append("file", excels);
-    const blob = new Blob([JSON.stringify(value)], {type : "application/json"})
-
-    formData.append("data" , blob);
-       
-axios({
-  method : "post",
-  url : `${config.SERVER_URL}/kakao/uploadExcel.do?template=${templateCode}`,
-  data : formData,
-  headers: {
-    "Content-Type": "multipart/form-data", 
-  }
-}).then(res => {
-  console.log(res);
-
-
-  const message = res.data.result;
-        if(message === "TOKEN ERROR"){
-          alert(message);
-          navigate("/login")
-        }
-        if(message === "SUCCESS"){
-          alert(message);
-          
-          const uploadExcel = document.querySelector("#uploadExcel");
-          const resultarea = document.querySelector("#resultarea");
-          uploadExcel.value = "";
-          resultarea.append("\n"+fileName+" : \n" +res.data.comment);
-
-
-        }
-        if(message === "TOKEN EXPIRED"){
-          alert(message);
-          navigate("/login")
-        }
-        if(message === "TOKEN NULL"){
-          alert(message);
-          navigate("/login");
-        }
-        if(message === "INSERT ERROR"){
-          alert('스탬프 발급 오류');
-          window.location.reload();
-
-        }
- 
-})
-    
-}
-}
-
-  function downloadExel(e){
-     e.preventDefault();
-
-     var formval = document.uploadExcelForm;
-     formval.action = `${config.SERVER_URL}/kakao/downloadExcel?templateCode=${templateCode}`;
-     formval.submit();
-  }
 
   
   
@@ -334,7 +302,7 @@ axios({
     return (
         <Wrapper>
             <Form>
-               <Title>스탬프  발급 
+               <Title>탬플릿 수정
               <div style={{flex : '1', textAlign : 'right'}}>   
                 <Select style={{textAlign : 'center'}} onChange={e => selectShop(e)}>
                   {shopList.map((value, index) => 
@@ -347,7 +315,7 @@ axios({
            
                <Contents>
                <div className="button_container">
-                <div className="image" ><img name="before" alt="before_img" onClick={(e) => changeTemplate(e)} src={leftButton}/></div>
+                <div className="image" ><img name="before" onClick={(e) => changeTemplate(e)} src={leftButton}/></div>
               </div>
                <TemplateContainer>
                     <div className="banner">
@@ -367,52 +335,53 @@ axios({
                     </div>
                 </TemplateContainer>
                 <div className="button_container">
-                  <div className="image" ><img name="after" alt="after_img" onClick={(e) => changeTemplate(e)} src={rightButton}/></div>
+                  <div className="image" ><img name="after" onClick={(e) => changeTemplate(e)} src={rightButton}/></div>
                 </div>
                 
                 <form id="uploadExcelForm" name="uploadExcelForm" method="post" enctype="multipart/form-data">   
                    <Table>
                      <tbody>
+                      <tr>
+                        <th>NO.</th>
+                        <td >
+                          {talkCode}
+                        </td>
+                      </tr>
                         <tr>
-                          <th className="text_title">엑셀 업로드</th>
+                          <th className="text_title">상태</th>
                           <td className="text_id">
-                            <div id="fileDiv">
-                              <input type="file" id="uploadExcel" name="uploadExcel" onChange={(e) => uploadexcel(e)} accept=".xls, .xlsx"/>
-                            </div>
+                            <Select onChange={e => selectStatus(e)}>
+                              <option value={0} selected={status == 0 ?  "selected" : null}>신청완료</option>
+                              <option value={1} selected={status == 1 ?  "selected" : null}>검수중</option>
+                              <option value={2} selected={status == 2 ?  "selected" : null}>검수완료</option>
+                              <option value={3} selected={status == 3 ?  "selected" : null}>사용가능</option>
+                              <option value={4}selected={status == 4 ?  "selected" : null}>부결</option>
+                            </Select>
                           </td>
                         </tr>
                         <tr>
-                          <th>엑셀 다운로드</th>
-                          <td>
-                            <button onClick={(e) => downloadExel(e)}>엑셀 다운로드</button>
-                          </td>
+                          <th className="text_title">템플릿 제목</th>
+                          <td><Input onChange={e => setTemplateTitle(e.target.value)} value={templateTitle}/></td>
                         </tr>
                         <tr>
-                          <th>전송결과</th>
-                          <td>
-                            <textarea id="resultarea">
-
-                            </textarea>
-                          </td>
+                          <th className="text_title">템플릿 코드</th>
+                          <td><Input onChange={e => setTemplateCode(e.target.value)} value={templateCode}/></td>
                         </tr>
+                        <tr>
+                          <th className="text_title">항목 갯수</th>
+                          <td><Input onChange={e => setItemCount(e.target.value)} value={itemCount}/></td>
+                        </tr>
+                        <tr>
+                          <td colSpan={2}><Button onClick={(e) => updateTemplate(e)}>수정</Button></td>
+                        </tr>
+                 
+                  
                       
                      </tbody>
                    </Table>
                    </form>
                </Contents>
               
-
-            </Form>
-            <Form>
-              <Contents>
-                {/* <input type="text" class="phonenum" name="phonenum" autocomplete="off" placeholder="휴대전화 번호"/>
-                <input type="text" class="type1" name="type1"/>
-                <Button onClick={(e) => PlusOrMinus(e)} value="+"></Button> */}
-              <InputList itemCount={itemCount}/>                
-           
-                
-               </Contents>
-               <Button onClick={issuanceButton}>발급</Button>
 
             </Form>
         </Wrapper>
@@ -426,7 +395,7 @@ axios({
   }
 };
 
-export default StampIssuance;
+export default TemplateUpdate;
 
 const Wrapper = styled.div`
   display: flex;
@@ -434,7 +403,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height : 100%;
+  margin : 0 auto;
   
 
 `
@@ -511,6 +480,27 @@ const Contents = styled.div`
 
 `
 
+const Input = styled.input`
+  height : 10px;
+  text-align: end;
+
+  padding: 11px 13px;
+  background: #f9f9fa;
+  color: #000;
+  border-radius: 4px;
+  outline: 0;
+  border: 1px solid rgba(245, 245, 245, 0.7);
+  font-size: 15px;
+  transition: all 0.3s ease-out;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.1);
+  :focus,
+  :hover {
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);
+  }
+
+
+`
+
 const Table = styled.table`
   border: 0px;
   border-collapse: separate;
@@ -539,10 +529,11 @@ const Table = styled.table`
 `
 
 const Button = styled.button`
-  max-width : 50px;
+  width : 100%;
   margin-left : 5px;
   margin-right : 5px;
-  height : 25px;
+  margin-top : 10px;
+  height : 35px;
   align-self: flex-end;
 
   border-radius: 4px;
