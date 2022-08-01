@@ -100,6 +100,14 @@ const DesktopLayout = (props) =>{
                         >
                             <div>스탬프 조회</div>
                         </NavLink>
+                        <br/>
+                        <NavLink
+                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
+                        to={"/stamp/issuance"}
+                        >
+                            <div>스탬프 수동 발급</div>
+                        </NavLink>
+
                 </div>
                 <div onClick={()=>toggleMenu(2)} className="main-menu">기본설정</div>
                     <div className={open2 ? "show-menu" : "hide-menu"} >

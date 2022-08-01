@@ -19,6 +19,7 @@ import EnquiryList from './components/pages/board/EnquiryList';
 import EnquiryDetail from './components/pages/board/EnquiryDetail';
 import EnquiryWrite from './components/pages/board/EnquiryWrite';
 import EnquiryUpdate from './components/pages/board/EnquiryUpdate';
+import StampIssuance from './components/pages/stamps/StampIssuance';
 
 
 
@@ -63,6 +64,7 @@ function App(props) {
                 <Route exact path="/login" element={<PublicRoute authenticated={isLogin} component={<Login loginCallBack={loginCallBack}/>}/>}/>
                 <Route exact path="/stamp/setting" element={<PrivateRoute authenticated={isLogin}  component={<StampSetting loginCallBack={loginCallBack}/>}/>}/>
                 <Route exact path="/stamp/list" element={<PrivateRoute authenticated={isLogin} component={<StampList loginCallBack={loginCallBack}/>}/>}/>
+                <Route path="/stamp/issuance" element={<PrivateRoute authenticated={isLogin} component={<StampIssuance loginCallBack={loginCallBack}/>}/>}/>
                 <Route path="/stamp/detail" element={<PrivateRoute authenticated={isLogin} component={<StampDetail loginCallBack={loginCallBack}/>}/>}/>
                 <Route exact path="/info/edit" element={<PrivateRoute authenticated={isLogin} component={<PasswordEdit loginCallBack={loginCallBack}/>}/>}/>
                 <Route exact path="/notice/list" element={<PrivateRoute authenticated={isLogin} component={<NoticeList loginCallBack={loginCallBack}/>}/>}/>
