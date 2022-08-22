@@ -5,6 +5,7 @@ import * as config from '../../../config';
 import { useNavigate } from 'react-router';
 import { refreshToken } from '../../auth/RefreshToken';
 import Spinner from 'react-spinkit';
+import LoadingForeground from '../../layout/LoadingForeground';
 
 
 
@@ -14,8 +15,10 @@ const TemplateManager = ({ loginCallBack }) => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
+  const [resLoading ,setResLoading] = useState(true);
   const [shopList, setShopList] = useState([]);
   const [shop, setShop] = useState('');
+  const [textLength , setTextLength] = useState(0);
   const buttonList = [0, 1, 2, 3, 4];
 
   const [value, SetValue] = useState({
@@ -25,22 +28,27 @@ const TemplateManager = ({ loginCallBack }) => {
 
   const [button, SetButton] = useState([
     {
+      id : 0,
       buttonName : '',
       buttonType : 0,
     },
     {
+      id : 1,
       buttonName : '',
       buttonType : 0,
     },
     {
+      id : 2,
       buttonName : '',
       buttonType : 0,
     },
     {
+      id : 3,
       buttonName : '',
       buttonType : 0,
     },
     {
+      id : 4,
       buttonName : '',
       buttonType : 0,
     },
@@ -78,6 +86,10 @@ const TemplateManager = ({ loginCallBack }) => {
               navigate("/login")
             }
             if (result === "SUCCESS") {
+              if(shopList.length < 1){
+                alert("등록된 가맹점이 없습니다. 가맹점을 등록해주세요.")
+                navigate('/info/shop/create');          
+              }
               setShopList(shopList);
               setShop(shopList[0].SHOP_INFO_NO);
 
@@ -168,6 +180,11 @@ const TemplateManager = ({ loginCallBack }) => {
 
 
   function valueChange(e) {
+    console.log(e.target.value.length> 1000)
+    console.log(e.target.name === 'message');
+    if(e.target.name === 'message'){
+      setTextLength(e.target.value.length)
+    }
     SetValue({
       ...value,
       [e.target.name]: e.target.value
@@ -181,21 +198,44 @@ const TemplateManager = ({ loginCallBack }) => {
   }
 
   function insertTemplate() {
+    setResLoading(false);
+    if(window.confirm("템플릿을 등록하시겠습니까?") === false){
+      setResLoading(true);
+      return;
+    }
+    setTimeout(() => {insert()} , 500)
+
+
+  function insert(){
+    if(textLength > 1000){
+     alert('템플릿 내용은 1000자 이내로 가능합니다.')
+     inputRef.current[0].focus();
+     return;
+    }
+
     for (let i = 0; i < inputRef.current.length; i++) {
       if (inputRef.current[i].value === "") {
         alert(inputRef.current[i].id + "를 입력해주세요.");
         inputRef.current[i].focus();
+        setResLoading(true);
         return;
       }
     }
 
+    let buttonResult = true;
     var blank_pattern = /^\s+|\s+$/g;
     button.map((value, index) => {
       if(value.buttonType !== 0 && (value.buttonName == "" || value.buttonName == null || value.buttonName.replace(blank_pattern,"") == "")){
-        alert('버튼이름을 확인해 주세요.')
+        alert('버튼이름을 확인해 주세요.');
         inputButtonRef.current[index].focus();
+        buttonResult = false;
       }
     })
+
+    if(buttonResult === false){
+      setResLoading(true);
+      return;
+    }
 
     const buttonList = button.filter((value) => value.buttonType !== 0);
     console.log(buttonList);
@@ -258,10 +298,13 @@ const TemplateManager = ({ loginCallBack }) => {
           console.log(ex);
         })
         .finally(() => {
+          setResLoading(true);
         });
-    } catch (error) {
-      console.log(error);
+      } catch (error) {
+        console.log(error);
 
+      }
+          
     }
   }
 
@@ -302,6 +345,9 @@ const TemplateManager = ({ loginCallBack }) => {
   if (loading === true) {
     return (
       <Wrapper>
+        {resLoading === false &&
+          <LoadingForeground/>
+        }
         <Form>
           <Title>템플릿 등록
             <div style={{ flex: '1', textAlign: 'right' }}>
@@ -324,7 +370,17 @@ const TemplateManager = ({ loginCallBack }) => {
                 <div className="speaker" />
               </div>
               <div className="templatediv">
-                <textarea placeholder='내용을 입력해주세요.' name="message" id="템플릿 내용" onChange={(e) => valueChange(e)} value={value.message} ref={el => (inputRef.current[0] = el)}></textarea>
+                <div className="textsize_form"><span style={{color : textLength > 1000 ? "red" : ""}} className="textLength">{textLength}</span><span> /1000 자</span></div>
+                <textarea 
+                  placeholder='내용을 입력해주세요.' 
+                  name="message" 
+                  id="템플릿 내용" 
+                  onChange={(e) => valueChange(e)} 
+                  value={value.message} 
+                  ref={el => (inputRef.current[0] = el)}
+                  maxLength={1000}
+                  >
+                </textarea>
               </div>
             </TemplateContainer>
             <Table>
@@ -453,7 +509,7 @@ const Wrapper = styled.div`
   align-items: center;
   width : 100%;
   padding-left: 50px;
-  padding-top : 50px;
+  padding-top : 80px;
 
 `
 const Form = styled.div`
@@ -463,6 +519,7 @@ const Form = styled.div`
   padding : 40px;
   width : 1100px;
   background-color: white;
+  margin-bottom: 100px;
 `
 
 const Title = styled.div`
@@ -670,7 +727,7 @@ const TemplateContainer = styled.div`
         }
 
         .templatediv{
-          margin: 0 auto;
+          margin: -16px auto;
           text-align: center;
 
           textarea {
@@ -680,6 +737,12 @@ const TemplateContainer = styled.div`
               border: 0;
               font-size : 12px;
 
+          }
+          
+          .textsize_form {
+            font-size : 13px;
+            float : right;
+            margin-right : 10px;
           }
       }
 

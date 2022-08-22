@@ -203,7 +203,7 @@ const Wrapper = styled.div`
   align-items: center;
   width : 100%;
   padding-left: 50px;
-  padding-top : 50px;
+  padding-top : 80px;
 `
 
 
@@ -214,6 +214,7 @@ const Form = styled.div`
   padding : 40px;
   width : 1000px;
   background-color: white;
+  margin-bottom: 100px;
 
 `
 

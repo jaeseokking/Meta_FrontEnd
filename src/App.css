@@ -37,17 +37,29 @@
   }
 }
 
-
 @font-face {
   font-family: 'SCDream';
   src: url('./font/SCDream4.otf') format('woff');
   font-weight: normal;
   font-style: normal;
 
-  font-family: 'SCDream_Bold';
-  src: url('./font/SCDream8.otf') format('woff');
+
+}
+
+
+@font-face {
+
+  font-family: 'SCDream_SemiBold';
+  src: url('./font/SCDream6.otf') format('woff');
   font-weight: normal;
   font-style: normal;
 
 
+}
+
+@font-face {
+  font-family: 'SCDream_Bold';
+  src: url('./font/SCDream8.otf') format('woff');
+  font-weight: normal;
+  font-style: normal;
 }

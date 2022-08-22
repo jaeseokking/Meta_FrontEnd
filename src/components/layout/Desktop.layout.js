@@ -23,8 +23,7 @@ const DesktopLayout = (props) =>{
     const cookies = new Cookies();
     const navigate = useNavigate();
     const [time, setTime] = useState(new Date());
-
-
+    const Bizno = cookies.get("BIZNO");
 
     const [menu, setMenu] = useState({
         menu1 : false,
@@ -49,9 +48,6 @@ const DesktopLayout = (props) =>{
         // }
     }
 
-    const toggleMenu2 = (e) => {
-    
-    }
 
     //분단위 시간 변화
     useEffect(() => {
@@ -100,13 +96,14 @@ const DesktopLayout = (props) =>{
               console.log("login request fail : " + ex);
               props.loginCallBack(false, 0);
               cookies.remove('refresh_token');
-
+              cookies.remove('BIZNO');
             })
             .finally(() => {});
           } catch (error) {
             console.log(error);
             props.loginCallBack(false, 0);
             cookies.remove('refresh_token');
+            cookies.remove('BIZNO');
 
           } 
     }
@@ -262,9 +259,13 @@ const DesktopLayout = (props) =>{
         </Wrapper>
          <TopMenu>
          <div className="top_container">
-             <div className="left_menu">스탬프 관리</div>
+             <div className="left_menu">   
+                <NavLink style={{textDecoration : "none" ,color : "#fff"}} to={"/"}>
+                    관리자 페이지
+                </NavLink></div>
              <div className="right_menu">
-                 <div onClick={() => logout()} className="main-menu" style={{cursor : 'pointer'}}>로그아웃</div>
+                 <div className="main-menu bizno" style={{cursor : 'pointer'}}>{Bizno}</div>
+                 <Button onClick={() => logout()} className="main-menu logout" style={{cursor : 'pointer'}}>로그아웃</Button>
              </div>
          </div>
      </TopMenu>
@@ -317,7 +318,7 @@ const Menu = styled.div`
     min-height : 100vh;
     background-color: #E9ECF3;
     padding : 20px 0 0 0px;
-    margin-top : 51px;
+    margin-top : 80px;
 
 
   .main-menu{
@@ -385,14 +386,14 @@ const TopMenu = styled.div`
     width : 100%;
     position: fixed;
     top : 0;
-    line-height: 50px;
+    line-height: 80px;
     height : fit-content;
     z-index: 10;
 
 
     .top_container {
         background-color: white;
-        height : 50px;
+        height : 80px;
         margin-right : 1px;
         background-color: #252643;
 
@@ -401,17 +402,31 @@ const TopMenu = styled.div`
 
     .left_menu{
         float : left;
-        margin-left : 10px;
+        margin-left : 30px;
         font-family: 'SCDream_Bold';
         color : white;
         font-size: 20px;
     }
 
     .right_menu {
+        line-height: 40px;
         float : right;
-        margin-right : 10px;
+        margin-right : 20px;
         font-family: 'SCDream_Bold';
         color : white;
+        flex-direction : column;
+        text-align: center;
+
+        .bizno {
+            font-size : 5px;
+            border-radius: 5px;
+            background-color: #E9ECF3;
+            height : 20px;
+            line-height: 20px;
+            margin-top : 10px;
+            color : #252643;
+
+        }
     }
 
 `
@@ -420,4 +435,24 @@ const Img = styled.img`
     width :20px;
     vertical-align: middle;
     margin-right : 8px;
+`
+
+const Button = styled.button`
+  font-family: 'SCDream_Bold';
+  margin-top : 10px;
+  height : 30px;
+  border-radius: 4px;
+  font-size : 20px;
+  outline: 0;
+  border: 0;
+  background : transparent;
+  
+  color : rgba(255,255,255);
+  cursor:pointer;
+  transition : 0.3s;
+
+  &:hover{
+    background-color : #714DDA;
+  }
+
 `

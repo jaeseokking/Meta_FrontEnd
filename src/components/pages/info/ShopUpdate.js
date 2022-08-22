@@ -5,6 +5,7 @@ import * as config from '../../../config';
 import { useNavigate } from 'react-router';
 import { refreshToken } from '../../auth/RefreshToken';
 import Spinner from 'react-spinkit';
+import LoadingForeground from '../../layout/LoadingForeground';
 
 
 
@@ -14,6 +15,7 @@ const ShopUpdate = ({loginCallBack}) => {
   
 
   const [loading, setLoading] = useState(false);
+  const [resLoading, setResLoading] = useState(true);
   const [shopList, setShopList] = useState([]);
   const [shop, setShop] = useState('');
   const [shopIDX, setShopIDX] = useState(0);
@@ -65,6 +67,10 @@ useEffect(() =>  {
           navigate("/login")
         }
         if(result === "SUCCESS"){
+          if(shopList.length < 1){
+            alert("등록된 가맹점이 없습니다. 가맹점을 등록해주세요.")
+            navigate('/info/shop/create');          
+          }
           setShopList(shopList);
           setShopIDX(0);
           setValue({
@@ -125,79 +131,88 @@ useEffect(() =>  {
 
   function updateShop(e){
     e.preventDefault();
-    console.log("????")
-    for(let i = 0; i<inputRef.current.length; i++){
-      if(inputRef.current[i].value === ""){
-          alert(inputRef.current[i].id + "를 입력해주세요.");
-          inputRef.current[i].focus();
-          return;
+    setResLoading(false);
+    if(window.confirm("가맹점을 수정하시겠습니까?") === false){
+      setResLoading(true);
+      return;
+    }
+    setTimeout(() => {update()}, 500);
+
+    function update(){
+      for(let i = 0; i<inputRef.current.length; i++){
+        if(inputRef.current[i].value === ""){
+            alert(inputRef.current[i].id + "를 입력해주세요.");
+            inputRef.current[i].focus();
+            setResLoading(true);
+            return;
+        }
       }
-
-
-  }
-
-
-    const data = {
-      shopBizno : value.shopBizno,
-      shopName : value.shopName,
-      shopBranch : value.shopBranch,
-      shopAddr : value.shopAddr,
-      shopCEO : value.shopCEO,
-      shopTelNum : value.shopTelNum,
-      shopInfoNo : value.shopInfoNo,
-      seq : value.seq
+  
+  
+      const data = {
+        shopBizno : value.shopBizno,
+        shopName : value.shopName,
+        shopBranch : value.shopBranch,
+        shopAddr : value.shopAddr,
+        shopCEO : value.shopCEO,
+        shopTelNum : value.shopTelNum,
+        shopInfoNo : value.shopInfoNo,
+        seq : value.seq
+      }
+      
+      try {
+  
+        axios.post(`${config.SERVER_URL}/api/account/shop/update`, JSON.stringify(data), {
+          headers: {
+            "Content-Type": `application/json`,
+          },
+          xhrFields: {
+            withCredentials: true
+          },
+      })
+        .then(res => {
+          
+  
+          const message = res.data.result;
+          console.log(message)
+          if(message === "TOKEN ERROR"){
+            alert(message);
+            navigate("/login")
+          }
+          if(message === "SUCCESS"){
+            alert(message);
+            window.location.reload();
+          }
+          if(message === "TOKEN EXPIRED"){
+            alert(message);
+            navigate("/login")
+          }
+          if(message === "TOKEN NULL"){
+            alert(message);
+            navigate("/login");
+          }
+          if(message === "UPDATE ERROR"){
+            alert('업데이트 오류');
+            window.location.reload();
+          }
+          if(message === "REDUPLICATED SHOP_INFO_NO"){
+            alert(message);
+            inputRef.current[6].focus();
+  
+          }
+            
+        })
+        .catch(ex => {
+        })
+        .finally(() => {
+          setResLoading(true);
+        });
+      } catch (error) {
+        console.log(error);
+        
+      } 
     }
     
-    try {
-
-      axios.post(`${config.SERVER_URL}/api/account/shop/update`, JSON.stringify(data), {
-        headers: {
-          "Content-Type": `application/json`,
-        },
-        xhrFields: {
-          withCredentials: true
-        },
-    })
-      .then(res => {
-        
-
-        const message = res.data.result;
-        console.log(message)
-        if(message === "TOKEN ERROR"){
-          alert(message);
-          navigate("/login")
-        }
-        if(message === "SUCCESS"){
-          alert(message);
-          window.location.reload();
-        }
-        if(message === "TOKEN EXPIRED"){
-          alert(message);
-          navigate("/login")
-        }
-        if(message === "TOKEN NULL"){
-          alert(message);
-          navigate("/login");
-        }
-        if(message === "UPDATE ERROR"){
-          alert('업데이트 오류');
-          window.location.reload();
-        }
-        if(message === "REDUPLICATED SHOP_INFO_NO"){
-          alert(message);
-          inputRef.current[6].focus();
-
-        }
-          
-      })
-      .catch(ex => {
-      })
-      .finally(() => {
-      });
-    } catch (error) {
-      console.log(error);
-      
-    } 
   }
 
   function valueChange(e){
@@ -215,6 +230,9 @@ useEffect(() =>  {
   if(loading === true){
     return (
         <Wrapper>
+          {resLoading === false &&
+            <LoadingForeground/>
+          }
             <Form>
                <Title>가맹점 수정
               <div style={{flex : '1', textAlign : 'right'}}>   
@@ -248,9 +266,7 @@ useEffect(() =>  {
                         <td ><div><Input name='shopTelNum'type="text" id="대표번호" onChange={(e) => valueChange(e)} ref={el => (inputRef.current[5] = el)} value={value.shopTelNum}/></div></td>
                     </tr>
                     <tr>      
-                        <th scope="col" >SHOP_INFO_NO</th>
-                        <td><div><Input name='shopInfoNo' type="text" id="SHOP_INFO_NO"onChange={(e) => valueChange(e)} ref={el => (inputRef.current[6] = el)} value={value.shopInfoNo}/></div></td>
-                        <td colSpan={2}>
+                      <td colSpan={4}>
                             <Button onClick={(e) => updateShop(e)}>등록</Button>
                         </td>
                     </tr>
@@ -281,7 +297,7 @@ const Wrapper = styled.div`
   align-items: center;
   width : 100%;
   padding-left: 50px;
-  padding-top : 50px;
+  padding-top : 80px;
   
 
 `
@@ -404,6 +420,7 @@ const Button = styled.button`
   cursor:pointer;
   box-shadow: 1px 1px 3px 0px gray;
   transition : 0.3s;
+  float : right;
 
   &:hover{
     width : 220px;
@@ -412,7 +429,10 @@ const Button = styled.button`
     border-radius: 5px;
   }
 
+
+
 `
+
 
 const Select = styled.select`
   height : 30px;

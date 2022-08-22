@@ -3,8 +3,10 @@ import React, {useState, useRef} from 'react';
 import styled from "styled-components";
 import * as config from '../../../config';
 import {useNavigate } from 'react-router-dom';
+import Cookies from 'universal-cookie';
 
 function Login(props) {
+  const cookie = new Cookies();
   const inputRef = useRef([]);
   const navigate = useNavigate();
 
@@ -40,6 +42,7 @@ function Login(props) {
         if(res.data.accessToken != null){
           axios.defaults.headers.common['Authorization'] = 'Bearer' + res.data.accessToken;
           props.loginCallBack(true, res.data.ROLE);
+          cookie.set("BIZNO", res.data.BIZNO);
           navigate("/");    
         }else{
           alert('일치하는 회원정보가 없습니다.')
@@ -106,6 +109,7 @@ function Login(props) {
 export default Login;
 
 const Wrapper = styled.section`
+  font-family: 'SCDream_Bold';
   display: flex;
   justify-content: center;
   align-items: center;
@@ -132,6 +136,7 @@ const Form = styled.form`
 `;
 
 const Input = styled.input`
+  font-family: 'SCDream';
   width : 200px;
   padding: 11px 13px;
   background: #f9f9fa;
@@ -150,15 +155,28 @@ const Input = styled.input`
 `;
 
 const Button = styled.button`
+ font-family: 'SCDream_Bold';
+  width : 100%;
+  margin-left : 5px;
+  margin-right : 5px;
+  height : 30px;
+  align-self: flex-end;
+
   border-radius: 4px;
-  font-size : 15px;
-  height : 35px;
+  font-size : 18px;
   outline: 0;
-  border: 0 ;
+  border: 0;
   background-color : #714DDA;
   color : rgba(255,255,255);
-  font-weight : bold;
-  cursor: pointer;
+  cursor:pointer;
+  transition : 0.3s;
+
+  &:hover{
+    font-size : 20px;
+    border-radius: 5px;
+    box-shadow: 1px 1px 3px 0px gray;
+
+  }
 `
 
 

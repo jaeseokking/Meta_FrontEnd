@@ -9,6 +9,7 @@ import leftButton from '../../../images/angle-left.svg';
 import rightButton from '../../../images/angle-right.svg';
 import InputList from './InputList';
 import { isFriday } from 'date-fns';
+import LoadingForeground from '../../layout/LoadingForeground';
 
 
 
@@ -19,6 +20,7 @@ const SendAlimTalk = ({loginCallBack}) => {
   
 
   const [loading, setLoading] = useState(false);
+  const [resLoading, setResLoading] = useState(true);
   const [shopList, setShopList] = useState([]);
   const [shop, setShop] = useState('');
   //const [issuanceDate, setIssuanceDate] = useState(new Date());
@@ -63,6 +65,18 @@ useEffect(() =>  {
           navigate("/login")
         }
         if(result === "SUCCESS"){
+          if(shopList.length < 1){
+            alert("등록된 가맹점이 없습니다. 가맹점을 등록해주세요.")
+            navigate('/info/shop/create');          
+            return;
+          }
+
+          if(templateList === undefined){
+            alert("등록된 템플릿이 없습니다. 템플릿을 등록해주세요.")
+            navigate('/template/manager');     
+            return;     
+          }
+
           console.log(templateList)
           setShopList(shopList);
           setShop(shopList[0].SHOP_INFO_NO);       
@@ -136,6 +150,8 @@ useEffect(() =>  {
           navigate("/login")
         }
         if(result === "SUCCESS"){
+         
+
           setTemplateIDX(0);
           setTemplateList(templateList);
 
@@ -224,104 +240,121 @@ useEffect(() =>  {
     const excelval = e.target.value;
     const uploadExcel = document.querySelector("#uploadExcel");
 
-    const buttonList = [];
-    for(let i = 0; i < 5; i++){
-      let urlList = [];
-      for(let j = 0; j < 2; j++){
-        if(buttonInputRef.current[[i,j]] !== null && buttonInputRef.current[[i,j]] !== undefined){
-          if(buttonInputRef.current[[i,j]].value == ""){
-            alert("입력된 값이 없습니다.")
-            buttonInputRef.current[[i,j]].focus();
-            uploadExcel.value = "";
-            return;
-          }else{
-            urlList.push(buttonInputRef.current[[i,j]].value)
-          }
-        }
-      }
-      if(buttonInputRef.current[[i,0]] !== null && buttonInputRef.current[[i,0]] !== undefined){
-        if(buttonInputRef.current[[i,0]].value !== ""){
-          buttonList.push({
-            buttonName : buttonNameList[i],
-            buttonType : buttonTypeList[i],
-            urlList : urlList,
-          })
-        }
-      }
-      urlList = [];
+    setResLoading(false);
+    if(window.confirm("알림톡을 전송하시겠습니까?") === false){
+      uploadExcel.value = "";
+      setResLoading(true);
+      return;
     }
 
+    setTimeout(() => {upload()}, 500);
 
-   if(templateCode == null){
-      return;
-   }
-
-   var excels = document.querySelectorAll("#uploadExcelForm")[0];
-
-   if(excelval !==""){
-
-    const formData = new FormData(excels);
-    const fileName = e.target.files[0].name;
-    //const files = e.target.files[0];      
-    const value = [{
-      shop_info_no : shop,
-      templateCode : templateCode,
-      stampIssue : stampIssue,
-      buttonList : buttonList,
-    }]
-
-    formData.append("file", excels);
-    const blob = new Blob([JSON.stringify(value)], {type : "application/json"})
-
-    formData.append("data" , blob);
-       
-axios({
-  method : "post",
-  url : `${config.SERVER_URL}/kakao/uploadExcel.do?template=${templateCode}`,
-  data : formData,
-  headers: {
-    "Accept": "application/json",
-    "Content-Type": "multipart/form-data; application/json", 
-  },
-  xhrFields: {
-    withCredentials: true
-  },
-}).then(res => {
-  console.log(res);
-
-
-  const message = res.data.result;
-        if(message === "TOKEN ERROR"){
-          alert(message);
-          navigate("/login")
+    function upload(){
+      const buttonList = [];
+      for(let i = 0; i < 5; i++){
+        let urlList = [];
+        for(let j = 0; j < 2; j++){
+          if(buttonInputRef.current[[i,j]] !== null && buttonInputRef.current[[i,j]] !== undefined){
+            if(buttonInputRef.current[[i,j]].value == ""){
+              alert("입력된 값이 없습니다.")
+              buttonInputRef.current[[i,j]].focus();
+              uploadExcel.value = "";
+              setResLoading(true);
+              return;
+            }else{
+              urlList.push(buttonInputRef.current[[i,j]].value)
+            }
+          }
         }
-        if(message === "SUCCESS"){
-          alert(message);
-          
-          const resultarea = document.querySelector("#resultarea");
-          resultarea.append("\n"+fileName+" : \n" +res.data.comment);
-
-
+        if(buttonInputRef.current[[i,0]] !== null && buttonInputRef.current[[i,0]] !== undefined){
+          if(buttonInputRef.current[[i,0]].value !== ""){
+            buttonList.push({
+              buttonName : buttonNameList[i],
+              buttonType : buttonTypeList[i],
+              urlList : urlList,
+            })
+          }
         }
-        if(message === "TOKEN EXPIRED"){
-          alert(message);
-          navigate("/login")
-        }
-        if(message === "TOKEN NULL"){
-          alert(message);
-          navigate("/login");
-        }
-        if(message === "INSERT ERROR"){
-          alert('스탬프 발급 오류');
-          window.location.reload();
-
-        }
-        uploadExcel.value = "";
-
- 
-})
+        urlList = [];
+      }
+  
+  
+     if(templateCode == null){
+        return;
+     }
+  
+  
+     var excels = document.querySelectorAll("#uploadExcelForm")[0];
+  
+     if(excelval !==""){
+  
+      const formData = new FormData(excels);
+      const fileName = e.target.files[0].name;
+      //const files = e.target.files[0];      
+      const value = [{
+        shop_info_no : shop,
+        templateCode : templateCode,
+        stampIssue : stampIssue,
+        buttonList : buttonList,
+      }]
+  
     
-}
+      formData.append("file", excels);
+      const blob = new Blob([JSON.stringify(value)], {type : "application/json"})
+  
+      formData.append("data" , blob);
+         
+    axios({
+      method : "post",
+      url : `${config.SERVER_URL}/kakao/uploadExcel.do?template=${templateCode}`,
+      data : formData,
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "multipart/form-data; application/json", 
+      },
+      xhrFields: {
+        withCredentials: true
+      },
+    }).then(res => {
+      console.log(res);
+  
+  
+    const message = res.data.result;
+          if(message === "TOKEN ERROR"){
+            alert(message);
+            navigate("/login")
+          }
+          if(message === "SUCCESS"){
+            alert(message);
+            
+            const resultarea = document.querySelector("#resultarea");
+            resultarea.append("\n"+fileName+" : \n" +res.data.comment);
+  
+  
+          }
+          if(message === "TOKEN EXPIRED"){
+            alert(message);
+            navigate("/login")
+          }
+          if(message === "TOKEN NULL"){
+            alert(message);
+            navigate("/login");
+          }
+          if(message === "INSERT ERROR"){
+            alert('스탬프 발급 오류');
+            window.location.reload();
+  
+          }
+          uploadExcel.value = "";
+  
+   
+      }).finally(() => {
+        setResLoading(true);
+      })
+    }
+    
+    
+  }
 }
 
   function downloadExel(e){
@@ -333,9 +366,18 @@ axios({
      
   }
 
-  function 단일업로드(e){
+  function 단일업로드(e) {
+  
+   setResLoading(false);
+   if(window.confirm("알림톡을 전송하시겠습니까?") === false){
+    setResLoading(true);
+    return;
+   }
 
-
+   setTimeout(() => {uploadOne()}, 1000);
+   
+   return;
+   function uploadOne(){
     for(let i = 0; i < 5; i++){
       for(let j = 0; j<itemCount + 1; j++){
         if(inputRef.current[[i,j]] !== null && inputRef.current[[i,j]] !== undefined){
@@ -343,6 +385,7 @@ axios({
           if(inputRef.current[[i,j]].value === ""){
             alert("입력된 값이 없습니다.")
             inputRef.current[[i,j]].focus();
+            setResLoading(true);
             return;
           }else{
             if(j == 0){
@@ -350,6 +393,7 @@ axios({
               if(regPhone.test(inputRef.current[[i,j]].value) === false){
                 alert('휴대폰 형식에 맞지않습니다.')
                 inputRef.current[[i,j]].focus();
+                setResLoading(true);
                 return;
               }
             }
@@ -369,6 +413,7 @@ axios({
           if(buttonInputRef.current[[i,j]].value == ""){
             alert("입력된 값이 없습니다.")
             buttonInputRef.current[[i,j]].focus();
+            setResLoading(true);
             return;
           }else{
             urlList.push(buttonInputRef.current[[i,j]].value)
@@ -407,16 +452,12 @@ axios({
             buttonList : buttonList,
           }]
 
-
-
-
-          console.log(value);
+          
 
 
           formData.append("file", excel);
           const blob = new Blob([JSON.stringify(value)], {type : "application/json"})
           formData.append("data" , blob);
-
 
           axios({
             method : "post",
@@ -466,7 +507,12 @@ axios({
             inputss.forEach((e) => {
               e.value = ""
             })
+          }).finally(() => {
+            setResLoading(true);
           })
+    
+   }
+   
 			
   }
 
@@ -474,11 +520,13 @@ axios({
   
 
 
-  
 
   if(loading === true){
     return (
         <Wrapper>
+            {resLoading === false &&
+              <LoadingForeground/>
+            }
             <Form>
                <Title>알림톡 전송 
               <div style={{flex : '1', textAlign : 'right'}}>   
@@ -625,7 +673,7 @@ axios({
             </Form>
         </Wrapper>
     );
-  }else{
+  }else{  
     return (
       <Wrapper>
       <Spinner name="ball-grid-pulse" color="steelblue" />
@@ -644,7 +692,7 @@ const Wrapper = styled.div`
   align-items: center;
   width : 100%;
   padding-left: 50px;
-  padding-top : 50px;
+  padding-top : 80px;
 
   
 
@@ -959,4 +1007,3 @@ const TemplateContainer = styled.div`
 
 
 `
-

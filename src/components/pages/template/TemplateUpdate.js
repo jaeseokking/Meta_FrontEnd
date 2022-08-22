@@ -312,15 +312,6 @@ useEffect(() =>  {
     }else{
       return ;
     }
-
-    const data = {
-      shop_info_no : shop,
-      talkCode : talkCode,
-      status : status,
-      templateTitle : templateTitle,
-      templateCode : templateCode,
-      itemCount : itemCount
-    }
    
   }
  

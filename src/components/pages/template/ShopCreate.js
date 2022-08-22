@@ -4,10 +4,12 @@ import { refreshToken } from '../../auth/RefreshToken';
 import axios from 'axios';
 import * as config from '../../../config';
 import { useNavigate } from 'react-router';
+import LoadingForeground from '../../layout/LoadingForeground';
 
 
 const ShopCreate = ({loginCallBack}) => {
     const inputRef = useRef([]);
+    const [resLoading, setResLoading] = useState(true);
 
     const navigate = useNavigate();
     const [value, setValue] = useState({
@@ -32,70 +34,80 @@ const ShopCreate = ({loginCallBack}) => {
 
   
     const createShop = () => {
+      setResLoading(false);
+      if(window.confirm("가맹점을 추가하시겠습니까?") === false){
+        setResLoading(true);
+        return;
+      }
+      setTimeout(() => {create()}, 500);
+
+      function create(){
         for(let i = 0; i<inputRef.current.length; i++){
-            if(inputRef.current[i].value === ""){
-                alert(inputRef.current[i].id + "를 입력해주세요.");
-                inputRef.current[i].focus();
-                return;
-            }
+          if(inputRef.current[i].value === ""){
+              alert(inputRef.current[i].id + "를 입력해주세요.");
+              inputRef.current[i].focus();
+              return;
+          }
 
 
-        }
+      }
 
-        const data = {
-            shopBizno : value.shopBizno,
-            shopName : value.shopName,
-            shopBranch : value.shopBranch,
-            shopAddr : value.shopAddr,
-            shopCEO : value.shopCEO,
-            shopTelNum : value.shopTelNum,
-            shopInfoNo : value.shopInfoNo,
-        }
-        try {
-            axios.post(`${config.SERVER_URL}/api/create/shop`, JSON.stringify(data), {
-            headers: {
-                "Content-Type": `application/json`,
-            },
-            xhrFields: {
-                withCredentials: true
-            },
-        })
-            .then(res => {
-            const message = res.data.result;
-            if(message === "NON BIZNO"){
-                alert("해당 사업자번호(ID) 계정이 존재하지 않습니다.")
-                return;
-            }
-            if(message === "TOKEN ERROR"){
-                alert(message);
-                navigate("/login")
-            }
-            if(message === "SUCCESS"){
-                alert("가맹점 추가 완료")
-                window.location.reload();
-            }
-            if(message === "REDUPLICATED SHOP_INFO_NO"){
-                alert(message)
-                inputRef.current[0].focus();
-            }
-            if(message === "TOKEN EXPIRED"){
-                alert("로그인 만료 다시 로그인해주세요.");
-                navigate("/login")
-            }
-            if(message === "TOKEN NULL"){
-                navigate("/login");
-            }
-            
-                
-            })
-            .catch(ex => {
-            })
-            .finally(() => {
-            });
-        } catch (error) {
-            console.log(error);
-            
-        } 
+      const data = {
+          shopBizno : value.shopBizno,
+          shopName : value.shopName,
+          shopBranch : value.shopBranch,
+          shopAddr : value.shopAddr,
+          shopCEO : value.shopCEO,
+          shopTelNum : value.shopTelNum,
+          shopInfoNo : value.shopInfoNo,
+      }
+      try {
+          axios.post(`${config.SERVER_URL}/api/create/shop`, JSON.stringify(data), {
+          headers: {
+              "Content-Type": `application/json`,
+          },
+          xhrFields: {
+              withCredentials: true
+          },
+      })
+          .then(res => {
+          const message = res.data.result;
+          if(message === "NON BIZNO"){
+              alert("해당 사업자번호(ID) 계정이 존재하지 않습니다.")
+              return;
+          }
+          if(message === "TOKEN ERROR"){
+              alert(message);
+              navigate("/login")
+          }
+          if(message === "SUCCESS"){
+              alert("가맹점 추가 완료")
+              window.location.reload();
+          }
+          if(message === "REDUPLICATED SHOP_INFO_NO"){
+              alert(message)
+              inputRef.current[0].focus();
+          }
+          if(message === "TOKEN EXPIRED"){
+              alert("로그인 만료 다시 로그인해주세요.");
+              navigate("/login")
+          }
+          if(message === "TOKEN NULL"){
+              navigate("/login");
+          }
+          
+              
+          })
+          .catch(ex => {
+          })
+          .finally(() => {
+          });
+      } catch (error) {
+          console.log(error);
+          
+      } 
+      }
+       
          
           
     }
@@ -111,6 +123,9 @@ const ShopCreate = ({loginCallBack}) => {
 
       return (
         <Wrapper>
+            {resLoading === false &&
+              <LoadingForeground/>
+            }
             <Form>
                <Title>가맹점 추가</Title>
                <Contents>               

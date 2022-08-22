@@ -71,6 +71,10 @@ const TemplateList = ({loginCallBack}) => {
             }
 
             if(result === "SUCCESS"){
+              if(shopList.length < 1){
+                alert("등록된 가맹점이 없습니다. 가맹점을 등록해주세요.")
+                navigate('/info/shop/create');          
+              }
               if(shopList != null){
                 setShopList(shopList);
               }
@@ -231,7 +235,7 @@ const Wrapper = styled.div`
   align-items: center;
   width : 100%;
   padding-left: 50px;
-  padding-top : 50px;
+  padding-top : 80px;
 
 `
 

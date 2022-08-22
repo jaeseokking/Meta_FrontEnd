@@ -145,7 +145,7 @@ const Form = styled.div`
   border-radius : 10px;
   box-shadow: 5px 5px 10px 0px gray;
   padding : 40px;
-    max-width : 600px;
+   max-width : 600px;
   width : 80%;
 
   @media screen and (max-width: 767px){

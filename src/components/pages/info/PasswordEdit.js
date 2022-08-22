@@ -11,6 +11,7 @@ const PasswordEdit = (props) => {
     const [currentPW, setCurrentPW] = useState('');
     const [NewPW, setNewPW] = useState('');
     const [CheckPW, setCheckPW] = useState('');
+    const [resLoading, setResLoading] = useState(true);
 
   //input 입력창에 따른 변수값 저장 
     const ChangePW1 = (e) => {
@@ -27,7 +28,16 @@ const PasswordEdit = (props) => {
 
     async function handleSubmit (e){
         e.preventDefault();
-        if(currentPW === ''){
+        setResLoading(false);
+        if(window.confirm("비밀번호를 수정하시겠습니까?") === false){
+          setResLoading(true);
+          return;
+        }
+        setTimeout(() => {editPW()}, 500)
+
+
+        function editPW(){
+          if(currentPW === ''){
             alert('현재 비밀번호를 입력해주세요.')
             inputRef.current[0].focus();
             return 
@@ -93,31 +103,9 @@ const PasswordEdit = (props) => {
           props.loginCallBack(false, 0);
           
         } 
+        }
 
-
-
-        // await axios.post(`${config.SERVER_URL}/api/login`, {
-             
-        // })
-        //   .then(response => {
-        //     if(response.data.result === true){            
-        //             axios.post(`${config.SERVER_URL}/api/passwordEdit`, {
-        //                 NewPW : NewPW,
-                        
-        //             }).then(response => {
-        //                 if(response.data === 1){
-        //                     alert('비밀번호 변경완료!')
-        //                     navigate("/");
-        //                 }else{
-        //                   alert('변경실패')
-        //                 }
-        //             })
-
-        //     }else {
-        //         alert('현재 비밀번호가 일치하지 않습니다.')
-        //         return
-        //     }
-        //   })
+       
     }
 
     return (
@@ -167,7 +155,7 @@ const Wrapper = styled.div`
   align-items: center;
   width : 100%;
   padding-left: 50px;
-  padding-top : 50px;
+  padding-top : 80px;
   
 
 `

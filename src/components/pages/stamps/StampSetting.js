@@ -6,6 +6,7 @@ import * as config from '../../../config';
 import { useNavigate } from 'react-router';
 import { refreshToken } from '../../auth/RefreshToken';
 import Spinner from 'react-spinkit';
+import LoadingForeground from '../../layout/LoadingForeground';
 
 
 
@@ -21,6 +22,7 @@ const StampSetting = ({loginCallBack}) => {
   const [loading, setLoading] = useState(false);
   const [shopList, setShopList] = useState([]);
   const [shop, setShop] = useState('');
+  const [resLoading, setResLoading] = useState(true);
 
   const [value, SetValue] = useState({
     minimum_price : undefined,
@@ -58,6 +60,11 @@ const StampSetting = ({loginCallBack}) => {
             navigate("/login")
           }
           if(result === "SUCCESS"){
+            console.log(shopList)
+            if(shopList.length < 1){
+              alert("등록된 가맹점이 없습니다. 가맹점을 등록해주세요.")
+              navigate('/info/shop/create');          
+            }
             setShopList(shopList);
             setShop(shopList[0].SHOP_INFO_NO);       
   
@@ -190,10 +197,16 @@ const StampSetting = ({loginCallBack}) => {
   }
 
   const SettingButton = () => {
-    console.log('?????????')
-    for(let i = 0; i<inputRef.current.length; i++){
-      console.log('???????324??')
+    setResLoading(false);
+    if(window.confirm("스탬프 발급 조건을 설정하시겠습니까?") === false){
+      setResLoading(true);
+      return;
+    }
 
+    setTimeout(() => {setting()}, 500);
+    
+  function setting(){
+    for(let i = 0; i<inputRef.current.length; i++){
       if(inputRef.current[i].value === ""){
         if(i < 3){
           inputRef.current[i].value = "";
@@ -206,15 +219,18 @@ const StampSetting = ({loginCallBack}) => {
               continue;
             }
           }else if(i === 2){
-            if(disInput === true){
+            if(disInput3 === true){
               continue;
             }
-          }else 
+          }
+          
           alert(inputRef.current[i].id + "을 설정해주세요.");
+
         }else{
           alert(inputRef.current[i].id + "를 입력해주세요.");
         }
         inputRef.current[i].focus();
+        setResLoading(true);
         return;
       }
       if(i == 3){
@@ -223,6 +239,7 @@ const StampSetting = ({loginCallBack}) => {
           alert('완료 스탬프 개수는 최대 50개까지 가능합니다')
           inputRef.current[i].value = 50;
           inputRef.current[i].focus();
+          setResLoading(true);
           return;
         }
       }
@@ -257,6 +274,7 @@ const StampSetting = ({loginCallBack}) => {
           navigate("/login")
         }
         if(message === "SUCCESS"){
+          alert("스탬프 발급조건이 설정되었습니다.")
           window.location.reload();
         }
         if(message === "TOKEN EXPIRED"){
@@ -272,11 +290,14 @@ const StampSetting = ({loginCallBack}) => {
       .catch(ex => {
       })
       .finally(() => {
+        setResLoading(true);
       });
     } catch (error) {
       console.log(error);
       
     } 
+  }
+    
   
   }
  
@@ -313,6 +334,9 @@ const StampSetting = ({loginCallBack}) => {
   if(loading === true){
     return (
         <Wrapper>
+            {resLoading === false &&
+              <LoadingForeground/>
+            }
             <Form>
                <Title>스탬프 발급 조건 설정 
               <div style={{flex : '1', textAlign : 'right'}}>   
@@ -385,7 +409,7 @@ const Wrapper = styled.div`
   align-items: center;
   width : 100%;
   padding-left: 50px;
-  padding-top : 50px;
+  padding-top : 80px;
   
 
 `
