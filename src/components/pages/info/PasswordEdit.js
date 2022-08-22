@@ -160,12 +160,14 @@ const PasswordEdit = (props) => {
 export default PasswordEdit;
 
 const Wrapper = styled.div`
+  font-family: 'SCDream';
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  height : 100vh;
+  width : 100%;
+  padding-left: 50px;
+  padding-top : 50px;
   
 
 `
@@ -178,7 +180,7 @@ const Form = styled.div`
 
 const Title = styled.div`
   font-size : 30px;
-  color : rgba(1, 78, 136, 0.9);
+  color : #714DDA;
   font-weight: 800;
 
 `
@@ -191,11 +193,12 @@ const Contents = styled.div`
 
 
 const Input = styled.input`
-  width : 200px;
+  width : 400px;
+  height : 30px;
   padding: 11px 13px;
   background: #f9f9fa;
   color: #000;
-  margin-bottom: 0.9rem;
+  margin-bottom: 2rem;
   border-radius: 4px;
   outline: 0;
   border: 1px solid rgba(245, 245, 245, 0.7);
@@ -207,15 +210,32 @@ const Input = styled.input`
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);
   }
 `;
-
 const Button = styled.button`
+  font-family: 'SCDream_Bold';
+  margin-top : 10px;
+  width : 100%;
+  margin-left : 5px;
+  margin-right : 5px;
+  height : 30px;
+  align-self: flex-end;
+
   border-radius: 4px;
-  font-size : 15px;
-  height : 35px;
+  font-size : 20px;
   outline: 0;
-  border: 0px;
-  background-color : rgba(1, 78, 136, 0.9);
+  border: 0;
+  background-color : #714DDA;
   color : rgba(255,255,255);
-  font-weight : bold;
+  cursor:pointer;
+  box-shadow: 1px 1px 3px 0px gray;
+  transition : 0.3s;
+  float : right;
+
+  &:hover{
+    height : 40px;
+    font-size : 22px;
+    border-radius: 5px;
+  }
+
+
 
 `

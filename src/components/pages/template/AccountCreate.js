@@ -27,8 +27,8 @@ const AccountCreate = ({loginCallBack}) => {
       }catch(e){
         console.log(e);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       setLoading(true);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
 
   
@@ -69,7 +69,7 @@ const AccountCreate = ({loginCallBack}) => {
                 alert("계정 생성 완료")
                 window.location.reload();
             }
-            if(message == "REDUPLICATED BIZNO"){
+            if(message === "REDUPLICATED BIZNO"){
                 alert("중복된 아이디입니다.")
                 inputRef.current[0].focus();
             }
@@ -113,21 +113,21 @@ const AccountCreate = ({loginCallBack}) => {
                 <Table>
                     <tr>
                         <th scope="col" >로그인 아이디</th>
-                        <td scope="col"><div><Input name='bizno' id="로그인 아이디" className="bizno" onChange={(e) => valueChange(e)} ref={el => (inputRef.current[0] = el)} ></Input></div></td>
+                        <td ><div><Input name='bizno' id="로그인 아이디" className="bizno" onChange={(e) => valueChange(e)} ref={el => (inputRef.current[0] = el)} ></Input></div></td>
                         <th scope="col">비밀번호</th>
-                        <td scope="col"><div><Input name='password' type="password" id="비밀번호" onChange={(e) => valueChange(e)} ref={el => (inputRef.current[1] = el)}/></div></td>
+                        <td ><div><Input name='password' type="password" id="비밀번호" onChange={(e) => valueChange(e)} ref={el => (inputRef.current[1] = el)}/></div></td>
                     </tr>
                     <tr>
                         <th scope="col" >플러스 친구</th>
-                        <td scope="col"><div><Input name='plusID'  id="플러스 친구"onChange={(e) => valueChange(e)} ref={el => (inputRef.current[2] = el)}/></div></td>
+                        <td ><div><Input name='plusID'  id="플러스 친구"onChange={(e) => valueChange(e)} ref={el => (inputRef.current[2] = el)}/></div></td>
                         <th scope="col">대표자</th>
-                        <td scope="col"><div><Input name='ceoName' id="대표자" onChange={(e) => valueChange(e)} ref={el => (inputRef.current[3] = el)}/></div></td>
+                        <td ><div><Input name='ceoName' id="대표자" onChange={(e) => valueChange(e)} ref={el => (inputRef.current[3] = el)}/></div></td>
                     </tr>
                     <tr>
                         <th scope="col" >대표번호</th>
-                        <td scope="col"><div><Input name='ceoCall' id="대표번호" onChange={(e) => valueChange(e)} ref={el => (inputRef.current[4] = el)}/></div></td>
+                        <td ><div><Input name='ceoCall' id="대표번호" onChange={(e) => valueChange(e)} ref={el => (inputRef.current[4] = el)}/></div></td>
                         
-                        <td scope="col" colSpan={2} ><div className="button_container">
+                        <td  colSpan={2} ><div className="button_container">
                             <button onClick={() => navigate({ pathname : `/account/list`})}
                             >목록</button>
                             <button onClick={createAccount}>등록</button>
@@ -177,7 +177,7 @@ const Form = styled.div`
 
 const Title = styled.div`
   font-size : 30px;
-  color : rgba(1, 78, 136, 0.9);
+  color : #714DDA;
   font-weight: 800;
   width : 100%;
   display: flex;
@@ -209,24 +209,6 @@ const Input = styled.input`
 `
 
 
-const SearchForm = styled.div`
-    display : flex;
-    align-items: center;
-    align-self : end;
-    justify-content: center;
-    width : '100%';
-  
-    @media screen and (max-width: 767px){
-        display: inline-block;
-        align-items: center;
-        align-self : end;
-        justify-content: flex-end;
-    }
-
-`
-
-
-
 const Table = styled.table`
   margin-top : 10px;
   border-collapse: collapse;
@@ -255,7 +237,7 @@ const Table = styled.table`
 
 
   th {
-    color : rgba(1, 78, 136, 0.9);
+    color : #714DDA;
     font-weight : 900;
   }
 
@@ -282,41 +264,3 @@ const Table = styled.table`
 
 `
 
-
-const NotData = styled.div `
-margin-top : 10px;
-  border-collapse: collapse;
-  width : 700px;
-  margin-bottom : 10px;
-  overflow: hidden;
-  border-radius: 15px;
-  align-items : center;
-
-
-
-  div {
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    border-radius : 100px;
-    font-weight: bold;
-
-  }
-`
-
-const Select = styled.select`
-  height : 30px;
-  background: #f9f9fa;
-  border-radius: 4px;
-  color: #000;
-  outline: 0;
-  border: 1px solid rgba(245, 245, 245, 0.7);
-  font-size: 15px;
-  transition: all 0.3s ease-out;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.1);
-  :focus,
-  :hover {
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);
-  }
-  font-family: inherit;
-`

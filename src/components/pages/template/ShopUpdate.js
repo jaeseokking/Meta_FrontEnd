@@ -5,11 +5,6 @@ import * as config from '../../../config';
 import { useNavigate } from 'react-router';
 import { refreshToken } from '../../auth/RefreshToken';
 import Spinner from 'react-spinkit';
-import DatePicker, { registerLocale } from "react-datepicker";  // 한국어적용
-import ko from 'date-fns/locale/ko'; // 한국어적용
-import moment from 'moment';
-import leftButton from '../../../images/angle-left.svg';
-import rightButton from '../../../images/angle-right.svg';
 
 
 
@@ -45,14 +40,12 @@ const ShopUpdate = ({loginCallBack}) => {
     }catch(e){
       console.log(e);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
 
 
-  //초기 설정한 데이터 가져오기
- 
-
-
+//초기 설정한 데이터 가져오기
 
 useEffect(() =>  { 
 
@@ -112,6 +105,7 @@ useEffect(() =>  {
     } 
   }
   getTemplate();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [])
    
 
@@ -131,9 +125,7 @@ useEffect(() =>  {
       shopInfoNo : shopList[e.target.selectedIndex].SHOP_INFO_NO,
       seq : shopList[e.target.selectedIndex].SEQ
     })
-  
-    
-   
+ 
 
   }
 
@@ -239,34 +231,35 @@ useEffect(() =>  {
                </Title>
                <Contents>
                    <Table>
-                    
+                    <tbody>
                     <tr>
                         <th scope="col" >사업자등록번호(ID)</th>
-                        <td scope="col"><div><Input name='shopBizno' type="text" id="로그인 아이디" className="bizno" onChange={(e) => valueChange(e)} ref={el => (inputRef.current[0] = el)} value={value.shopBizno} readOnly></Input></div></td>
+                        <td ><div><Input name='shopBizno' type="text" id="로그인 아이디" className="bizno" onChange={(e) => valueChange(e)} ref={el => (inputRef.current[0] = el)} value={value.shopBizno} readOnly></Input></div></td>
                         <th scope="col">상호명</th>
-                        <td scope="col"><div><Input name='shopName' type="text" id="상호명" onChange={(e) => valueChange(e)} ref={el => (inputRef.current[1] = el)} value={value.shopName}/></div></td>
+                        <td ><div><Input name='shopName' type="text" id="상호명" onChange={(e) => valueChange(e)} ref={el => (inputRef.current[1] = el)} value={value.shopName}/></div></td>
                     </tr>
                     <tr>
                         <th scope="col" >가맹점 이름</th>
-                        <td scope="col"><div><Input name='shopBranch' type="text" id="가맹점 이름"onChange={(e) => valueChange(e)} ref={el => (inputRef.current[2] = el)} value={value.shopBranch}/></div></td>
+                        <td ><div><Input name='shopBranch' type="text" id="가맹점 이름"onChange={(e) => valueChange(e)} ref={el => (inputRef.current[2] = el)} value={value.shopBranch}/></div></td>
                         <th scope="col">주소</th>
-                        <td scope="col"><div><Input name='shopAddr' type="text"id="주소" onChange={(e) => valueChange(e)} ref={el => (inputRef.current[3] = el)} value={value.shopAddr}/></div></td>
+                        <td ><div><Input name='shopAddr' type="text"id="주소" onChange={(e) => valueChange(e)} ref={el => (inputRef.current[3] = el)} value={value.shopAddr}/></div></td>
                     </tr>
                     <tr>
                         <th scope="col" >대표자</th>
-                        <td scope="col"><div><Input name='shopCEO' type="text" id="대표자"onChange={(e) => valueChange(e)} ref={el => (inputRef.current[4] = el)} value={value.shopCEO}/></div></td>
+                        <td ><div><Input name='shopCEO' type="text" id="대표자"onChange={(e) => valueChange(e)} ref={el => (inputRef.current[4] = el)} value={value.shopCEO}/></div></td>
                         <th scope="col">대표번호</th>
-                        <td scope="col"><div><Input name='shopTelNum'type="text" id="대표번호" onChange={(e) => valueChange(e)} ref={el => (inputRef.current[5] = el)} value={value.shopTelNum}/></div></td>
+                        <td ><div><Input name='shopTelNum'type="text" id="대표번호" onChange={(e) => valueChange(e)} ref={el => (inputRef.current[5] = el)} value={value.shopTelNum}/></div></td>
                     </tr>
                     <tr>      
                         <th scope="col" >SHOP_INFO_NO</th>
                         <td><div><Input name='shopInfoNo' type="text" id="SHOP_INFO_NO"onChange={(e) => valueChange(e)} ref={el => (inputRef.current[6] = el)} value={value.shopInfoNo}/></div></td>
                         <td></td>                  
-                        <td scope="col"  ><div className="button_container">
-                            <button onClick={() => navigate({ pathname : `/account/list`})}>계정 목록</button>
+                        <td ><div className="button_container">
+                            {/* <button onClick={() => navigate({ pathname : `/account/list`})}>계정 목록</button> */}
                             <button onClick={(e) => updateShop(e)}>등록</button>
                         </div></td>
-                    </tr>  
+                    </tr>
+                    </tbody>  
                    </Table>
                </Contents>
               
@@ -312,7 +305,7 @@ const Form = styled.div`
 
 const Title = styled.div`
   font-size : 30px;
-  color : rgba(1, 78, 136, 0.9);
+  color : #714DDA;
   font-weight: 800;
   width : 100%;
   display: flex;
@@ -345,22 +338,6 @@ const Input = styled.input`
 `
 
 
-const SearchForm = styled.div`
-    display : flex;
-    align-items: center;
-    align-self : end;
-    justify-content: center;
-    width : '100%';
-  
-    @media screen and (max-width: 767px){
-        display: inline-block;
-        align-items: center;
-        align-self : end;
-        justify-content: flex-end;
-    }
-
-`
-
 
 
 const Table = styled.table`
@@ -391,7 +368,7 @@ const Table = styled.table`
 
 
   th {
-    color : rgba(1, 78, 136, 0.9);
+    color : #714DDA;
     font-weight : 900;
   }
 
@@ -417,28 +394,6 @@ const Table = styled.table`
   }
 
 
-`
-
-
-const NotData = styled.div `
-margin-top : 10px;
-  border-collapse: collapse;
-  width : 700px;
-  margin-bottom : 10px;
-  overflow: hidden;
-  border-radius: 15px;
-  align-items : center;
-
-
-
-  div {
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    border-radius : 100px;
-    font-weight: bold;
-
-  }
 `
 
 const Select = styled.select`

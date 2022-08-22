@@ -190,7 +190,10 @@ const StampSetting = ({loginCallBack}) => {
   }
 
   const SettingButton = () => {
+    console.log('?????????')
     for(let i = 0; i<inputRef.current.length; i++){
+      console.log('???????324??')
+
       if(inputRef.current[i].value === ""){
         if(i < 3){
           inputRef.current[i].value = "";
@@ -206,7 +209,7 @@ const StampSetting = ({loginCallBack}) => {
             if(disInput === true){
               continue;
             }
-          }
+          }else 
           alert(inputRef.current[i].id + "을 설정해주세요.");
         }else{
           alert(inputRef.current[i].id + "를 입력해주세요.");
@@ -214,8 +217,17 @@ const StampSetting = ({loginCallBack}) => {
         inputRef.current[i].focus();
         return;
       }
-    }
+      if(i == 3){
+        if(inputRef.current[i].value > 50){
+          console.log( inputRef.current[i].value)
+          alert('완료 스탬프 개수는 최대 50개까지 가능합니다')
+          inputRef.current[i].value = 50;
+          inputRef.current[i].focus();
+          return;
+        }
+      }
 
+    }
 
 
     const data = {
@@ -318,13 +330,13 @@ const StampSetting = ({loginCallBack}) => {
                      <tbody>
                         <tr>
                           <th>1회발급 최소금액</th>
-                          <td><Input type={"number"} value={value.minimum_price || ""} style={{background : disInput ? "#d3d3d3" : null}} placeholder={disInput ? "조건없음" : "ex) 1000"} name="minimum_price" id="최소금액"  onChange={(e)=>valueChange(e)} disabled={disInput} ref={el => (inputRef.current[0] = el)}/> 원</td>
-                          <td><input type="checkbox" id="money"  defaultChecked={disInput} checked={disInput} onClick={(e) => lockInput(e)}/>조건없음</td>
+                          <td><Input type={"number"} value={value.minimum_price || ""} style={{background : disInput ? "#d3d3d3" : null}} placeholder={disInput ? "조건없음" : "ex) 1000"} name="minimum_price" id="최소금액"  onChange={(e)=>valueChange(e)} disabled={disInput} ref={el => (inputRef.current[0] = el)}/> 원
+                          <input className="checkbox" type="checkbox" id="money"  onChange={(e) => lockInput(e)} checked={disInput} />조건없음</td>
                         </tr>
                         <tr>
                           <th>1회발급 최소건수</th>
-                          <td><Input type={"number"} value={value.minimum_count || ""} style={{background : disInput2 ? "#d3d3d3" : null}} placeholder={disInput2 ? "조건없음" : "ex) 1"} name="minimum_count" id="최소건수"  onChange={(e)=>valueChange(e)} disabled={disInput2} ref={el => (inputRef.current[1] = el)}/> 개</td>
-                          <td><input type="checkbox"  defaultChecked={disInput2} checked={disInput2} id="count" onClick={(e) => lockInput(e)}/>조건없음</td>
+                          <td><Input type={"number"} value={value.minimum_count || ""} style={{background : disInput2 ? "#d3d3d3" : null}}  placeholder={disInput2 ? "조건없음" : "ex) 1"} name="minimum_count" id="최소건수"  onChange={(e)=>valueChange(e)} disabled={disInput2} ref={el => (inputRef.current[1] = el)}/> 개
+                          <input className="checkbox" type="checkbox" onChange={(e) => lockInput(e)} checked={disInput2} id="count"/>조건없음</td>
                         </tr>
                         <tr>
                           <th>이벤트 기간</th>
@@ -332,19 +344,19 @@ const StampSetting = ({loginCallBack}) => {
                         </tr>
                         <tr>
                           <th>발급후 사용기간</th>
-                          <td><Input type={"number"} value={value.stamp_exp || ""} style={{background : disInput3 ? "#d3d3d3" : null}} placeholder={disInput3 ? "무제한" : "ex) 30"} name="stamp_exp" id="사용기간"  onChange={(e)=>valueChange(e)} ref={el => (inputRef.current[2] = el)}/> 일</td>
-                          <td><input type="checkbox" defaultChecked={disInput3} checked={disInput3} id="exp" onClick={(e) => lockInput(e)}/>조건없음</td>
+                          <td><Input type={"number"} value={value.stamp_exp || ""} style={{background : disInput3 ? "#d3d3d3" : null}} placeholder={disInput3 ? "무제한" : "ex) 30"} name="stamp_exp" id="사용기간"  onChange={(e)=>valueChange(e)} ref={el => (inputRef.current[2] = el)}/> 일
+                          <input className="checkbox" type="checkbox" onChange={(e) => lockInput(e)} checked={disInput3} id="exp" />조건없음</td>
                         </tr>
                         <tr>
                           <th>완료 스탬프 개수</th>
-                          <td><Input type={"number"} name="completion_stamp" id="완료 개수" placeholder="ex) 10" onChange={(e)=>valueChange(e)} value={value.completion_stamp || ""} ref={el => (inputRef.current[3] = el)}/> 개</td>
+                          <td><Input type={"number"} name="completion_stamp" id="완료 개수" placeholder="ex) 10"onChange={(e)=>valueChange(e)} value={value.completion_stamp || ""} ref={el => (inputRef.current[3] = el)}/> 개</td>
                         </tr>
                         <tr>
                           <th>스탬프 보상</th>
-                          <td><Input value={value.reward || ""} name="reward" placeholder="ex) 할인 2000원" id="스탬프 보상" onChange={(e)=>valueChange(e)} ref={el => (inputRef.current[4] = el)}/></td>
+                          <td><Input value={value.reward || ""} name="reward" placeholder="ex) 할인 2000원" maxLength="5"  id="스탬프 보상" onChange={(e)=>valueChange(e)} ref={el => (inputRef.current[4] = el)}/></td>
                         </tr>
                         <tr>
-                          <td colSpan={3} style={{textAlign : 'right'}}>
+                          <td colSpan={3} style={{textAlign : 'right' , border : '0'}}>
                               <Button onClick={SettingButton}>설정</Button>
                           </td>
                         </tr>
@@ -366,12 +378,14 @@ const StampSetting = ({loginCallBack}) => {
 export default StampSetting;
 
 const Wrapper = styled.div`
+  font-family: 'SCDream';
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  height : 100vh;
+  width : 100%;
+  padding-left: 50px;
+  padding-top : 50px;
   
 
 `
@@ -380,20 +394,23 @@ const Form = styled.div`
   border-radius : 10px;
   box-shadow: 5px 5px 10px 0px gray;
   padding : 40px;
+  width : 1000px;
+  background-color: white;
 `
 
 const Title = styled.div`
   font-size : 30px;
-  color : rgba(1, 78, 136, 0.9);
+  color : #714DDA;
   font-weight: 800;
   width : 100%;
   display: flex;
   flex-direction: row;
+  font-family: 'SCDream_Bold';
+
 `
 
 const Contents = styled.div`
   margin-top : 20px;
-  display : flex;
 `
 
 const Input = styled.input`
@@ -418,13 +435,17 @@ const Input = styled.input`
 `
 
 const Table = styled.table`
-  border: 0px;
   border-collapse: separate;
   border-spacing: 0 10px;
+  font-family: 'SCDream';
+  font-weight : 900;
+  border-spacing: 0 0px;
+  width : 100%;
 
   tbody th {
-    font-weight : 400;
-    padding : 10px;
+    padding : 25px;
+    font-family: 'SCDream_Bold';
+
   }
 
   input::-webkit-outer-spin-button,
@@ -433,30 +454,63 @@ const Table = styled.table`
     margin: 0;
   }
 
+
+
+  th {
+    background-color: #F5F2F4;
+    border-bottom : 1px solid #888;
+    width : 180px;
+  }
+
+  td{
+    border-bottom : 1px solid #888;
+    padding-left : 20px;
+  }
+
   /* Firefox */
   input[type=number] {
     -moz-appearance: textfield;
   }
-`
 
+  .checkbox {
+    margin-left : 30px;
+  }
+
+  tr:last-child td{
+    height : 50px;
+  }
+
+ 
+`
 const Button = styled.button`
-  max-width : 50px;
+  font-family: 'SCDream_Bold';
+  margin-top : 10px;
+  width : 150px;
   margin-left : 5px;
   margin-right : 5px;
-  height : 25px;
+  height : 30px;
   align-self: flex-end;
 
   border-radius: 4px;
-  font-size : 15px;
+  font-size : 20px;
   outline: 0;
-  border: 0px solid rgba(1, 78, 136, 0.9);
-  background-color : rgba(1, 78, 136, 0.9);
+  border: 0;
+  background-color : #714DDA;
   color : rgba(255,255,255);
+  cursor:pointer;
+  box-shadow: 1px 1px 3px 0px gray;
+  transition : 0.3s;
 
-  &:hover {
-    cursor:pointer;
+  &:hover{
+    width : 170px;
+    height : 34px;
+    font-size : 22px;
+    border-radius: 5px;
+
   }
+
 `
+
 
 
 const Select = styled.select`
@@ -469,6 +523,7 @@ const Select = styled.select`
   font-size: 15px;
   transition: all 0.3s ease-out;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
   :focus,
   :hover {
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);

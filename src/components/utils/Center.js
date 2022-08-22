@@ -1,14 +1,16 @@
 import React from 'react'
 import {useMediaQuery} from 'react-responsive';
 import styled from 'styled-components';
+import TopLayout from '../layout/TopLayout';
 
 function Center({children}) {
-    const Center_D = () => {
-        const isDesktop = useMediaQuery({minWidth : 768});
-        return isDesktop && <DesktopCenter>{children}</DesktopCenter> 
+    const CenterD = () => {
+        // const isDesktop = useMediaQuery({minWidth : 768});
+        // return isDesktop && <DesktopCenter>{children}</DesktopCenter> 
+        return <DesktopCenter>{children}</DesktopCenter>
     }
     
-    const Center_M = () => {
+    const CenterM = () => {
         const isMobile = useMediaQuery({maxWidth : 767});
         return isMobile && <MobileCenter>{children}</MobileCenter>;
     }
@@ -17,8 +19,9 @@ function Center({children}) {
 
     return (
         <>
-            <Center_D/>
-            <Center_M/>
+       
+            <CenterD/>
+            {/* <CenterM/> */}
         </>
     );
 }
@@ -38,3 +41,4 @@ const MobileCenter = styled.div`
     display: flex;
     flex-direction : column;
 `
+

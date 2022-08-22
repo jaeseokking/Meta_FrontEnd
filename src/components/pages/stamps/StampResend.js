@@ -202,12 +202,15 @@ function changePhone(e){
 export default StampResend;
 
 const Wrapper = styled.div`
+  font-family: 'SCDream';
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  height : 100vh;
+  width : 100%;
+  padding-left: 50px;
+  padding-top : 50px;
+
   
 
 `
@@ -220,7 +223,7 @@ const Form = styled.div`
 
 const Title = styled.div`
   font-size : 30px;
-  color : rgba(1, 78, 136, 0.9);
+  color : #714DDA;
   font-weight: 800;
   width : 100%;
   display: flex;
@@ -305,12 +308,16 @@ const Button = styled.button`
   border-radius: 4px;
   font-size : 15px;
   outline: 0;
-  border: 0px solid rgba(1, 78, 136, 0.9);
-  background-color : rgba(1, 78, 136, 0.9);
+  border: 0;
+  background-color : #714DDA;
   color : rgba(255,255,255);
+
+  transition : 0.2s;
 
   &:hover {
     cursor:pointer;
+    transition : 0.2s;
+    border-radius: 20px;
   }
 `
 

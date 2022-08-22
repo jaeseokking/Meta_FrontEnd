@@ -87,6 +87,7 @@ const StampDetail = ({loginCallBack}) => {
         STAMP_USE_YN : useYN
 
       }).then(response => {
+        console.log(response);
         const status = response.data.result;
         if(status === 'SUCCESS'){
           alert('수정완료')
@@ -134,16 +135,13 @@ const StampDetail = ({loginCallBack}) => {
             
                         <tr>
                           <td colSpan={3} style={{textAlign : 'right'}}>
-                              
+                            <Button style={{backgroundColor : '#714DDA' }} onClick={() => updateStamp()}>수정</Button>
+                            <Button style={{ backgroundColor : 'rgba(150, 150, 150, 0.9)', marginRight : '30px'}} onClick={()=> navigate('/stamp/list')}>확인</Button>
                           </td>
                         </tr>
                      </tbody>
                    </Table>
                    </Contents>
-                   <div style={{width : '100%', textAlign : 'end' , marginTop : '10px'}}> 
-                    <Button style={{backgroundColor : 'rgba(1, 78, 136, 0.9)' }} onClick={() => updateStamp()}>수정</Button>
-                    <Button style={{ backgroundColor : 'rgba(150, 150, 150, 0.9)', marginRight : '30px'}} onClick={()=> navigate('/stamp/list')}>확인</Button>
-                   </div>
             </Form>
         </Wrapper>
       );
@@ -160,13 +158,14 @@ const StampDetail = ({loginCallBack}) => {
 export default StampDetail;
 
 const Wrapper = styled.div`
+  font-family: 'SCDream';
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  height : 100vh;
- 
+  width : 100%;
+  padding-left: 50px;
+  padding-top : 50px;
 
 
 `
@@ -174,19 +173,18 @@ const Form = styled.div`
   border : 0px solid gray; 
   border-radius : 10px;
   box-shadow: 5px 5px 10px 0px gray;
-  padding : 10px;
-    max-width : 600px;
-  width : 80%;
-
-  @media screen and (max-width: 767px){
-    width : 80%;
-  }
+  padding : 40px;
+  width : 1000px;
+  background-color: white;
 `
-
 const Title = styled.div`
   font-size : 30px;
-  color : rgba(1, 78, 136, 0.9);
+  color : #714DDA;
   font-weight: 800;
+  width : 100%;
+  display: flex;
+  flex-direction: row;
+  font-family: 'SCDream_Bold';
 
 `
 
@@ -194,20 +192,23 @@ const Contents = styled.div`
   margin : 30px 30px 0px 30px;
   display : flex;
   flex-direction: column;
-  border: 2px solid rgb(240,240,240);
   border-radius: 5px;
  
 `
 
 
 const Table = styled.table`
-  border: 0px;
   border-collapse: separate;
   border-spacing: 0 10px;
+  font-family: 'SCDream';
+  font-weight : 900;
+  border-spacing: 0 0px;
+  width : 100%;
 
   tbody th {
-    font-weight : 400;
-    padding : 10px;
+    padding : 25px;
+    font-family: 'SCDream_Bold';
+
   }
 
   input::-webkit-outer-spin-button,
@@ -216,26 +217,62 @@ const Table = styled.table`
     margin: 0;
   }
 
+
+
+  th {
+    background-color: #F5F2F4;
+    border-bottom : 1px solid #888;
+    width : 180px;
+  }
+
+  td{
+    border-bottom : 1px solid #888;
+    padding-left : 20px;
+  }
+
+  tr:last-child td:last-child{
+    border-bottom : 0;
+  }
+
   /* Firefox */
   input[type=number] {
     -moz-appearance: textfield;
   }
+
+  .checkbox {
+    margin-left : 30px;
+  }
+
+  tr:last-child td{
+    height : 50px;
+  }
 `
 
 const Button = styled.button`
-  max-width : 50px;
+  font-family: 'SCDream_Bold';
+  margin-top : 10px;
+  width : 150px;
   margin-left : 5px;
   margin-right : 5px;
-  height : 25px;
+  height : 30px;
   align-self: flex-end;
 
   border-radius: 4px;
-  font-size : 15px;
+  font-size : 20px;
   outline: 0;
-  border: 0px ;
+  border: 0;
+  background-color : #714DDA;
   color : rgba(255,255,255);
+  cursor:pointer;
+  box-shadow: 1px 1px 3px 0px gray;
+  transition : 0.3s;
 
-  &:hover {
-    cursor:pointer;
+  &:hover{
+    width : 170px;
+    height : 34px;
+    font-size : 22px;
+    border-radius: 5px;
+
   }
+
 `

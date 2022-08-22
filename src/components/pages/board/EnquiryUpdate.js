@@ -160,7 +160,7 @@ const EnquiryUpdate = ({loginCallBack}) => {
                       onChange={handleContent}
                   />
                     <div style={{width : '100%', textAlign : 'end' , marginTop : '10px'}}> 
-                    <Button style={{backgroundColor : 'rgba(1, 78, 136, 0.9)' }} onClick={enquiryUpdate} >수정</Button>
+                    <Button style={{backgroundColor : '#714DDA' }} onClick={enquiryUpdate} >수정</Button>
                     <Button style={{ backgroundColor : 'rgba(150, 150, 150, 0.9)'}} onClick={()=> navigate(`/enquiry/detail?idx=${idx}`)}>취소</Button>
                    </div>
                 </Contents>
@@ -197,7 +197,7 @@ const Form = styled.div`
 
 const Title = styled.div`
   font-size : 30px;
-  color : rgba(1, 78, 136, 0.9);
+  color : #714DDA;
   font-weight: 800;
 
 `
@@ -247,8 +247,8 @@ const Button = styled.button`
   border-radius: 4px;
   font-size : 15px;
   outline: 0;
-  border: 0px solid rgba(1, 78, 136, 0.9);
-  background-color : rgba(1, 78, 136, 0.9);
+  border: 0px ;
+  background-color : #714DDA;
   color : rgba(255,255,255);
 
   &:hover {

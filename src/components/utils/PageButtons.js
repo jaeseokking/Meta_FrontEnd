@@ -5,47 +5,62 @@ import * as config from '../../config'
 
 
 function PageButtons({currentPage, startDate, endDate, selectUse, what, shopInfoNo}) {
-	  const [selectPage, setSelectPage] = useState(currentPage); 
+	  const [selectPage, setSelectPage] = useState(); 
     const [totalcounts, setTot] = useState(0);
-
+    const [whatType, setWhatType] = useState();
     const [index, setIndex] = useState(0);
     const [loading, setLoading] = useState(false);
     const [kind, setKind] = useState('');
+    const [sDate, setSDate] = useState();
+    const [eDate, setEDate] = useState();
+    const [use, setUse] = useState();
+    const [shop, setShop] = useState();
 
     //시작날짜와 끝날짜, 사용유무를 선택 변경할 경우 시작페이지와 인덱스 변경
     useEffect(() => {
       setSelectPage(1)
       setIndex(0)
+       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [startDate, endDate, selectUse, shopInfoNo])
 
+    useEffect(() => {
+      setSelectPage(currentPage);
+      setWhatType(what);
+      setSDate(startDate);
+      setEDate(endDate);
+      setUse(selectUse);
+      setShop(shopInfoNo)
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
-  
+
     //초기 렌더링시 전체의 갯수를 가져옴
     var pageNumber = [];
     useEffect(() => {
-        if(what === 'stamp'){
+        if(whatType === 'stamp'){
           setKind('스탬프')
-        }else if(what === 'notice'){
+        }else if(whatType === 'notice'){
           setKind('공지')
-        }else if(what === 'enquiry'){
+        }else if(whatType === 'enquiry'){
           setKind('문의')
-        }else if(what === 'account'){
+        }else if(whatType === 'account'){
           setKind('계정')
-        }else if(what === 'template'){
+        }else if(whatType === 'template'){
           setKind("템플릿")
         }
 
-      axios.post(`${config.SERVER_URL}/api/board/counts`, {
-          startDate : startDate,
-          endDate: endDate,
-          selectUse : selectUse,
-          what : what,
-          shop_info_no : shopInfoNo
-        }).then(response => {
-            setTot(response.data)
-            setLoading(true);
-        })   
-      }, [])
+        axios.post(`${config.SERVER_URL}/api/board/counts`, {
+            startDate : sDate,
+            endDate: eDate,
+            selectUse : use,
+            what : whatType,
+            shop_info_no : shop
+          }).then(response => {
+              setTot(response.data)
+              setLoading(true);
+          })
+          // eslint-disable-next-line react-hooks/exhaustive-deps   
+    }, [])
 
       //시작날짜와 끝날짜, 사용유무를 선택 변경할 경우 페이지 갯수 가져옴
       useEffect(() => {
@@ -58,7 +73,8 @@ function PageButtons({currentPage, startDate, endDate, selectUse, what, shopInfo
         }).then(response => {
             setTot(response.data)
             setLoading(true);
-        })   
+        }) 
+         // eslint-disable-next-line react-hooks/exhaustive-deps  
       }, [startDate, endDate, selectUse, shopInfoNo])
 
     //총 페이지를 한페이지에 10개씩 보여줌 
@@ -91,6 +107,7 @@ function PageButtons({currentPage, startDate, endDate, selectUse, what, shopInfo
         setSelectPage(1)
 
       }
+       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index])
 
     function SetPage(value){

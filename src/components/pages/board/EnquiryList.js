@@ -124,12 +124,14 @@ const EnquiryList = ({loginCallBack}) => {
 export default EnquiryList;
 
 const Wrapper = styled.div`
+  font-family: 'SCDream';
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  height : 100vh;
+  width : 100%;
+  padding-left: 50px;
+  padding-top : 50px;
  
 
 
@@ -138,17 +140,14 @@ const Form = styled.div`
   border : 0px solid gray; 
   border-radius : 10px;
   box-shadow: 5px 5px 10px 0px gray;
-
-  width : 80%;
-
-  @media screen and (max-width: 767px){
-    width : 95%;
-  }
+  padding : 40px;
+  width : 1000px;
+  background-color: white;
 `
 
 const TitleContainer = styled.div`
   font-size : 30px;
-  color : rgba(1, 78, 136, 0.9);
+  color : #714DDA;
   font-weight: 800;
   border-bottom : 2px solid rgb(230,230,230);
 
@@ -227,7 +226,7 @@ const Button = styled.button`
   font-weight : 600;
   transition: 0.5s;
   :hover {
-   background-color : rgba(1, 78, 136, 0.9);
+   background-color : #714DDA;
   }
   cursor: pointer;
 `

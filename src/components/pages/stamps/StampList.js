@@ -87,21 +87,27 @@ const StampList = ({loginCallBack}) => {
     }, [])
   
     useEffect(() => {
-      axios.post(`${config.SERVER_URL}/api/stamp/board`, {
-        page : page,
-        startDate : startDate,
-        endDate : endDate,
-        selectUse : selectUse,
-        shop_info_no : shop,
-      }).then(response => {
-       if(response.data.stampList != null){
-        setList(response.data.stampList)
 
-       }
+      async function getBoard(){
+        await axios.post(`${config.SERVER_URL}/api/stamp/board`, {
+          page : page,
+          startDate : startDate,
+          endDate : endDate,
+          selectUse : selectUse,
+          shop_info_no : shop,
+        }).then(response => {
+         if(response.data.stampList != null){
+          setList(response.data.stampList)
+  
+         }
+  
+          setLoading(true);
+  
+        })
+      }
+    
+      getBoard();
 
-        setLoading(true);
-
-      })
     }, [page, startDate, endDate, selectUse, shop])
   
     function selectShop(e){
@@ -141,7 +147,7 @@ const StampList = ({loginCallBack}) => {
                     <th scope="col">발행일자</th>
                     <th scope="col">유효일자</th>
                     <th scope="col">스탬프 개수</th>
-                    <th scope="col">사용유무</th>
+                    <th scope="col" style={{width : '70px'}}>사용유무</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -170,7 +176,9 @@ const StampList = ({loginCallBack}) => {
                     조회된 스탬프가 없습니다.
                   </div>
                 }
+                {list.length > 0 &&
                 <PageButtons currentPage={setPage} startDate={startDate} endDate={endDate} selectUse={selectUse} what={'stamp'} shopInfoNo={shop}/>
+                }
                </Contents>
             </Form>
         </Wrapper>
@@ -188,13 +196,14 @@ const StampList = ({loginCallBack}) => {
 export default StampList;
 
 const Wrapper = styled.div`
+  font-family: 'SCDream';
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  height : 100vh;
- 
+  width : 100%;
+  padding-left: 50px;
+  padding-top : 50px;
 `
 
 
@@ -203,27 +212,35 @@ const Form = styled.div`
   border-radius : 10px;
   box-shadow: 5px 5px 10px 0px gray;
   padding : 40px;
+  width : 1000px;
+  background-color: white;
 
-  width : 80%;
-
-  @media screen and (max-width: 767px){
-    width : 95%;
-  }
 `
 
 const Title = styled.div`
   font-size : 30px;
-  color : rgba(1, 78, 136, 0.9);
+  color : #714DDA;
   font-weight: 800;
   width : 100%;
   display: flex;
   flex-direction: row;
+  font-family: 'SCDream_Bold';
+
 `
 
 const Contents = styled.div`
   margin-top : 20px;
   display : flex;
   flex-direction: column;
+  transition : 0.4s;
+
+  button {
+    &:hover {
+    cursor:pointer;
+    transition : 0.4s;
+    border-radius: 20px;
+    }
+  }
  
 `
 
@@ -235,13 +252,13 @@ const SearchForm = styled.div`
     align-self : end;
     justify-content: center;
     width : '100%';
-  
+/*   
     @media screen and (max-width: 767px){
         display: inline-block;
         align-items: center;
         align-self : end;
         justify-content: flex-end;
-    }
+    } */
 
 `
 
@@ -252,9 +269,10 @@ const Table = styled.table`
   border-collapse: collapse;
   margin-bottom : 10px;
   overflow: hidden;
-  border-radius: 15px;
   align-items : center;
   width : 100%;
+  font-family: 'SCDream';
+
 
 
   div {
@@ -269,27 +287,39 @@ const Table = styled.table`
   th, td {
     padding : 10px;
     text-align: center;
-    border : 2px solid rgb(255, 255, 255);
-    font-size: 13px;
+    font-size: 15px;
+    height : 35px;
+    border-bottom : 1px solid #aeaeae;
 
   }
 
+  td:first-child{
+    border-left : 0px;
+  }
+
+  th:first-child{
+    border-left : 0px;
+  }
+
   th {
-    color: rgb(255, 255, 255);
-    background-color: rgba(1, 78, 136, 0.9);;
+    background-color: #F5F2F4;
+    border-top: 1px solid black;
+    border-left : 1px solid #aeaeae;
+    font-family: 'SCDream_Bold';
+
 
   }
 
   td {
     padding: 7px;
-    background-color: rgb(240, 240, 240);
+    border-left : 1px solid #aeaeae;
   }
 
-  .stamp_code {
+  /* .stamp_code {
     @media screen and (max-width: 767px){
       display : none;
     }
-  }
+  } */
 
 `
 
@@ -305,9 +335,12 @@ const Select = styled.select`
   font-size: 15px;
   transition: all 0.3s ease-out;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  
   :focus,
   :hover {
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);
   }
   font-family: inherit;
 `
+

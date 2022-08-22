@@ -1,12 +1,10 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
-import CalendarSetting from '../list/CalendarSetting';
 import axios from 'axios';
 import * as config from '../../../config';
 import { useNavigate } from 'react-router';
 import { refreshToken } from '../../auth/RefreshToken';
 import Spinner from 'react-spinkit';
-import reactStringReplace from 'react-string-replace';
 import {format} from 'date-fns';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
@@ -14,7 +12,6 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 
 const TemplateMessage = ({loginCallBack}) => {
-  const inputRef = useRef([]);
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -34,6 +31,7 @@ const TemplateMessage = ({loginCallBack}) => {
     }catch(e){
       console.log(e);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
@@ -76,73 +74,13 @@ const TemplateMessage = ({loginCallBack}) => {
       console.log(error);
       
     } 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-
-
-
-
-
-
-  function insertTemplate(){
-    for(let i = 0; i<inputRef.current.length; i++){
-      if(inputRef.current[i].value === ""){
-        alert(inputRef.current[i].id + "를 입력해주세요.");
-        inputRef.current[i].focus();
-        return;
-      }
-    }
-
-
-
-
-
-    const data = {
-    }
-    try {
-      axios.post(`${config.SERVER_URL}/api/template/insert`, JSON.stringify(data), {
-        headers: {
-          "Content-Type": `application/json`,
-        },
-        xhrFields: {
-          withCredentials: true
-        },
-    })
-      .then(res => {
-        
-
-        const message = res.data.result;
-        if(message === "TOKEN ERROR"){
-          alert(message);
-          navigate("/login")
-        }
-        if(message === "SUCCESS"){
-          window.location.reload();
-        }
-        if(message === "TOKEN EXPIRED"){
-          alert("로그인 만료 다시 로그인해주세요.");
-          navigate("/login")
-        }
-        if(message === "TOKEN NULL"){
-          navigate("/login");
-        }
-      
-          
-      })
-      .catch(ex => {
-      })
-      .finally(() => {
-      });
-    } catch (error) {
-      console.log(error);
-      
-    } 
-  }
 
 
   function regMessage(){
     const talkCode = getParameter("tc");
-    if(inputValue == "" ){
+    if(inputValue === "" ){
         alert("댓글을 입력해주세요.")
         const input = document.querySelector('#message_input');
         input.focus();
@@ -211,8 +149,8 @@ const TemplateMessage = ({loginCallBack}) => {
                 </TemplateContainer>
                 <ChatContainer>
                     <div className="register">
-                        <input type="text" id="message_input" onChange={(e) => inputChange(e)} placeholder="댓글을 작성해주세요."></input>
-                        <button id="reg_message" onClick={regMessage}>등록</button>
+                        <Input type="text" id="message_input" onChange={(e) => inputChange(e)} placeholder="댓글을 작성해주세요."></Input>
+                        <Button id="reg_message" onClick={regMessage}>등록</Button>
                     </div>
                    <div className="comment">
                         {templateChat.length > 0 ?
@@ -258,12 +196,14 @@ const TemplateMessage = ({loginCallBack}) => {
 export default TemplateMessage;
 
 const Wrapper = styled.div`
+  font-family: 'SCDream';
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  height : 100vh;
+  width : 100%;
+  padding-left: 50px;
+  padding-top : 50px;
   
 
 `
@@ -272,35 +212,35 @@ const Form = styled.div`
   border-radius : 10px;
   box-shadow: 5px 5px 10px 0px gray;
   padding : 40px;
+  width : 500px;
+  background-color: white;
 `
 
-const Title = styled.div`
-  font-size : 30px;
-  color : rgba(1, 78, 136, 0.9);
-  font-weight: 800;
-  width : 100%;
-  display: flex;
-  flex-direction: row;
-`
 
 const Contents = styled.div`
   margin-top : 20px;
   display : flex;
   flex-direction : column;
+  width : 100%;
+  text-align: center;;
 
   .register {
     margin : 10px;
     width : 400px;
-    display : flex;
+    display : inline-flex;
+    text-align :  center;
+  
+    
 
     input {
-        width : 100%;
-        float : left
+        width : 300px;
+        float : left;
     }
 
     button {
-        width : 50px;
+        width : 100px;
         float : left;
+        
     }
   }
 `
@@ -326,80 +266,28 @@ const Input = styled.input`
 
 `
 
-const Table = styled.table`
-  border: 0px;
-  border-collapse: separate;
-  border-spacing: 0 10px;
-
-  tbody th {
-    font-weight : 400;
-    padding : 10px;
-  }
-
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  /* Firefox */
-  input[type=number] {
-    -moz-appearance: textfield;
-  }
-
-  .registration_form {
-    text-align : center;
-
-     div {
-        width : 200px;
-        
-     }
-  }
-
-  .description {
-    margin : 20px;
-    color: #9f6eaf;
-    font-size: 14px;
-    font-weight:600;
-    line-height: 1.9em;
-    float: right;
-  }
-
-`
-
 const Button = styled.button`
-  width : 40%;
-  height : 30px;
+  font-family: 'SCDream';
+  width : 200px;
+  margin-left : 5px;
+  margin-right : 5px;
+  height : 35px;
   align-self: flex-end;
 
   border-radius: 4px;
   font-size : 15px;
   outline: 0;
-  border: 0px solid rgba(1, 78, 136, 0.9);
-  background-color : rgba(1, 78, 136, 0.9);
+  border: 0;
+  background-color : #714DDA;
   color : rgba(255,255,255);
+  cursor:pointer;
+  box-shadow: 1px 1px 3px 0px gray;
+  transition : 0.3s;
 
-  &:hover {
-    cursor:pointer;
+  &:hover{
+    border-radius: 10px;
   }
-`
 
-
-const Select = styled.select`
-  height : 30px;
-  background: #f9f9fa;
-  border-radius: 4px;
-  color: #000;
-  outline: 0;
-  border: 1px solid rgba(245, 245, 245, 0.7);
-  font-size: 15px;
-  transition: all 0.3s ease-out;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.1);
-  :focus,
-  :hover {
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);
-  }
-  font-family: inherit;
 `
 
 const TemplateContainer = styled.div`
@@ -446,7 +334,10 @@ const TemplateContainer = styled.div`
 `
 
 const ChatContainer = styled.div`
-
+     ul {
+      text-align : left;
+     }
+     
       li {
         list-style: none;
       }

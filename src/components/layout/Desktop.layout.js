@@ -4,6 +4,19 @@ import { NavLink , useNavigate} from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
 import * as config from '../../config';
+import TopLayout from './TopLayout';
+import AlimTalk from '../../images/alimtalk.png';
+import Stamp from '../../images/stamp.png'
+import Template from '../../images/template.png';
+import Setting from '../../images/setting.png';
+import board from '../../images/board.png'
+import AlimTalkWhite from '../../images/alimtalk_white.png';
+import StampWhite from '../../images/stamp_white.png'
+import TemplateWhite from '../../images/template_white.png';
+import SettingWhite from '../../images/setting_white.png';
+import boardWhite from '../../images/board_white.png'
+
+
 const WEEKDAY = ['월요일' , '화요일' , '수요일', '목요일', '금요일' , '토요일', '일요일'];
 
 const DesktopLayout = (props) =>{
@@ -11,22 +24,33 @@ const DesktopLayout = (props) =>{
     const navigate = useNavigate();
     const [time, setTime] = useState(new Date());
 
-    const [open1, setOpen1] = useState(false);
-    const [open2, setOpen2] = useState(false);
-    const [open3, setOpen3] = useState(false);
-    const [open4, setOpen4] = useState(false);
+
+
+    const [menu, setMenu] = useState({
+        menu1 : false,
+        menu2 : false,
+        menu3 : false,
+        menu4 : false,
+        // menu5 : false,
+    })
 
     const toggleMenu = (e) => {
-  
         if(e === 1){
-            setOpen1(open1 => !open1);
+            setMenu({menu1 : true});
         }else if(e === 2){
-            setOpen2(open2 => !open2);
+            setMenu({menu2 : true});
         }else if(e === 3){
-            setOpen3(open3 => !open3);
+            setMenu({menu3 : true});
         }else if(e === 4){
-            setOpen4(open4 => !open4);
+            setMenu({menu4 : true});
         }
+        // else if(e === 5){
+        //     setMenu({menu5 : true});
+        // }
+    }
+
+    const toggleMenu2 = (e) => {
+    
     }
 
     //분단위 시간 변화
@@ -35,6 +59,24 @@ const DesktopLayout = (props) =>{
             setTime(new Date());
         }, 1000);
         return(() => clearInterval(id))
+    }, [])
+
+    useEffect(() => {
+        const url = window.location.pathname;
+        console.log(url.includes('template'));
+        if(url.includes('alimtalk')){
+            setMenu({...menu, menu1 : true})
+        }else if(url.includes('stamp') === true){
+            setMenu({...menu, menu2 : true});
+        }else if(url.includes('template')){
+            setMenu({...menu, menu3 : true});
+        }else if(url.includes('info')){
+            setMenu({...menu, menu4 : true})
+        }
+        // else if(url.includes('notice') || url.includes('enquiry')){
+        //     setMenu({...menu, menu5 : true})
+        // }
+        console.log(menu);
     }, [])
 
     const logout = () => {
@@ -71,15 +113,16 @@ const DesktopLayout = (props) =>{
 
 
     return (
+        <>
         <Wrapper>
             <Menu>
                 <div className='title-form'>
-                    <div className="title">
+                    {/* <div className="title">
                     <NavLink style={{textDecoration : "none" ,color : "#555"}} to={"/"}>
                         <br/>
                         스탬프 관리
                     </NavLink>
-                    </div>
+                    </div> */}
                     <div className="subtitle">
                         {time.getFullYear()+"년"}<br/>
                         {time.getMonth() +"월"+time.getDate()+"일   "+ WEEKDAY[time.getDay() - 1]}<br/>
@@ -88,45 +131,62 @@ const DesktopLayout = (props) =>{
                         {time.getMinutes() >= 10 ? time.getMinutes() : "0"+time.getMinutes()}
                 </div> 
                 </div>
-                <div onClick={()=>toggleMenu(1)} className="main-menu">스탬프</div>
-                    <div className={open1 ? "show-menu" : "hide-menu"} >
+                <div onClick={()=>toggleMenu(1)} className={menu.menu1 ? "main-menu main-show" : "main-menu"}>
+                    <div className="menu_name"><Img  className="stamp" style={{cursor : 'pointer'}} alert="x"  src={menu.menu1 ? AlimTalkWhite : AlimTalk}/>알림톡</div></div>
+                        <div className={menu.menu1 ? "show-menu" : "hide-menu"} >
+                            <NavLink
+                            style={({isActive}) => ({color: isActive ? '#714DDA'  : 'grey', fontSize : isActive ? '17px' : '15px', textDecoration : "none", cursor : 'pointer'})}
+                            to={"/alimtalk/send"}
+                            >
+                                <div className="sub_menu">알림톡 발송</div>
+                            </NavLink>
+                    
+                    </div>
+                <div onClick={()=>toggleMenu(2)} className={menu.menu2 ? "main-menu main-show" : "main-menu"}>
+                    <div className="menu_name"><Img  className="stamp" style={{cursor : 'pointer'}} alert="x"  src={menu.menu2 ? StampWhite : Stamp}/>스탬프</div></div>
+                    <div className={menu.menu2 ? "show-menu" : "hide-menu"} >
                         <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
+                        style={({isActive}) => ({color: isActive ? '#714DDA'  : 'grey', fontSize : isActive ? '17px' : '15px', textDecoration : "none", cursor : 'pointer'})}
                         to={"/stamp/setting"}
                         >
-                            <div>스탬프 관리</div>
-                        </NavLink>
+                            <div className="sub_menu">스탬프 설정</div>
+                        </NavLink> 
                         <br/>
                         <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
+                        style={({isActive}) => ({color: isActive ? '#714DDA' : 'grey', fontSize : isActive ? '17px' : '15px',textDecoration : "none", cursor : 'pointer'})}
                         to={"/stamp/list"}
                         >
-                            <div>스탬프 조회</div>
+                            <div className="sub_menu">스탬프 조회</div>
                         </NavLink>
-                        <br/>
+                        {/* <br/>
                         <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
+                        style={({isActive}) => ({color: isActive ? '#714DDA' : 'grey', fontSize : isActive ? '17px' : '15px',textDecoration : "none", cursor : 'pointer'})}
                         to={"/stamp/issuance"}
                         >
-                            <div>스탬프 발급</div>
-                        </NavLink>
-                        <br/>
-                        <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
+                            <div className="sub_menu">스탬프 발급</div>
+                        </NavLink> */}
+                        {/*<br/>
+                         <NavLink
+                        style={({isActive}) => ({color: isActive ? '#714DDA' : 'grey', fontSize : isActive ? '17px' : '15px',textDecoration : "none", cursor : 'pointer'})}
                         to={"/stamp/resend"}
                         >
                             <div>스탬프 재발송</div>
-                        </NavLink>
+                        </NavLink> */}
 
                 </div>
-                <div onClick={()=>toggleMenu(2)} className="main-menu">탬플릿</div>
-                    <div className={open2 ? "show-menu" : "hide-menu"} >
+                <div onClick={()=>toggleMenu(3)} className={menu.menu3 ? "main-menu main-show" : "main-menu"}>
+                    <div className="menu_name">
+                    <Img className="template" style={{cursor : 'pointer'}} alert="x"  src={menu.menu3 ? TemplateWhite : Template}/>  
+                        탬플릿
+                    </div>
+                </div>
+                    <div className={menu.menu3 ? "show-menu" : "hide-menu"} >
                         {props.role === 2 ? <>                        
                         <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
+                        style={({isActive}) => ({color: isActive ? '#714DDA' : 'grey', fontSize : isActive ? '17px' : '15px',textDecoration : "none", cursor : 'pointer'})}
                         to={"/account/list"}
                         >
-                            <div>계정 관리</div>
+                            <div className="sub_menu">계정 관리</div>
                         </NavLink>
                         <br/>
                         </>
@@ -134,47 +194,81 @@ const DesktopLayout = (props) =>{
                         null
                         }
                         <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
+                        style={({isActive}) => ({color: isActive ? '#714DDA' : 'grey', fontSize : isActive ? '17px' : '15px',textDecoration : "none", cursor : 'pointer'})}
                         to={"/template/manager"}
                         >
-                            <div>탬플릿 등록</div>
+                            <div className="sub_menu">탬플릿 등록</div>
                         </NavLink>
                         <br/>
                         <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
+                        style={({isActive}) => ({color: isActive ? '#714DDA' : 'grey', fontSize : isActive ? '17px' : '15px',textDecoration : "none", cursor : 'pointer'})}
                         to={"/template/list"}
                         >
-                            <div>탬플릿 관리</div>
+                            <div className="sub_menu">탬플릿 관리</div>
                         </NavLink>
                 </div>
-                <div onClick={()=>toggleMenu(3)} className="main-menu">기본설정</div>
-                    <div className={open3 ? "show-menu" : "hide-menu"} >
+                <div onClick={()=>toggleMenu(4)} className={menu.menu4 ? "main-menu main-show" : "main-menu"}>
+                    <div className="menu_name">
+                    <Img className="setting" style={{cursor : 'pointer'}} alert="x"   src={menu.menu4 ? SettingWhite : Setting}/>  
+                        기본설정
+                    </div>
+                </div>
+                    <div className={menu.menu4 ? "show-menu" : "hide-menu"} >
                         <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
+                        style={({isActive}) => ({color: isActive ? '#714DDA' : 'grey', fontSize : isActive ? '17px' : '15px',textDecoration : "none", cursor : 'pointer'})}
+                        to={"/info/shop/create"}
+                        >
+                            <div className="sub_menu">가맹점 추가</div>
+                        </NavLink>
+                        <br/>
+                        <NavLink
+                        style={({isActive}) => ({color: isActive ? '#714DDA' : 'grey', fontSize : isActive ? '17px' : '15px',textDecoration : "none", cursor : 'pointer'})}
+                        to={"/info/shop/update"}
+                        >
+                            <div className="sub_menu">가맹점 수정</div>
+                        </NavLink>
+                        <br/>
+                        <NavLink
+                        style={({isActive}) => ({color: isActive ? '#714DDA' : 'grey', fontSize : isActive ? '17px' : '15px',textDecoration : "none", cursor : 'pointer'})}
                         to={"/info/edit"}
                         >
-                            <div>비밀번호 수정</div>
+                            <div className="sub_menu">비밀번호 수정</div>
                         </NavLink>
                 </div>
-                <div onClick={()=>toggleMenu(4)} className="main-menu">게시판</div>
-                    <div className={open4 ? "show-menu" : "hide-menu"} >
+                {/* <div onClick={()=>toggleMenu(5)} className={menu.menu5 ? "main-menu main-show" : "main-menu"}>
+                    <div className="menu_name">
+                    <Img className="board" style={{cursor : 'pointer'}} alert="x"   src={menu.menu5 ? boardWhite : board}/>  
+                        게시판
+                    </div>
+                </div>
+                    <div className={menu.menu5 ? "show-menu" : "hide-menu"} >
                     <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
+                        style={({isActive}) => ({color: isActive ? '#714DDA' : 'grey', fontSize : isActive ? '17px' : '15px',textDecoration : "none", cursor : 'pointer'})}
                         to={"/notice/list"}
                         >
-                            <div>공지사항</div>
+                            <div className="sub_menu">공지사항</div>
                         </NavLink>
                             <br/>
                         <NavLink
-                        style={({isActive}) => ({color: isActive ? 'black' : 'grey', textDecoration : "none", cursor : 'pointer'})}
+                        style={({isActive}) => ({color: isActive ? '#714DDA' : 'grey', fontSize : isActive ? '17px' : '15px',textDecoration : "none", cursor : 'pointer'})}
                         to={"/enquiry/list"}
                         >
-                            <div>1:1문의</div>
+                            <div className="sub_menu">1:1문의</div>
                         </NavLink>
-                </div>
-                <div onClick={() => logout()} className="main-menu" style={{cursor : 'pointer'}}>로그아웃</div>
+                </div> */}
+                
             </Menu>
+           
         </Wrapper>
+         <TopMenu>
+         <div className="top_container">
+             <div className="left_menu">스탬프 관리</div>
+             <div className="right_menu">
+                 <div onClick={() => logout()} className="main-menu" style={{cursor : 'pointer'}}>로그아웃</div>
+             </div>
+         </div>
+     </TopMenu>
+     </>
     );
 }
 
@@ -182,80 +276,148 @@ export default DesktopLayout;
 
 
 const Wrapper = styled.div`
-  font-family : "BMDOHYEON";
+  font-family: 'SCDream_Bold';
   display: flex;
-  border-right: 1px solid #e0e0e0;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   width: 100%;
 
   position: -webkit-sticky; /* 사파리 브라우저 지원 */
-  position: sticky;
-  top : 0;
+  position: fixed;
+
+
+
+
   
 
 
   .main-menu {
-      font-size : 15px;
-      margin-bottom : 20px;
+      font-size : 20px;
       cursor: pointer;
+      
   }
 
-  .title {
-      font-size : 25px;
-      margin-left : 20px;
-      color : #555;
-      margin-bottom : 20px;
-      margin-top : 20px;
-  }
 
   .subtitle {
     font-size : 15px;
-    margin-left : 20px;
-    color : #888;
+    color : black;
     margin-bottom: 20px;
+    margin-left : 20px;
   }
 
   .title-form{
       margin-bottom : 20px;
   }
-
-
 `
-
-// const Profile = styled.img`
-//   width: 150px;
-//   height: 150px;
-//   border-radius: 100%;
-// `
 
 const Menu = styled.div`
     width: 200px;
     display: flex;
     flex-direction: column;
-    height : 100%;
     min-height : 100vh;
+    background-color: #E9ECF3;
+    padding : 20px 0 0 0px;
+    margin-top : 51px;
+
 
   .main-menu{
-    width : 200px;
+    height : 40px;
+    line-height: 40px;
+    border-radius: 10px;
+    border-right: -20px;
+    margin-bottom : 10px;
+    padding : 0px 0px 0px 10px; 
+    margin-right : 20px;
     margin-left : 20px;
   }
 
-.show-menu{
-    height: 100%;
-    transition: 1s;
-    margin-left : 40px;
-    margin-top : 2px;
-    margin-bottom : 10px;
+  .menu_name {
+  }
+
+  .main-menu:hover{
+    background-color: #714DDA;
+    color : white;
+    transition : 0.2s;
+    box-shadow: 2px 2px 5px 0px gray;
+
+
+  }
+
+  .stamp:hover {
+    src: StampWhite; 
+  }
+
+    .show-menu{
+        height: 100%;
+        transition: 0.2s;
+        margin-top : 2px;
+        margin-bottom : 10px;
+        margin-left : 40px;
     
-}
+    }
+
     
-.hide-menu{
-    height: 100%;
-    display : none;
-    position : absolute;
-    transition : 1s;
-}
+    .hide-menu{
+        height: 100%;
+        position : absolute;
+        left : -200px;
+    }
+
+    .main-show {
+        background-color: #714DDA;
+        color: white;
+        box-shadow: 2px 2px 5px 0px gray;
+
+
+    }
+
+    .sub_menu:hover {
+        color : #714DDA;
+        font-size : 17px;
+        transition : 0.2s;
+    }
+
+   
 `
 
+const TopMenu = styled.div`
+    font-family : "SCDream";
+    width : 100%;
+    position: fixed;
+    top : 0;
+    line-height: 50px;
+    height : fit-content;
+    z-index: 10;
 
+
+    .top_container {
+        background-color: white;
+        height : 50px;
+        margin-right : 1px;
+        background-color: #252643;
+
+
+    }
+
+    .left_menu{
+        float : left;
+        margin-left : 10px;
+        font-family: 'SCDream_Bold';
+        color : white;
+        font-size: 20px;
+    }
+
+    .right_menu {
+        float : right;
+        margin-right : 10px;
+        font-family: 'SCDream_Bold';
+        color : white;
+    }
+
+`
+
+const Img = styled.img`
+    width :20px;
+    vertical-align: middle;
+    margin-right : 8px;
+`

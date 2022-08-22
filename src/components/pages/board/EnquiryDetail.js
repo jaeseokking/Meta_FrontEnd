@@ -111,7 +111,7 @@ const EnquiryDetail = ({loginCallBack}) => {
                     }
                 </Contents>
                    <div style={{width : '100%', textAlign : 'end' , marginTop : '10px'}}> 
-                    <Button style={{backgroundColor : 'rgba(1, 78, 136, 0.9)' }} onClick={()=> navigate(`/enquiry/update?idx=${getParameter('idx')}`)}>수정</Button>
+                    <Button style={{backgroundColor : '#714DDA' }} onClick={()=> navigate(`/enquiry/update?idx=${getParameter('idx')}`)}>수정</Button>
                     <Button style={{ backgroundColor : 'rgba(150, 150, 150, 0.9)', marginRight : '30px'}} onClick={()=> navigate('/enquiry/list')}>확인</Button>
                    </div>
             </Form>
@@ -155,7 +155,7 @@ const Form = styled.div`
 
 const Title = styled.div`
   font-size : 30px;
-  color : rgba(1, 78, 136, 0.9);
+  color : #714DDA;
   font-weight: 800;
 
 `

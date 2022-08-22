@@ -1,33 +1,24 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import * as config from '../../../config';
 import { useNavigate } from 'react-router';
 import { refreshToken } from '../../auth/RefreshToken';
 import Spinner from 'react-spinkit';
-import DatePicker, { registerLocale } from "react-datepicker";  // 한국어적용
-import ko from 'date-fns/locale/ko'; // 한국어적용
-import moment from 'moment';
 import leftButton from '../../../images/angle-left.svg';
 import rightButton from '../../../images/angle-right.svg';
 
 
 
 const TemplateUpdate = ({loginCallBack}) => {
-  const inputRef = useRef([]);
   const navigate = useNavigate();
   
 
   const [loading, setLoading] = useState(false);
   const [shopList, setShopList] = useState([]);
   const [shop, setShop] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [stampAmount, setStampAmount] = useState(1);
-  const [issuanceDate, setIssuanceDate] = useState(new Date());
-  const [expirationDate, setExpirationDate] = useState('');
   const [templateList , setTemplateList] = useState([]);
   const [templateIDX, setTemplateIDX] = useState(0);
-  const [inputList, setInputList] = useState([]);
   const [status, setStatus] = useState(4);
   const [templateTitle, setTemplateTitle] = useState('');
   const [templateCode, setTemplateCode] = useState('');
@@ -45,6 +36,7 @@ const TemplateUpdate = ({loginCallBack}) => {
     }catch(e){
       console.log(e);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
 
@@ -103,6 +95,7 @@ useEffect(() =>  {
   }
 
   getTemplate();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [])
 
 
@@ -125,7 +118,7 @@ useEffect(() =>  {
         },
     })
       .then(res => {
-        const {shopList , result, templateList} = res.data;
+        const {result, templateList} = res.data;
 
         if(result === "TOKEN ERROR"){
           alert(result);
@@ -164,22 +157,9 @@ useEffect(() =>  {
 
   getTemplate();
 
-  
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [shop])
    
-
-
-
-
-function choiceDate1(date) {
-    if(date > expirationDate && expirationDate != ""){
-      alert('만료 일자 이전의 날짜를 설정해주세요.')
-      return;
-    }
-    setIssuanceDate(date) 
-}
-
-
 
 
 
@@ -197,17 +177,17 @@ function choiceDate1(date) {
   function changeTemplate(e){
     const button = e.target.name;
 
-    if(button == "before" && templateIDX !== 0){
+    if(button === "before" && templateIDX !== 0){
       const IDX = templateIDX - 1;
-      setTemplateCode(templateList[IDX].TEMPLATE_CODE);
+      setTemplateCode(templateList[IDX].TEMPLATE_CODE ? templateList[IDX].TEMPLATE_CODE : "");
       setTemplateIDX(IDX);
       setItemCount(templateList[IDX].VAR);
       setTemplateTitle(templateList[IDX].TITLE);
       setStatus(templateList[IDX].GRADE);
       setTalkCode(templateList[IDX].TALK_CODE);
-    }else if(button == "after" && templateIDX < templateList.length - 1){
+    }else if(button === "after" && templateIDX < templateList.length - 1){
       const IDX = templateIDX + 1;
-      setTemplateCode(templateList[IDX].TEMPLATE_CODE);
+      setTemplateCode(templateList[IDX].TEMPLATE_CODE ? templateList[IDX].TEMPLATE_CODE : "");
       setTemplateIDX(IDX);
       setItemCount(templateList[IDX].VAR);
       setTemplateTitle(templateList[IDX].TITLE);
@@ -216,20 +196,10 @@ function choiceDate1(date) {
 
     }
 
+
+
   }
 
-  function PlusOrMinus(e){
-    e.preventDefault();
-    console.log(e.target);
-
-    if(e.target.value == "-"){
-
-
-    }else{
-
-    }
-
-  }
 
   function updateTemplate(e){
     e.preventDefault();
@@ -286,6 +256,73 @@ function choiceDate1(date) {
     } 
   }
 
+  function deleteTemplate(e){
+    e.preventDefault();
+
+    if(window.confirm("삭제하시겠습니까?") === true){
+
+      const data = {
+        shop_info_no : shop,
+        talkCode : talkCode,
+      }
+    
+      try {
+        axios.post(`${config.SERVER_URL}/api/template/delete`, JSON.stringify(data), {
+          headers: {
+            "Content-Type": `application/json`,
+          },
+          xhrFields: {
+            withCredentials: true
+          },
+      })
+        .then(res => {
+          const message = res.data.result;
+          if(message === "TOKEN ERROR"){
+            alert(message);
+            navigate("/login")
+          }
+          if(message === "SUCCESS"){
+            alert("삭제완료");
+            window.location.reload();
+          }
+          if(message === "TOKEN EXPIRED"){
+            alert(message);
+            navigate("/login")
+          }
+          if(message === "TOKEN NULL"){
+            alert(message);
+            navigate("/login");
+          }
+          if(message === "INSERT ERROR"){
+            alert('스탬프 발급 오류');
+            window.location.reload();
+  
+          }
+            
+        })
+        .catch(ex => {
+        })
+        .finally(() => {
+        });
+      } catch (error) {
+        console.log(error);
+        
+      } 
+      return;
+    }else{
+      return ;
+    }
+
+    const data = {
+      shop_info_no : shop,
+      talkCode : talkCode,
+      status : status,
+      templateTitle : templateTitle,
+      templateCode : templateCode,
+      itemCount : itemCount
+    }
+   
+  }
  
   
 
@@ -304,7 +341,7 @@ function choiceDate1(date) {
             <Form>
                <Title>탬플릿 수정
               <div style={{flex : '1', textAlign : 'right'}}>   
-                <Select style={{textAlign : 'center'}} onChange={e => selectShop(e)}>
+                <Select style={{textAlign : 'center'}}  onChange={e => selectShop(e)}>
                   {shopList.map((value, index) => 
                     <option key={value.SHOP_INFO_NO} value={value.SHOP_INFO_NO} >{value.SHOP_NAME}</option>
                     )
@@ -315,7 +352,7 @@ function choiceDate1(date) {
            
                <Contents>
                <div className="button_container">
-                <div className="image" ><img name="before" onClick={(e) => changeTemplate(e)} src={leftButton}/></div>
+                <div className="image" ><img alt='before_img' name="before" onClick={(e) => changeTemplate(e)} src={leftButton}/></div>
               </div>
                <TemplateContainer>
                     <div className="banner">
@@ -335,10 +372,10 @@ function choiceDate1(date) {
                     </div>
                 </TemplateContainer>
                 <div className="button_container">
-                  <div className="image" ><img name="after" onClick={(e) => changeTemplate(e)} src={rightButton}/></div>
+                  <div className="image" ><img alt='after_img' name="after" onClick={(e) => changeTemplate(e)} src={rightButton}/></div>
                 </div>
                 
-                <form id="uploadExcelForm" name="uploadExcelForm" method="post" enctype="multipart/form-data">   
+                <form id="uploadExcelForm" name="uploadExcelForm" method="post" encType="multipart/form-data">   
                    <Table>
                      <tbody>
                       <tr>
@@ -350,12 +387,12 @@ function choiceDate1(date) {
                         <tr>
                           <th className="text_title">상태</th>
                           <td className="text_id">
-                            <Select onChange={e => selectStatus(e)}>
-                              <option value={0} selected={status == 0 ?  "selected" : null}>신청완료</option>
-                              <option value={1} selected={status == 1 ?  "selected" : null}>검수중</option>
-                              <option value={2} selected={status == 2 ?  "selected" : null}>검수완료</option>
-                              <option value={3} selected={status == 3 ?  "selected" : null}>사용가능</option>
-                              <option value={4}selected={status == 4 ?  "selected" : null}>부결</option>
+                            <Select value={status || ""} onChange={e => selectStatus(e)}>
+                              <option value={0} selected={status === 0 ?  "selected" : null} defaultValue={true}>신청완료</option>
+                              <option value={1} selected={status === 1 ?  "selected" : null} defaultValue={false}>검수중</option>
+                              <option value={2} selected={status === 2 ?  "selected" : null} defaultValue={false}>검수완료</option>
+                              <option value={3} selected={status === 3 ?  "selected" : null} defaultValue={false}>사용가능</option>
+                              <option value={4}selected={status === 4 ?  "selected" : null} defaultValue={false}>부결</option>
                             </Select>
                           </td>
                         </tr>
@@ -372,9 +409,12 @@ function choiceDate1(date) {
                           <td><Input onChange={e => setItemCount(e.target.value)} value={itemCount}/></td>
                         </tr>
                         <tr>
-                          <td colSpan={2}><Button onClick={(e) => updateTemplate(e)}>수정</Button></td>
+                          <td colSpan={2}><Button  className="up_button" onClick={(e) => updateTemplate(e)}>수정</Button></td>
                         </tr>
-                 
+                        <tr>
+                        <td colSpan={2}><Button className="del_button" onClick={(e) => deleteTemplate(e)}>삭제</Button></td>
+                        </tr>
+                                     
                   
                       
                      </tbody>
@@ -417,7 +457,7 @@ const Form = styled.div`
 
 const Title = styled.div`
   font-size : 30px;
-  color : rgba(1, 78, 136, 0.9);
+  color : #714DDA;
   font-weight: 800;
   width : 100%;
   display: flex;
@@ -526,22 +566,33 @@ const Table = styled.table`
     width : 100%;
     height : 300px;
   }
+
+
+  .up_button {
+    margin-top : 10px;
+    background-color : #714DDA;
+  }
+
+  .del_button {
+    background-color : #CC0000;
+  }
+
 `
 
 const Button = styled.button`
   width : 100%;
   margin-left : 5px;
   margin-right : 5px;
-  margin-top : 10px;
   height : 35px;
   align-self: flex-end;
 
   border-radius: 4px;
   font-size : 15px;
   outline: 0;
-  border: 0px solid rgba(1, 78, 136, 0.9);
-  background-color : rgba(1, 78, 136, 0.9);
+  border: 0;
   color : rgba(255,255,255);
+
+
 
   &:hover {
     cursor:pointer;

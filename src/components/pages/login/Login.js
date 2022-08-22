@@ -33,9 +33,7 @@ function Login(props) {
     }
     try {
       axios.post(`${config.SERVER_URL}/api/login`, JSON.stringify(data), {
-        headers: {
-          "Content-Type": `application/json`,
-        },
+        headers: { 'Content-Type': 'application/json' }
 
     })
       .then(res => {
@@ -115,6 +113,8 @@ const Wrapper = styled.section`
   background : '#123123';
   flex-direction : column;
   height : 100vh;
+  margin-left : -200px;
+  margin-top : -50px;
   
 `;
 
@@ -127,6 +127,8 @@ const Form = styled.form`
   box-shadow: 0px 0px 8px 5px rgba(0, 0, 0, 0.1);
   padding : 50px;
   border-radius: 5px;
+
+
 `;
 
 const Input = styled.input`
@@ -152,8 +154,8 @@ const Button = styled.button`
   font-size : 15px;
   height : 35px;
   outline: 0;
-  border: 0px solid rgba(1, 78, 136, 0.9);
-  background-color : rgba(1, 78, 136, 0.9);
+  border: 0 ;
+  background-color : #714DDA;
   color : rgba(255,255,255);
   font-weight : bold;
   cursor: pointer;
@@ -162,7 +164,7 @@ const Button = styled.button`
 
 const Title = styled.div`
   font-size : 30px;
-  color : rgba(1, 78, 136, 0.9);
+  color : #714DDA;
   padding : 0px 0px 20px 0px;
 
 `

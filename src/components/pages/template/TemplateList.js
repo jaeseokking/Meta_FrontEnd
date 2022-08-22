@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import { refreshToken } from '../../auth/RefreshToken';
-import Calendar from '../list/Calendar';
 import axios from 'axios';
 import PageButtons from '../../utils/PageButtons';
 import * as config from '../../../config';
@@ -13,15 +12,22 @@ import Spinner from 'react-spinkit';
 const TemplateList = ({loginCallBack}) => {
     const [page, setPage] = useState(1);
     const [list, setList] = useState([]);
-    const [startDate, setStartDate] = useState(0);
-    const [endDate, setEndDate] = useState(0);
-    const [selectUse, setSelectUse] = useState('all');
+    // const [startDate, setStartDate] = useState(0);
+    // const [endDate, setEndDate] = useState(0);
+    // const [selectUse, setSelectUse] = useState('all');
+    const startDate = 0;
+    const endDate = 0;
+    const selectUse = 'all';
     const [shopList, setShopList] = useState([]);
     const [shop, setShop] = useState('');
 
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
+    useEffect(() => {
+      setLoading(false);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     useEffect(() => {
       try{
@@ -38,12 +44,12 @@ const TemplateList = ({loginCallBack}) => {
       }catch(e){
         console.log(e);
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     },[page, startDate, endDate, selectUse]);
 
 
 
     useEffect(() => {
-
 
       async function getShopDetail(){
 
@@ -105,6 +111,7 @@ const TemplateList = ({loginCallBack}) => {
   
       getShopDetail();
       getTemplate();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
   
     useEffect(() => {
@@ -167,15 +174,15 @@ const TemplateList = ({loginCallBack}) => {
                     }
 
                     let status;
-                    if(value.GRADE == 0){
+                    if(value.GRADE === 0){
                       status = "신청완료"
-                    }else if(value.GRADE == 1){
+                    }else if(value.GRADE === 1){
                       status = "검수중"
-                    }else if(value.GRADE == 2){
+                    }else if(value.GRADE === 2){
                       status = '검수완료'
-                    }else if(value.GRADE == 3){
+                    }else if(value.GRADE === 3){
                       status = "사용가능"
-                    }else if(value.GRADE == 4){
+                    }else if(value.GRADE === 4){
                       status = "부결"
                     }else{
                       status = "오류"
@@ -217,13 +224,14 @@ const TemplateList = ({loginCallBack}) => {
 export default TemplateList;
 
 const Wrapper = styled.div`
+  font-family: 'SCDream';
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  margin-top : 30px;
-  margin-bottom : 30px;
+  width : 100%;
+  padding-left: 50px;
+  padding-top : 50px;
 
 `
 
@@ -233,20 +241,18 @@ const Form = styled.div`
   border-radius : 10px;
   box-shadow: 5px 5px 10px 0px gray;
   padding : 40px;
-  width : 80%;
-
-  @media screen and (max-width: 767px){
-    width : 95%;
-  }
+  width : 1000px;
+  background-color: white;
 `
 
 const Title = styled.div`
   font-size : 30px;
-  color : rgba(1, 78, 136, 0.9);
+  color : #714DDA;
   font-weight: 800;
   width : 100%;
   display: flex;
   flex-direction: row;
+  font-family: 'SCDream_Bold';
 `
 
 const Contents = styled.div`
@@ -256,36 +262,12 @@ const Contents = styled.div`
  
 `
 
-const Input = styled.input`
-   height : 20px;
-   text-align: end;
-`
-
-
-const SearchForm = styled.div`
-    display : flex;
-    align-items: center;
-    align-self : end;
-    justify-content: center;
-    width : '100%';
-  
-    @media screen and (max-width: 767px){
-        display: inline-block;
-        align-items: center;
-        align-self : end;
-        justify-content: flex-end;
-    }
-
-`
-
-
 
 const Table = styled.table`
   margin-top : 10px;
   border-collapse: collapse;
   margin-bottom : 10px;
   overflow: hidden;
-  border-radius: 15px;
   align-items : center;
   width : 100%;
 
@@ -302,51 +284,37 @@ const Table = styled.table`
   th, td {
     padding : 10px;
     text-align: center;
-    border : 2px solid rgb(255, 255, 255);
-    font-size: 13px;
+    font-size: 15px;
+    height : 35px;
+    border-bottom : 1px solid #aeaeae;
 
   }
 
+  td:first-child{
+    border-left : 0px;
+  }
+
+  th:first-child{
+    border-left : 0px;
+  }
+
   th {
-    color: rgb(255, 255, 255);
-    background-color: rgba(1, 78, 136, 0.9);;
+    background-color: #F5F2F4;
+    border-top: 1px solid black;
+    border-left : 1px solid #aeaeae;
+    font-family: 'SCDream_Bold';
+
 
   }
 
   td {
     padding: 7px;
-    background-color: rgb(240, 240, 240);
-  }
-
-  .stamp_code {
-    @media screen and (max-width: 767px){
-      display : none;
-    }
+    border-left : 1px solid #aeaeae;
   }
 
 `
 
 
-const NotData = styled.div `
-margin-top : 10px;
-  border-collapse: collapse;
-  width : 700px;
-  margin-bottom : 10px;
-  overflow: hidden;
-  border-radius: 15px;
-  align-items : center;
-
-
-
-  div {
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    border-radius : 100px;
-    font-weight: bold;
-
-  }
-`
 
 const Select = styled.select`
   height : 30px;

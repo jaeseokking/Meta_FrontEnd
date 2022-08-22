@@ -11,9 +11,12 @@ import Spinner from 'react-spinkit';
 const AccountList = ({loginCallBack}) => {
     const [page, setPage] = useState(1);
     const [accountList, setAccountList] = useState([]);
-    const [startDate, setStartDate] = useState(0);
-    const [endDate, setEndDate] = useState(0);
-    const [selectUse, setSelectUse] = useState('all');
+    // const [startDate, setStartDate] = useState(0);
+    // const [endDate, setEndDate] = useState(0);
+    // const [selectUse, setSelectUse] = useState('all');
+    const startDate = 0;
+    const endDate = 0;
+    const selectUse = 'all';
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -82,6 +85,7 @@ const AccountList = ({loginCallBack}) => {
       }
   
       getAccountList();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
 
@@ -100,7 +104,6 @@ const AccountList = ({loginCallBack}) => {
         const data = {
           page : page
         }
-        console.log(data);
         try {
           await axios.post(`${config.SERVER_URL}/api/get/accountList`, JSON.stringify(data), {
             headers: {
@@ -141,6 +144,7 @@ const AccountList = ({loginCallBack}) => {
       }
   
       getAccountList();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page])
   
     useEffect(() => {
@@ -192,8 +196,8 @@ const AccountList = ({loginCallBack}) => {
                         <td>{value.PLUS_ID}</td>
                         <td>{value.BIZNO}</td>
                         <td>{value.CEONAME}</td>
-                        <td className="shopCount"><a onClick={() => value.SHOP_COUNT > 0 ?navigate({ pathname : `/account/shop/update?bizno=${value.BIZNO}`}) : null }>{value.SHOP_COUNT || 0}</a></td>
-                        <td className="templateCount" ><a onClick={() => value.TEMPLATE_COUNT > 0 ? navigate({ pathname : `/template/update?bizno=${value.BIZNO}`}): null}>{value.TEMPLATE_COUNT || 0}</a></td>
+                        <td className="shopCount"><span onClick={() => value.SHOP_COUNT > 0 ? navigate({ pathname : `/account/shop/update?bizno=${value.BIZNO}`}) : null }>{value.SHOP_COUNT || 0}</span></td>
+                        <td className="templateCount" ><span onClick={() => value.TEMPLATE_COUNT > 0 ? navigate({ pathname : `/template/update?bizno=${value.BIZNO}`}): null}>{value.TEMPLATE_COUNT || 0}</span></td>
                       </tr>
                     )
                   })
@@ -228,13 +232,14 @@ export default AccountList;
 
 
 const Wrapper = styled.div`
+  font-family: 'SCDream';
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  margin-top : 30px;
-  margin-bottom : 30px;
+  width : 100%;
+  padding-left: 50px;
+  padding-top : 50px;
 
 `
 
@@ -244,20 +249,21 @@ const Form = styled.div`
   border-radius : 10px;
   box-shadow: 5px 5px 10px 0px gray;
   padding : 40px;
-  width : 80%;
-
-  @media screen and (max-width: 767px){
+  width : 1000px;
+  background-color: white;
+  /* @media screen and (max-width: 767px){
     width : 95%;
-  }
+  } */
 `
 
 const Title = styled.div`
   font-size : 30px;
-  color : rgba(1, 78, 136, 0.9);
+  color : #714DDA;
   font-weight: 800;
   width : 100%;
   display: flex;
   flex-direction: row;
+  font-family: 'SCDream_Bold';
 `
 
 const Contents = styled.div`
@@ -276,32 +282,10 @@ const Button = styled.button`
   font-weight : 600;
   transition: 0.5s;
   :hover {
-   background-color : rgba(1, 78, 136, 0.9);
+   background-color : #714DDA;
   }
   cursor: pointer;  
 `
-const Input = styled.input`
-   height : 20px;
-   text-align: end;
-`
-
-
-const SearchForm = styled.div`
-    display : flex;
-    align-items: center;
-    align-self : end;
-    justify-content: center;
-    width : '100%';
-  
-    @media screen and (max-width: 767px){
-        display: inline-block;
-        align-items: center;
-        align-self : end;
-        justify-content: flex-end;
-    }
-
-`
-
 
 
 const Table = styled.table`
@@ -309,7 +293,6 @@ const Table = styled.table`
   border-collapse: collapse;
   margin-bottom : 10px;
   overflow: hidden;
-  border-radius: 15px;
   align-items : center;
   width : 100%;
 
@@ -326,77 +309,53 @@ const Table = styled.table`
   th, td {
     padding : 10px;
     text-align: center;
-    border : 2px solid rgb(255, 255, 255);
-    font-size: 13px;
+    font-size: 15px;
+    height : 35px;
+    border-bottom : 1px solid #aeaeae;
 
   }
 
+  td:first-child{
+    border-left : 0px;
+  }
+
+  th:first-child{
+    border-left : 0px;
+  }
+
   th {
-    color: rgb(255, 255, 255);
-    background-color: rgba(1, 78, 136, 0.9);;
+    background-color: #F5F2F4;
+    border-top: 1px solid black;
+    border-left : 1px solid #aeaeae;
+    font-family: 'SCDream_Bold';
+
 
   }
 
   td {
     padding: 7px;
-    background-color: rgb(240, 240, 240);
+    border-left : 1px solid #aeaeae;
   }
 
-  .stamp_code {
+
+  /* .stamp_code {
     @media screen and (max-width: 767px){
       display : none;
     }
-  }
+  } */
 
- .templateCount a, .shopCount a {
+ .templateCount span, .shopCount span {
     text-decoration : underline;
   }
-  .shopCount a:hover{
+  .shopCount span:hover{
     cursor : pointer;
   }
-  .templateCount a:hover{
+  .templateCount span:hover{
     cursor : pointer;
   }
 `
 
 
-const NotData = styled.div `
-margin-top : 10px;
-  border-collapse: collapse;
-  width : 700px;
-  margin-bottom : 10px;
-  overflow: hidden;
-  border-radius: 15px;
-  align-items : center;
-
-
-
-  div {
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    border-radius : 100px;
-    font-weight: bold;
-
-  }
-`
-
-const Select = styled.select`
-  height : 30px;
-  background: #f9f9fa;
-  border-radius: 4px;
-  color: #000;
-  outline: 0;
-  border: 1px solid rgba(245, 245, 245, 0.7);
-  font-size: 15px;
-  transition: all 0.3s ease-out;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(0, 0, 0, 0.1);
-  :focus,
-  :hover {
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);
-  }
-  font-family: inherit;
-`
 
 const PlusButton = styled.button`
   width : 20px;
