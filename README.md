@@ -10,8 +10,8 @@
  - http://115.71.11.210:6060/
 
 ## 페이지 구성
- - 권한라우터
- -![image](https://user-images.githubusercontent.com/72733192/236750633-1fcc3f6a-525a-4f19-a9c3-80b776e03934.png)
+ - 권한라우터  
+ ![image](https://user-images.githubusercontent.com/72733192/236750633-1fcc3f6a-525a-4f19-a9c3-80b776e03934.png)
 
  - 페이지 구성
  
